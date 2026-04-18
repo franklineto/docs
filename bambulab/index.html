@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Completo de Materiais e Bicos — Bambu Lab A1</title>
+<style>
+@media print {
+  .no-print { display: none !important; }
+  .tabs { display: none !important; }
+  .panel { display: block !important; }
+  .section-title-bar { display: block !important; }
+  body { background: #fff; padding: 0; font-size: 11px; }
+  .page { box-shadow: none; padding: 0; max-width: 100%; }
+  .print-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { break-inside: avoid; }
+  .page-break { page-break-before: always; display: block !important; }
+  .cmp-wrap { overflow: visible; }
+  .cmp-table { font-size: 10px; }
+  .tip-grid { grid-template-columns: 1fr 1fr; }
+  .sto-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .nozzle-grid { grid-template-columns: 1fr 1fr; }
+  h2.section-heading { font-size: 15px; }
+  .footer { display: none !important; }
+}
+
+@page {
+  margin: 1.8cm 2cm 2.6cm;
+  @bottom-center {
+    content: "\00A9 2026 \2014 Franklin Jos\00E9 de Oliveira Neto. Todos os direitos reservados.";
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #888888;
+    border-top: 1px solid #dddddd;
+    padding-top: 5pt;
+  }
+  @bottom-right {
+    content: counter(page);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #aaaaaa;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, Helvetica, sans-serif; background: #f4f4f4; color: #111; padding: 20px 16px; line-height: 1.5; }
+.page { max-width: 1100px; margin: 0 auto; background: #fff; padding: 28px 32px; border-radius: 8px; box-shadow: 0 1px 8px rgba(0,0,0,.10); }
+
+.hero { display: flex; align-items: center; gap: 14px; padding-bottom: 16px; border-bottom: 2px solid #111; margin-bottom: 20px; }
+.hero-icon { width: 44px; height: 44px; border-radius: 10px; background: #eee; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.hero h1 { font-size: 20px; font-weight: 700; }
+.hero p { font-size: 12px; color: #666; margin-top: 2px; }
+
+.tabs { display: flex; gap: 3px; margin-bottom: 20px; border-bottom: 1px solid #ddd; flex-wrap: wrap; }
+.tab { font-size: 12px; padding: 7px 14px; cursor: pointer; border: 1px solid transparent; border-bottom: none; border-radius: 5px 5px 0 0; color: #666; background: transparent; margin-bottom: -1px; white-space: nowrap; }
+.tab:hover { background: #f5f5f5; }
+.tab.active { background: #fff; border-color: #ddd; color: #111; font-weight: 700; }
+.panel { display: none; } .panel.active { display: block; }
+.section-title-bar { display: none; border-bottom: 2px solid #111; margin: 24px 0 14px; padding-bottom: 6px; }
+h2.section-heading { font-size: 16px; font-weight: 700; }
+.page-break { display: none; }
+
+/* CARDS */
+.print-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.card { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+.card:hover { border-color: #aaa; }
+.card-head { padding: 11px 13px 9px; border-bottom: 1px solid #eee; }
+.mat-name { font-size: 14px; font-weight: 700; }
+.mat-full { font-size: 10px; color: #888; margin-top: 1px; }
+.badges { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+.badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+.stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #eee; }
+.stat { padding: 7px 8px; text-align: center; }
+.stat + .stat { border-left: 1px solid #eee; }
+.stat-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 1px; }
+.stat-val { font-size: 11px; font-weight: 700; }
+.diff-dots { display: flex; gap: 2px; justify-content: center; margin-top: 3px; }
+.dd { width: 6px; height: 6px; border-radius: 50%; }
+.section { padding: 9px 13px; border-bottom: 1px solid #eee; }
+.section:last-child { border-bottom: none; }
+.sec-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #999; margin-bottom: 5px; }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+.pitem, .citem { font-size: 10px; line-height: 1.35; color: #444; display: flex; gap: 4px; align-items: flex-start; }
+.dp { width: 5px; height: 5px; border-radius: 50%; background: #1D9E75; margin-top: 3px; flex-shrink: 0; }
+.dc { width: 5px; height: 5px; border-radius: 50%; background: #E24B4A; margin-top: 3px; flex-shrink: 0; }
+.ex-wrap { display: flex; flex-wrap: wrap; gap: 3px; }
+.ex { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: #f4f4f4; color: #555; border: 1px solid #e5e5e5; }
+.warn { font-size: 10px; color: #7a3a00; background: #fff4e5; border: 1px solid #f5c97a; padding: 5px 9px; border-radius: 5px; display: flex; gap: 4px; align-items: flex-start; line-height: 1.35; }
+.nozzle-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+.nozzle-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid; }
+
+/* COMPARATIVO */
+.cmp-wrap { overflow-x: auto; }
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 950px; }
+.cmp-table th { text-align: left; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #666; padding: 6px 8px; border-bottom: 2px solid #ddd; background: #f9f9f9; white-space: nowrap; }
+.cmp-table td { padding: 6px 8px; border-bottom: 1px solid #eee; color: #444; vertical-align: middle; font-size: 11px; }
+.cmp-table tr:hover td { background: #fafafa; }
+.mat-col { font-weight: 700; color: #111; white-space: nowrap; }
+.dot5 { display: inline-flex; gap: 2px; vertical-align: middle; }
+.dot5 span { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.p-green { background: #d4f5e9; color: #085041; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.p-amber { background: #fef3c7; color: #713f12; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.p-red   { background: #fee2e2; color: #7f1d1d; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.p-gray  { background: #f0f0f0; color: #555; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+
+/* DICAS */
+.tip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.tip-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 11px 13px; }
+.tip-head { font-size: 13px; font-weight: 700; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+.tip-icon { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
+.tip-list { list-style: none; }
+.tip-list li { font-size: 11px; color: #555; padding: 3px 0; border-bottom: 1px solid #f0f0f0; line-height: 1.4; display: flex; gap: 5px; align-items: flex-start; }
+.tip-list li:last-child { border-bottom: none; }
+.tip-bullet { width: 4px; height: 4px; border-radius: 50%; background: #bbb; margin-top: 5px; flex-shrink: 0; }
+
+/* BICOS */
+.nozzle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.nozzle-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+.nozzle-head { padding: 11px 13px 9px; border-bottom: 1px solid #eee; display: flex; align-items: flex-start; gap: 10px; }
+.nozzle-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+.nozzle-name { font-size: 14px; font-weight: 700; }
+.nozzle-sub  { font-size: 10px; color: #888; margin-top: 1px; }
+.nozzle-price { font-size: 10px; font-weight: 700; margin-top: 3px; }
+.nozzle-section { padding: 9px 13px; border-bottom: 1px solid #eee; }
+.nozzle-section:last-child { border-bottom: none; }
+.compat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+.compat-item { font-size: 10px; display: flex; align-items: center; gap: 4px; color: #444; }
+.compat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.models-wrap { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.model-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: #f0f0f0; color: #333; border: 1px solid #ddd; font-weight: 700; }
+
+/* ARMAZENAMENTO */
+.sto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 9px; margin-bottom: 12px; }
+.sto-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; }
+.sto-mat { font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+.sto-row { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid #f0f0f0; }
+.sto-row:last-child { border-bottom: none; }
+.sto-label { color: #999; }
+.sto-val { font-weight: 700; font-size: 10px; }
+.info-box { background: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 7px; padding: 10px 13px; margin-bottom: 12px; font-size: 11px; color: #555; line-height: 1.5; }
+.dry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 7px; }
+.dry-card { font-size: 11px; color: #555; padding: 8px 10px; background: #f9f9f9; border-radius: 6px; border: 1px solid #eee; }
+.dry-card strong { display: block; font-size: 12px; font-weight: 700; color: #111; margin-bottom: 2px; }
+
+.print-btn { display: block; margin: 0 auto 18px; padding: 9px 28px; background: #111; color: #fff; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; font-weight: 700; }
+.print-btn:hover { background: #333; }
+.footer { font-size: 10px; color: #aaa; text-align: center; margin-top: 18px; border-top: 1px solid #eee; padding-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="no-print" style="text-align:center;padding:12px 0 4px">
+  <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar PDF</button>
+</div>
+
+<div class="page">
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <rect x="3" y="19" width="20" height="4" rx="2" fill="#888"/>
+        <rect x="11" y="5" width="4" height="14" rx="2" fill="#333"/>
+        <path d="M8 9 L13 5 L18 9" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Guia Completo de Materiais e Bicos — Bambu Lab A1</h1>
+      <p>Filamentos · Tipos de bico · Tabela comparativa · Configurações · Armazenamento</p>
+      <p style="margin-top:5px;font-size:11px;color:#999;font-style:italic;letter-spacing:.03em;">by <strong style="color:#111;font-style:normal;">Franklin</strong></p>
+    </div>
+  </div>
+
+  <div class="tabs no-print">
+    <div class="tab active" data-tab="materiais">Materiais</div>
+    <div class="tab" data-tab="bicos">Tipos de bico</div>
+    <div class="tab" data-tab="comparativo">Tabela comparativa</div>
+    <div class="tab" data-tab="config">Dicas Bambu Studio</div>
+    <div class="tab" data-tab="storage">Armazenamento</div>
+  </div>
+
+  <!-- ============================= MATERIAIS ============================= -->
+  <div class="panel active" id="tab-materiais">
+    <div class="section-title-bar"><h2 class="section-heading">Materiais de impressão</h2></div>
+    <div class="print-grid">
+
+      <!-- PLA -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PLA</div>
+          <div class="mat-full">Polylactic Acid</div>
+          <div class="badges">
+            <span class="badge" style="background:#d4f5e9;color:#085041;">Recomendado</span>
+            <span class="badge" style="background:#dbeafe;color:#1e3a8a;">Iniciante</span>
+            <span class="badge" style="background:#dcfce7;color:#14532d;">Biodegradável</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">190–220°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">25–60°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#1D9E75"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm ✓ ideal</span>
+            <span class="nozzle-tag" style="background:#f4f4f4;color:#555;border-color:#ddd;">Aço 0.4 mm (funciona)</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Sem warping, fácil de imprimir</span></div>
+              <div class="pitem"><div class="dp"></div><span>Boa definição de detalhes</span></div>
+              <div class="pitem"><div class="dp"></div><span>Custo baixo, amplas cores</span></div>
+              <div class="pitem"><div class="dp"></div><span>Semibio­degradável</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Frágil a impactos</span></div>
+              <div class="citem"><div class="dc"></div><span>Amolece a ~60°C</span></div>
+              <div class="citem"><div class="dc"></div><span>Não indicado ao ar livre</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Miniaturas</span><span class="ex">Protótipos visuais</span><span class="ex">Organizadores</span><span class="ex">Decoração</span><span class="ex">Brinquedos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLA Silk/Matte -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PLA Silk / Matte</div>
+          <div class="mat-full">Variações estéticas do PLA</div>
+          <div class="badges">
+            <span class="badge" style="background:#d4f5e9;color:#085041;">Iniciante</span>
+            <span class="badge" style="background:#ede9fe;color:#3730a3;">Acabamento</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">200–230°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">35–60°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#1D9E75"></div><div class="dd" style="background:#1D9E75"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm ✓ ideal</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Silk: acabamento metálico brilhante</span></div>
+              <div class="pitem"><div class="dp"></div><span>Matte: camadas praticamente invisíveis</span></div>
+              <div class="pitem"><div class="dp"></div><span>Tão fácil quanto PLA padrão</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Silk: mais frágil, bridging ruim</span></div>
+              <div class="citem"><div class="dc"></div><span>Mesmas limitações térmicas do PLA</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Estátuas e bustos</span><span class="ex">Vasos decorativos</span><span class="ex">Cosplay</span><span class="ex">Jóias</span><span class="ex">Troféus</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PETG -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PETG</div>
+          <div class="mat-full">Polyethylene Terephthalate Glycol</div>
+          <div class="badges">
+            <span class="badge" style="background:#dbeafe;color:#1e3a8a;">Versátil</span>
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Resistente</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">230–250°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">70–85°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm ✓ ideal</span>
+            <span class="nozzle-tag" style="background:#f4f4f4;color:#555;border-color:#ddd;">Aço 0.4 mm (OK)</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Boa resistência ao impacto</span></div>
+              <div class="pitem"><div class="dp"></div><span>Suporta até ~80°C</span></div>
+              <div class="pitem"><div class="dp"></div><span>Resistente à umidade</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Stringing frequente</span></div>
+              <div class="citem"><div class="dc"></div><span>Superfície menos lisa</span></div>
+              <div class="citem"><div class="dc"></div><span>Difícil de colar/pintar</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Peças mecânicas</span><span class="ex">Caixas externas</span><span class="ex">Tampas eletrônicos</span><span class="ex">Clipes e travas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PETG-CF -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PETG-CF</div>
+          <div class="mat-full">PETG com fibra de carbono</div>
+          <div class="badges">
+            <span class="badge" style="background:#1c1c1c;color:#ccc;">Fibra de carbono</span>
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Alta rigidez</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">240–260°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">70–85°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ Exige bico de aço endurecido obrigatoriamente — fibra de carbono desgasta latão em poucas horas</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#fee2e2;color:#7f1d1d;border-color:#f09595;">Latão — PROIBIDO</span>
+            <span class="nozzle-tag" style="background:#d4f5e9;color:#085041;border-color:#9FE1CB;">Aço 0.4 mm ✓ obrigatório</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Rigidez superior ao PETG comum</span></div>
+              <div class="pitem"><div class="dp"></div><span>Resistente à umidade</span></div>
+              <div class="pitem"><div class="dp"></div><span>Acabamento fosco premium</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Requer bico de aço obrigatório</span></div>
+              <div class="citem"><div class="dc"></div><span>Frágil a impactos laterais</span></div>
+              <div class="citem"><div class="dc"></div><span>Custo elevado</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Drones FPV</span><span class="ex">Suportes estruturais</span><span class="ex">Peças automotivas</span><span class="ex">Ferramentas industriais</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="page-break"></div>
+    <div style="height:14px" class="no-print"></div>
+    <div class="print-grid">
+
+      <!-- TPU -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">TPU 95A</div>
+          <div class="mat-full">Thermoplastic Polyurethane</div>
+          <div class="badges">
+            <span class="badge" style="background:#fce7f3;color:#831843;">Flexível</span>
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Borrachoso</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">220–240°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">30–60°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ AMS Lite limitado para TPU &lt; 95A Shore. Prefira alimentação direta.</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4–0.6 mm ✓ ideal</span>
+            <span class="nozzle-tag" style="background:#f4f4f4;color:#555;border-color:#ddd;">Aço (desnecessário)</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Extremamente flexível</span></div>
+              <div class="pitem"><div class="dp"></div><span>Resistente a óleo e UV</span></div>
+              <div class="pitem"><div class="dp"></div><span>Absorção de impacto</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Impressão lenta obrigatória</span></div>
+              <div class="citem"><div class="dc"></div><span>Stringing intenso</span></div>
+              <div class="citem"><div class="dc"></div><span>Difícil no AMS Lite</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Capas de celular</span><span class="ex">Solas e palmilhas</span><span class="ex">Vedações</span><span class="ex">Grips</span><span class="ex">Amortecedores</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLA-CF -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PLA-CF</div>
+          <div class="mat-full">PLA com fibra de carbono</div>
+          <div class="badges">
+            <span class="badge" style="background:#1c1c1c;color:#ccc;">Fibra de carbono</span>
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Alta rigidez</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">200–230°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">35–55°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ Exige bico de aço endurecido — fibra de carbono desgasta latão rapidamente</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#fee2e2;color:#7f1d1d;border-color:#f09595;">Latão — PROIBIDO</span>
+            <span class="nozzle-tag" style="background:#d4f5e9;color:#085041;border-color:#9FE1CB;">Aço 0.4 mm ✓ obrigatório</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Altíssima rigidez e leveza</span></div>
+              <div class="pitem"><div class="dp"></div><span>Acabamento fosco premium</span></div>
+              <div class="pitem"><div class="dp"></div><span>Baixo warping</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Bico de aço obrigatório</span></div>
+              <div class="citem"><div class="dc"></div><span>Frágil a impactos laterais</span></div>
+              <div class="citem"><div class="dc"></div><span>Custo elevado</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Quadros de drone</span><span class="ex">Suportes estruturais</span><span class="ex">Ferramentas</span><span class="ex">Chassi de robôs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASA -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">ASA</div>
+          <div class="mat-full">Acrylonitrile Styrene Acrylate</div>
+          <div class="badges">
+            <span class="badge" style="background:#fef9c3;color:#713f12;">UV resistente</span>
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Uso externo</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">240–260°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">90–110°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ A1 aberta — exige ambiente sem correntes de ar. Pode precisar de caixa improvisada.</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm (OK)</span>
+            <span class="nozzle-tag" style="background:#d4f5e9;color:#085041;border-color:#9FE1CB;">Aço 0.4 mm ✓ preferido</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Excelente resistência UV</span></div>
+              <div class="pitem"><div class="dp"></div><span>Suporta até ~100°C</span></div>
+              <div class="pitem"><div class="dp"></div><span>Resistente a intempéries</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Warping intenso</span></div>
+              <div class="citem"><div class="dc"></div><span>Requer ambiente fechado</span></div>
+              <div class="citem"><div class="dc"></div><span>Vapores irritantes</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Câmeras externas</span><span class="ex">Peças de jardim</span><span class="ex">Caixas de automação</span><span class="ex">Sinalizações</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PVA -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PVA</div>
+          <div class="mat-full">Polyvinyl Alcohol — suporte solúvel</div>
+          <div class="badges">
+            <span class="badge" style="background:#dbeafe;color:#1e3a8a;">Suporte solúvel</span>
+            <span class="badge" style="background:#d4f5e9;color:#085041;">Dissolve em água</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">180–200°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">45–60°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ Extremamente higroscópico — absorve umidade em minutos. Usar dry box durante toda a impressão.</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm ✓ ideal</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Dissolve em água morna</span></div>
+              <div class="pitem"><div class="dp"></div><span>Permite geometrias impossíveis</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Caríssimo por kg</span></div>
+              <div class="citem"><div class="dc"></div><span>Degradação rápida se úmido</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Canais internos</span><span class="ex">Geometrias em balanço</span><span class="ex">Protótipos médicos</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="page-break"></div>
+    <div style="height:14px" class="no-print"></div>
+    <div class="print-grid">
+
+      <!-- HIPS -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">HIPS</div>
+          <div class="mat-full">High Impact Polystyrene</div>
+          <div class="badges">
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Suporte</span>
+            <span class="badge" style="background:#ede9fe;color:#3730a3;">Leve</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">220–240°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">80–100°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#BA7517"></div><div class="dd" style="background:#ddd"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ Dissolve em d-Limoneno (não em água). A1 aberta: risco de warping.</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm ✓ ideal</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Suporte dissolve em limoneno</span></div>
+              <div class="pitem"><div class="dp"></div><span>Material leve e fácil de lixar</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Requer d-Limoneno</span></div>
+              <div class="citem"><div class="dc"></div><span>Vapores de estireno</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Suporte para ABS/ASA</span><span class="ex">Maquetes</span><span class="ex">Props de cosplay</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PA/Nylon -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PA / Nylon</div>
+          <div class="mat-full">Poliamida</div>
+          <div class="badges">
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Alta performance</span>
+            <span class="badge" style="background:#fee2e2;color:#7f1d1d;">Avançado</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">240–270°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">70–90°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#ddd"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ Extremamente higroscópico — dry box obrigatória. Muito difícil na A1 aberta.</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#e8f4fd;color:#1a3a7c;border-color:#b5d4f4;">Latão 0.4 mm (OK)</span>
+            <span class="nozzle-tag" style="background:#d4f5e9;color:#085041;border-color:#9FE1CB;">Aço 0.4 mm ✓ preferido</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Muito resistente ao impacto</span></div>
+              <div class="pitem"><div class="dp"></div><span>Suporta até ~120°C</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Absorve umidade (crítico)</span></div>
+              <div class="citem"><div class="dc"></div><span>Warping severo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Engrenagens</span><span class="ex">Buchas e mancais</span><span class="ex">Ferramentas pesadas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PC -->
+      <div class="card">
+        <div class="card-head">
+          <div class="mat-name">PC</div>
+          <div class="mat-full">Policarbonato</div>
+          <div class="badges">
+            <span class="badge" style="background:#fee2e2;color:#7f1d1d;">Avançado</span>
+            <span class="badge" style="background:#fef3c7;color:#713f12;">Alta temperatura</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-label">Bico</div><div class="stat-val">260–280°C</div></div>
+          <div class="stat"><div class="stat-label">Mesa</div><div class="stat-val">100–120°C</div></div>
+          <div class="stat"><div class="stat-label">Dific.</div>
+            <div class="diff-dots"><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div><div class="dd" style="background:#E24B4A"></div></div>
+          </div>
+        </div>
+        <div class="section"><div class="warn">⚠ A1 opera no limite para PC. Exige bico de aço, ambiente fechado e dry box. Resultado imprevisível sem enclosure.</div></div>
+        <div class="section">
+          <div class="sec-title">Bico recomendado</div>
+          <div class="nozzle-tags">
+            <span class="nozzle-tag" style="background:#fee2e2;color:#7f1d1d;border-color:#f09595;">Latão — PROIBIDO</span>
+            <span class="nozzle-tag" style="background:#d4f5e9;color:#085041;border-color:#9FE1CB;">Aço 0.4 mm ✓ obrigatório</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Suporta até ~130°C</span></div>
+              <div class="pitem"><div class="dp"></div><span>Resistência excepcional ao impacto</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Muito difícil na A1 aberta</span></div>
+              <div class="citem"><div class="dc"></div><span>Warping extremo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sec-title">Exemplos</div>
+          <div class="ex-wrap">
+            <span class="ex">Peças próximas a motores</span><span class="ex">Gabinetes elétricos</span><span class="ex">Lentes e difusores</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================= BICOS ============================= -->
+  <div class="panel" id="tab-bicos">
+    <div class="section-title-bar"><h2 class="section-heading">Tipos de bico para a Bambu Lab A1</h2></div>
+    <div class="nozzle-grid">
+
+      <!-- LATÃO PADRÃO -->
+      <div class="nozzle-card">
+        <div class="nozzle-head">
+          <div class="nozzle-icon" style="background:#fff8dc;">🔩</div>
+          <div>
+            <div class="nozzle-name">Latão padrão</div>
+            <div class="nozzle-sub">Brass — vem de fábrica na A1</div>
+            <div class="nozzle-price" style="color:#1D9E75;">Custo: baixo · ~R$ 15–30/un.</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Compatibilidade com materiais</div>
+          <div class="compat-grid">
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PLA (todos os tipos)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PETG</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>TPU / TPE</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PVA</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>HIPS</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#BA7517"></div>ASA (desgaste rápido)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#BA7517"></div>PA/Nylon (uso limitado)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#E24B4A"></div>PLA-CF — PROIBIDO</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#E24B4A"></div>PETG-CF — PROIBIDO</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#E24B4A"></div>PC — NÃO recomendado</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Excelente condutividade térmica (aquece rápido e uniformemente)</span></div>
+              <div class="pitem"><div class="dp"></div><span>Acabamento interno liso (ótimo para PLA e PETG)</span></div>
+              <div class="pitem"><div class="dp"></div><span>Custo muito baixo</span></div>
+              <div class="pitem"><div class="dp"></div><span>Padrão de fábrica — fácil de encontrar</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Desgasta rapidamente com materiais abrasivos (CF, GF)</span></div>
+              <div class="citem"><div class="dc"></div><span>Vida útil reduzida com materiais carregados</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Modelos recomendados para a A1</div>
+          <div class="models-wrap">
+            <span class="model-tag">Bambu Brass 0.4</span>
+            <span class="model-tag">Bambu Brass 0.6</span>
+            <span class="model-tag">Bambu Brass 0.2</span>
+            <span class="model-tag">Bambu Brass 0.8</span>
+          </div>
+          <p style="font-size:10px;color:#777;margin-top:5px;">Usar bicos originais Bambu para garantir encaixe perfeito no hotend V6 da A1. Compatíveis com todos os tamanhos disponíveis.</p>
+        </div>
+      </div>
+
+      <!-- AÇO ENDURECIDO -->
+      <div class="nozzle-card">
+        <div class="nozzle-head">
+          <div class="nozzle-icon" style="background:#f0f0f0;">⚙️</div>
+          <div>
+            <div class="nozzle-name">Aço endurecido</div>
+            <div class="nozzle-sub">Hardened Steel — obrigatório para CF/GF</div>
+            <div class="nozzle-price" style="color:#BA7517;">Custo: médio · ~R$ 50–120/un.</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Compatibilidade com materiais</div>
+          <div class="compat-grid">
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PLA-CF ✓ obrigatório</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PETG-CF ✓ obrigatório</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PA-CF ✓ obrigatório</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PC ✓ recomendado</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>ASA ✓ recomendado</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PA/Nylon ✓ preferido</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PLA (funciona)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PETG (funciona)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#BA7517"></div>TPU (menos recomendado)</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Dureza HRC 60+ resiste a materiais abrasivos</span></div>
+              <div class="pitem"><div class="dp"></div><span>Vida útil muito longa com CF/GF</span></div>
+              <div class="pitem"><div class="dp"></div><span>Suporta temperaturas mais altas (PC, PA)</span></div>
+              <div class="pitem"><div class="dp"></div><span>Obrigatório para qualquer filamento com fibra</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Condutividade térmica inferior ao latão</span></div>
+              <div class="citem"><div class="dc"></div><span>Acabamento interno levemente mais rugoso</span></div>
+              <div class="citem"><div class="dc"></div><span>Custo mais elevado</span></div>
+              <div class="citem"><div class="dc"></div><span>Pode exigir +5–10°C na temperatura de impressão</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Modelos recomendados para a A1</div>
+          <div class="models-wrap">
+            <span class="model-tag">Bambu Hardened Steel 0.4</span>
+            <span class="model-tag">Bambu Hardened Steel 0.6</span>
+            <span class="model-tag">Bambu Hardened Steel 0.2</span>
+          </div>
+          <p style="font-size:10px;color:#777;margin-top:5px;">A Bambu Lab vende bicos de aço endurecido originais para a A1. Terceiros como TriangleLab e Mellow também fabricam bicos V6 compatíveis de qualidade, geralmente mais baratos.</p>
+        </div>
+      </div>
+
+      <!-- AÇO INOX -->
+      <div class="nozzle-card">
+        <div class="nozzle-head">
+          <div class="nozzle-icon" style="background:#e8f5fd;">🔧</div>
+          <div>
+            <div class="nozzle-name">Aço inoxidável</div>
+            <div class="nozzle-sub">Stainless Steel — uso alimentar e médico</div>
+            <div class="nozzle-price" style="color:#BA7517;">Custo: médio · ~R$ 60–130/un.</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Compatibilidade com materiais</div>
+          <div class="compat-grid">
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PLA (uso alimentar)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PETG (uso alimentar)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PA/Nylon (funciona)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#BA7517"></div>CF (desgaste moderado)</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#E24B4A"></div>Não para uso geral (caro)</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>FDA-safe — peças em contato com alimentos</span></div>
+              <div class="pitem"><div class="dp"></div><span>Não libera chumbo (seguro para biocompatível)</span></div>
+              <div class="pitem"><div class="dp"></div><span>Resistente à corrosão</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Condutividade térmica muito baixa</span></div>
+              <div class="citem"><div class="dc"></div><span>Custo alto para uso geral</span></div>
+              <div class="citem"><div class="dc"></div><span>Não recomendado para materiais abrasivos CF</span></div>
+              <div class="citem"><div class="dc"></div><span>Exige temperatura +10–15°C extra</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Modelos compatíveis com a A1</div>
+          <div class="models-wrap">
+            <span class="model-tag">TriangleLab SS 0.4</span>
+            <span class="model-tag">Mellow V6 SS 0.4</span>
+            <span class="model-tag">E3D V6 SS 0.4</span>
+          </div>
+          <p style="font-size:10px;color:#777;margin-top:5px;">A Bambu não vende versão de aço inox oficial. Bicos V6 de terceiros são compatíveis com a A1. Verificar diâmetro do fio e rosca M6 antes de comprar.</p>
+        </div>
+      </div>
+
+      <!-- RUBY / OLIVA DE RUBI -->
+      <div class="nozzle-card">
+        <div class="nozzle-head">
+          <div class="nozzle-icon" style="background:#fce7f3;">💎</div>
+          <div>
+            <div class="nozzle-name">Rubi (Ruby tip)</div>
+            <div class="nozzle-sub">Corpo de latão + ponta de rubi sintético</div>
+            <div class="nozzle-price" style="color:#E24B4A;">Custo: alto · ~R$ 250–600/un.</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Compatibilidade com materiais</div>
+          <div class="compat-grid">
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PLA-CF / PETG-CF ✓</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>PA-CF / PA-GF ✓</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>Filamentos com abrasivos</div>
+            <div class="compat-item"><div class="compat-dot" style="background:#1D9E75"></div>Todos os materiais padrão</div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Vantagens · Desvantagens</div>
+          <div class="pros-cons">
+            <div>
+              <div class="pitem"><div class="dp"></div><span>Ponta de rubi é extremamente dura — praticamente indestrutível</span></div>
+              <div class="pitem"><div class="dp"></div><span>Corpo de latão mantém boa condutividade térmica</span></div>
+              <div class="pitem"><div class="dp"></div><span>Ideal para uso intenso com CF/GF profissional</span></div>
+            </div>
+            <div>
+              <div class="citem"><div class="dc"></div><span>Custo muito elevado</span></div>
+              <div class="citem"><div class="dc"></div><span>Overkill para uso hobbyist casual</span></div>
+              <div class="citem"><div class="dc"></div><span>Disponibilidade limitada em lojas nacionais</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nozzle-section">
+          <div class="sec-title">Modelos compatíveis com a A1</div>
+          <div class="models-wrap">
+            <span class="model-tag">E3D Ruby V6 0.4</span>
+            <span class="model-tag">TriangleLab Ruby 0.4</span>
+          </div>
+          <p style="font-size:10px;color:#777;margin-top:5px;">Bicos V6 Ruby de terceiros são compatíveis com a A1. Ideal apenas para quem imprime CF/GF regularmente e quer máxima vida útil.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="page-break"></div>
+    <div style="margin-top:14px;background:#fff;border:1px solid #ddd;border-radius:8px;padding:13px 15px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px">Guia rápido: qual bico escolher?</div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <tr style="background:#f9f9f9">
+          <th style="padding:6px 9px;text-align:left;border-bottom:2px solid #ddd;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#666">Material</th>
+          <th style="padding:6px 9px;text-align:left;border-bottom:2px solid #ddd;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#666">Bico mínimo</th>
+          <th style="padding:6px 9px;text-align:left;border-bottom:2px solid #ddd;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#666">Bico ideal</th>
+          <th style="padding:6px 9px;text-align:left;border-bottom:2px solid #ddd;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#666">Observação</th>
+        </tr>
+        <tr><td style="padding:5px 9px;border-bottom:1px solid #eee;font-weight:700">PLA / PLA Silk</td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee;color:#666;font-size:10px">Bico de fábrica — sem necessidade de troca</td></tr>
+        <tr style="background:#fafafa"><td style="padding:5px 9px;border-bottom:1px solid #eee;font-weight:700">PETG</td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee;color:#666;font-size:10px">Bico de fábrica — sem necessidade de troca</td></tr>
+        <tr><td style="padding:5px 9px;border-bottom:1px solid #eee;font-weight:700">TPU 95A</td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.6</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee;color:#666;font-size:10px">Bico 0.6 mm facilita a impressão de flexíveis</td></tr>
+        <tr style="background:#fafafa"><td style="padding:5px 9px;border-bottom:1px solid #eee;font-weight:700">PLA-CF / PETG-CF</td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-red">Aço 0.4 (obrig.)</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-red">Aço 0.4 ou Ruby</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee;color:#666;font-size:10px">Latão é destruído em poucas horas</td></tr>
+        <tr><td style="padding:5px 9px;border-bottom:1px solid #eee;font-weight:700">ASA</td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-amber">Aço 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee;color:#666;font-size:10px">Aço preferido para temperaturas mais altas (260°C+)</td></tr>
+        <tr style="background:#fafafa"><td style="padding:5px 9px;border-bottom:1px solid #eee;font-weight:700">PA / Nylon</td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-green">Latão 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee"><span class="p-amber">Aço 0.4</span></td><td style="padding:5px 9px;border-bottom:1px solid #eee;color:#666;font-size:10px">Aço preferido para durabilidade e altas temperaturas</td></tr>
+        <tr><td style="padding:5px 9px;font-weight:700">PC</td><td style="padding:5px 9px"><span class="p-red">Aço 0.4 (obrig.)</span></td><td style="padding:5px 9px"><span class="p-red">Aço 0.4 ou Ruby</span></td><td style="padding:5px 9px;color:#666;font-size:10px">Latão não suporta temperatura de 260–280°C por longos períodos</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= COMPARATIVO ============================= -->
+  <div class="panel" id="tab-comparativo">
+    <div class="section-title-bar"><h2 class="section-heading">Tabela comparativa de materiais</h2></div>
+    <div class="cmp-wrap">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Material</th><th>Bico</th><th>Mesa</th><th>Dificuldade</th>
+            <th>Resistência</th><th>Temp. máx.</th><th>UV</th>
+            <th>Umidade</th><th>Bico especial</th><th>AMS Lite</th><th>Ideal para</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mat-col">PLA</td><td>190–220°C</td><td>25–60°C</td><td><div class="dot5"><span style="background:#1D9E75"></span><span style="background:#ddd"></span><span style="background:#ddd"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-amber">Média</span></td><td>~60°C</td><td><span class="p-red">Não</span></td><td><span class="p-amber">Absorve</span></td><td><span class="p-green">Latão</span></td><td><span class="p-green">Ótimo</span></td><td>Protótipos, decoração</td></tr>
+          <tr style="background:#fafafa"><td class="mat-col">PLA Silk</td><td>200–230°C</td><td>35–60°C</td><td><div class="dot5"><span style="background:#1D9E75"></span><span style="background:#1D9E75"></span><span style="background:#ddd"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-red">Baixa</span></td><td>~55°C</td><td><span class="p-red">Não</span></td><td><span class="p-amber">Absorve</span></td><td><span class="p-green">Latão</span></td><td><span class="p-green">Ótimo</span></td><td>Decoração, estética</td></tr>
+          <tr><td class="mat-col">PETG</td><td>230–250°C</td><td>70–85°C</td><td><div class="dot5"><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#ddd"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-green">Alta</span></td><td>~80°C</td><td><span class="p-amber">Parcial</span></td><td><span class="p-green">Resistente</span></td><td><span class="p-green">Latão</span></td><td><span class="p-green">Bom</span></td><td>Peças mecânicas, exterior</td></tr>
+          <tr style="background:#fafafa"><td class="mat-col">PETG-CF</td><td>240–260°C</td><td>70–85°C</td><td><div class="dot5"><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-green">Muito alta</span></td><td>~85°C</td><td><span class="p-amber">Parcial</span></td><td><span class="p-green">Resistente</span></td><td><span class="p-red">Aço obrig.</span></td><td><span class="p-amber">Limitado</span></td><td>Estrutural, drones</td></tr>
+          <tr><td class="mat-col">TPU 95A</td><td>220–240°C</td><td>30–60°C</td><td><div class="dot5"><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-green">Flexível</span></td><td>~100°C</td><td><span class="p-green">Sim</span></td><td><span class="p-green">Resistente</span></td><td><span class="p-green">Latão</span></td><td><span class="p-amber">Limitado</span></td><td>Capas, vedações, grips</td></tr>
+          <tr style="background:#fafafa"><td class="mat-col">PLA-CF</td><td>200–230°C</td><td>35–55°C</td><td><div class="dot5"><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#ddd"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-green">Rígida</span></td><td>~60°C</td><td><span class="p-red">Não</span></td><td><span class="p-amber">Absorve</span></td><td><span class="p-red">Aço obrig.</span></td><td><span class="p-amber">Limitado</span></td><td>Estrutural leve, drones</td></tr>
+          <tr><td class="mat-col">ASA</td><td>240–260°C</td><td>90–110°C</td><td><div class="dot5"><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#ddd"></span></div></td><td><span class="p-green">Alta</span></td><td>~100°C</td><td><span class="p-green">Excelente</span></td><td><span class="p-green">Resistente</span></td><td><span class="p-amber">Aço pref.</span></td><td><span class="p-amber">Difícil</span></td><td>Uso externo, jardim</td></tr>
+          <tr style="background:#fafafa"><td class="mat-col">PVA</td><td>180–200°C</td><td>45–60°C</td><td><div class="dot5"><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-gray">Suporte</span></td><td>—</td><td><span class="p-gray">N/A</span></td><td><span class="p-red">Crítico</span></td><td><span class="p-green">Latão</span></td><td><span class="p-amber">Dry box</span></td><td>Suporte solúvel (água)</td></tr>
+          <tr><td class="mat-col">HIPS</td><td>220–240°C</td><td>80–100°C</td><td><div class="dot5"><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#BA7517"></span><span style="background:#ddd"></span><span style="background:#ddd"></span></div></td><td><span class="p-amber">Média</span></td><td>~90°C</td><td><span class="p-amber">Parcial</span></td><td><span class="p-amber">Moderado</span></td><td><span class="p-green">Latão</span></td><td><span class="p-red">Difícil</span></td><td>Suporte (limoneno)</td></tr>
+          <tr style="background:#fafafa"><td class="mat-col">PA / Nylon</td><td>240–270°C</td><td>70–90°C</td><td><div class="dot5"><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#ddd"></span></div></td><td><span class="p-green">Muito alta</span></td><td>~120°C</td><td><span class="p-amber">Parcial</span></td><td><span class="p-red">Crítico</span></td><td><span class="p-amber">Aço pref.</span></td><td><span class="p-red">Dry box</span></td><td>Engrenagens, peças técnicas</td></tr>
+          <tr><td class="mat-col">PC</td><td>260–280°C</td><td>100–120°C</td><td><div class="dot5"><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span><span style="background:#E24B4A"></span></div></td><td><span class="p-green">Excepcional</span></td><td>~130°C</td><td><span class="p-amber">Parcial</span></td><td><span class="p-red">Crítico</span></td><td><span class="p-red">Aço obrig.</span></td><td><span class="p-red">Não rec.</span></td><td>Engenharia, alta temp.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= CONFIG ============================= -->
+  <div class="panel" id="tab-config">
+    <div class="section-title-bar"><h2 class="section-heading">Dicas de configuração no Bambu Studio</h2></div>
+    <div class="tip-grid">
+      <div class="tip-card">
+        <div class="tip-head"><div class="tip-icon" style="background:#e6f9ef">✓</div>Perfis de filamento</div>
+        <ul class="tip-list">
+          <li><div class="tip-bullet"></div><span>Use o perfil genérico Bambu para o tipo de material como ponto de partida</span></li>
+          <li><div class="tip-bullet"></div><span>Prefira perfis específicos do fabricante quando disponíveis no MakerWorld</span></li>
+          <li><div class="tip-bullet"></div><span>Salve seu perfil editado com nome do fabricante + cor para reutilizar</span></li>
+          <li><div class="tip-bullet"></div><span>Não copie perfis de A1 Mini ou P1S — calibrações diferentes</span></li>
+          <li><div class="tip-bullet"></div><span>Ao trocar de bico (latão para aço), recriar o perfil com +5°C na temperatura</span></li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head"><div class="tip-icon" style="background:#fef3c7">⏱</div>Velocidade de impressão</div>
+        <ul class="tip-list">
+          <li><div class="tip-bullet"></div><span>PLA: até 250 mm/s; 150 mm/s para detalhes finos</span></li>
+          <li><div class="tip-bullet"></div><span>PETG: máximo 150 mm/s — acima disso aumenta stringing</span></li>
+          <li><div class="tip-bullet"></div><span>TPU: nunca acima de 30–40 mm/s</span></li>
+          <li><div class="tip-bullet"></div><span>PLA-CF / PETG-CF: 80–120 mm/s para preservar fibras</span></li>
+          <li><div class="tip-bullet"></div><span>Primeira camada: sempre ≤ 50 mm/s para aderência</span></li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head"><div class="tip-icon" style="background:#dbeafe">↩</div>Retração e stringing</div>
+        <ul class="tip-list">
+          <li><div class="tip-bullet"></div><span>PLA: retração 0.5–1 mm a 30–40 mm/s</span></li>
+          <li><div class="tip-bullet"></div><span>PETG: retração 0.4–0.8 mm; ativar "Wipe on retract"</span></li>
+          <li><div class="tip-bullet"></div><span>TPU: retração 0 mm — flexíveis não se beneficiam de retração</span></li>
+          <li><div class="tip-bullet"></div><span>Aumentar temperatura piora stringing — teste reduzindo 5°C</span></li>
+          <li><div class="tip-bullet"></div><span>Ativar "Avoid crossing perimeters" reduz fios sem ajustar retração</span></li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head"><div class="tip-icon" style="background:#fce7f3">⬡</div>Adesão à mesa PEI (A1)</div>
+        <ul class="tip-list">
+          <li><div class="tip-bullet"></div><span>PLA: lado liso da placa PEI, sem cola, mesa 55°C</span></li>
+          <li><div class="tip-bullet"></div><span>PETG: lado texturizado — nunca imprima no lado liso (gruda)</span></li>
+          <li><div class="tip-bullet"></div><span>ASA / ABS / PC: usar cola bastão como agente de liberação</span></li>
+          <li><div class="tip-bullet"></div><span>TPU: lado texturizado, mesa 40°C; esperar esfriar para remover</span></li>
+          <li><div class="tip-bullet"></div><span>Calibrar Z-offset após trocar placa ou mudar temperatura</span></li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head"><div class="tip-icon" style="background:#eaf3de">≡</div>Suportes e preenchimento</div>
+        <ul class="tip-list">
+          <li><div class="tip-bullet"></div><span>"Tree (auto)" para suporte fácil de remover em PLA e PETG</span></li>
+          <li><div class="tip-bullet"></div><span>Infill 15% gyroid para peças funcionais; 5% lightning para decorativas</span></li>
+          <li><div class="tip-bullet"></div><span>Para PVA como suporte: separação de camada 0.2 mm na interface</span></li>
+          <li><div class="tip-bullet"></div><span>PETG sobre PETG: usar PLA como suporte no AMS (separa melhor)</span></li>
+          <li><div class="tip-bullet"></div><span>Mínimo 3 paredes para peças funcionais</span></li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <div class="tip-head"><div class="tip-icon" style="background:#fff4e5">⚠</div>AMS Lite — dicas práticas</div>
+        <ul class="tip-list">
+          <li><div class="tip-bullet"></div><span>Aumentar volume de purga ao trocar de cores escuras para claras</span></li>
+          <li><div class="tip-bullet"></div><span>Nunca misturar PLA + PETG no AMS — causa entupimento</span></li>
+          <li><div class="tip-bullet"></div><span>Filamentos abrasivos (CF): limpar sensores do AMS após cada uso</span></li>
+          <li><div class="tip-bullet"></div><span>TPU: usar alimentação direta (sem AMS) sempre que possível</span></li>
+          <li><div class="tip-bullet"></div><span>Inspecionar rolos e PTFE do AMS a cada 3–4 kg impresso</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================= ARMAZENAMENTO ============================= -->
+  <div class="panel" id="tab-storage">
+    <div class="section-title-bar"><h2 class="section-heading">Armazenamento e cuidados com filamentos</h2></div>
+    <div class="info-box">Filamentos absorvem umidade do ar (higroscopicidade) e isso degrada severamente a qualidade de impressão — causando bolhas, stringing, superfície áspera e quebra de camadas. Armazenar corretamente é tão importante quanto imprimir com bons parâmetros.</div>
+    <div class="sto-grid">
+      <div class="sto-card">
+        <div class="sto-mat">PLA / PLA Silk / PLA-CF</div>
+        <div class="sto-row"><span class="sto-label">Umidade máxima</span><span class="sto-val">&lt; 45%</span></div>
+        <div class="sto-row"><span class="sto-label">Sensibilidade</span><span class="sto-val" style="color:#BA7517">Baixa–média</span></div>
+        <div class="sto-row"><span class="sto-label">Secagem</span><span class="sto-val">45°C · 4–6h</span></div>
+        <div class="sto-row"><span class="sto-label">Sinais de umidade</span><span class="sto-val">Estalo, bolhas</span></div>
+        <div class="sto-row"><span class="sto-label">Armazenamento</span><span class="sto-val">Saco zip + sílica gel</span></div>
+      </div>
+      <div class="sto-card">
+        <div class="sto-mat">PETG / PETG-CF</div>
+        <div class="sto-row"><span class="sto-label">Umidade máxima</span><span class="sto-val">&lt; 35%</span></div>
+        <div class="sto-row"><span class="sto-label">Sensibilidade</span><span class="sto-val" style="color:#BA7517">Média</span></div>
+        <div class="sto-row"><span class="sto-label">Secagem</span><span class="sto-val">65°C · 4–6h</span></div>
+        <div class="sto-row"><span class="sto-label">Sinais de umidade</span><span class="sto-val">Stringing, opacidade</span></div>
+        <div class="sto-row"><span class="sto-label">Armazenamento</span><span class="sto-val">Caixa hermética + sílica</span></div>
+      </div>
+      <div class="sto-card">
+        <div class="sto-mat">TPU</div>
+        <div class="sto-row"><span class="sto-label">Umidade máxima</span><span class="sto-val">&lt; 40%</span></div>
+        <div class="sto-row"><span class="sto-label">Sensibilidade</span><span class="sto-val" style="color:#BA7517">Média</span></div>
+        <div class="sto-row"><span class="sto-label">Secagem</span><span class="sto-val">50°C · 4–8h</span></div>
+        <div class="sto-row"><span class="sto-label">Sinais de umidade</span><span class="sto-val">Bolhas, fragilidade</span></div>
+        <div class="sto-row"><span class="sto-label">Armazenamento</span><span class="sto-val">Saco zip + sílica gel</span></div>
+      </div>
+      <div class="sto-card">
+        <div class="sto-mat">ASA / ABS / HIPS</div>
+        <div class="sto-row"><span class="sto-label">Umidade máxima</span><span class="sto-val">&lt; 40%</span></div>
+        <div class="sto-row"><span class="sto-label">Sensibilidade</span><span class="sto-val" style="color:#BA7517">Baixa–média</span></div>
+        <div class="sto-row"><span class="sto-label">Secagem</span><span class="sto-val">60°C · 4–6h</span></div>
+        <div class="sto-row"><span class="sto-label">Sinais de umidade</span><span class="sto-val">Rugosidade, warping extra</span></div>
+        <div class="sto-row"><span class="sto-label">Armazenamento</span><span class="sto-val">Caixa hermética + sílica</span></div>
+      </div>
+      <div class="sto-card">
+        <div class="sto-mat">PVA</div>
+        <div class="sto-row"><span class="sto-label">Umidade máxima</span><span class="sto-val">&lt; 15%</span></div>
+        <div class="sto-row"><span class="sto-label">Sensibilidade</span><span class="sto-val" style="color:#E24B4A">Extrema</span></div>
+        <div class="sto-row"><span class="sto-label">Secagem</span><span class="sto-val">45°C · 8–12h</span></div>
+        <div class="sto-row"><span class="sto-label">Sinais de umidade</span><span class="sto-val">Absorve em minutos</span></div>
+        <div class="sto-row"><span class="sto-label">Armazenamento</span><span class="sto-val">Dry box durante impressão</span></div>
+      </div>
+      <div class="sto-card">
+        <div class="sto-mat">PA (Nylon) / PC</div>
+        <div class="sto-row"><span class="sto-label">Umidade máxima</span><span class="sto-val">&lt; 10%</span></div>
+        <div class="sto-row"><span class="sto-label">Sensibilidade</span><span class="sto-val" style="color:#E24B4A">Extrema</span></div>
+        <div class="sto-row"><span class="sto-label">Secagem</span><span class="sto-val">70–80°C · 8–12h</span></div>
+        <div class="sto-row"><span class="sto-label">Sinais de umidade</span><span class="sto-val">Bolhas, sem adesão</span></div>
+        <div class="sto-row"><span class="sto-label">Armazenamento</span><span class="sto-val">Dry box obrigatória</span></div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:8px">Opções de dry box e secagem</div>
+      <div class="dry-grid">
+        <div class="dry-card"><strong>Bambu Dry Box</strong>Solução oficial, integra com AMS. Mantém &lt;15% UR durante impressão.</div>
+        <div class="dry-card"><strong>Estufa de filamento</strong>Sunlu, Polymaker. Seca e imprime ao mesmo tempo. 40–70°C ajustável.</div>
+        <div class="dry-card"><strong>Desidratador de alimentos</strong>Opção econômica. Funciona bem para PLA, PETG e TPU.</div>
+        <div class="dry-card"><strong>Caixa hermética + sílica 🔧</strong>DIY — manutenção passiva. Trocar sílica a cada 1–2 meses.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Bambu Lab A1 · Bico padrão 0.4 mm · Temperaturas orientativas — consulte o perfil do fabricante no Bambu Studio
+    <div style="margin-top:8px;font-size:10px;color:#bbb;border-top:1px solid #f0f0f0;padding-top:8px;letter-spacing:.02em;">
+      © 2026 — <strong style="color:#888;font-weight:600;">Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
