@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentos de Estudo — Franklin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0d1017;
+  --surface: #141820;
+  --card:    #1a1f2b;
+  --border:  #242b38;
+  --border2: #2e3748;
+  --text:    #e2e8f0;
+  --muted:   #64748b;
+  --muted2:  #475569;
+  --accent:  #e8a020;
+  --blue:    #58a6ff;
+  --radius:  10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  line-height: 1.6;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+
+/* HEADER */
+header {
+  position: relative; z-index: 1;
+  padding: 3.5rem 2rem 2.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(232,160,32,0.05) 0%, transparent 100%);
+}
+.header-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.9rem;
+}
+.header-eyebrow::before, .header-eyebrow::after {
+  content: ''; width: 36px; height: 1px; background: var(--border2);
+}
+header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
+  color: var(--text); margin-bottom: 0.4rem;
+}
+header h1 em { font-style: normal; color: var(--accent); }
+.author-line {
+  margin-top: 0.9rem;
+  font-size: 0.8rem; color: var(--muted2);
+  font-style: italic; letter-spacing: 0.04em;
+}
+.author-line strong { color: var(--muted); font-style: normal; font-weight: 500; }
+
+/* MAIN */
+main {
+  flex: 1;
+  max-width: 860px; width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+  position: relative; z-index: 1;
+}
+
+/* BREADCRUMB */
+#breadcrumb {
+  display: none;
+  align-items: center; flex-wrap: wrap;
+  margin-bottom: 1.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+}
+#breadcrumb.visible { display: flex; }
+.bc-item {
+  color: var(--muted); cursor: pointer;
+  padding: 3px 6px; border-radius: 4px;
+  transition: color 0.15s; user-select: none;
+}
+.bc-item:hover { color: var(--accent); }
+.bc-item.current { color: var(--text); cursor: default; }
+.bc-item.current:hover { color: var(--text); }
+.bc-sep { color: var(--border2); padding: 0 2px; user-select: none; }
+
+/* BACK BTN */
+#back-btn {
+  display: none;
+  align-items: center; gap: 0.5rem;
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 6px;
+  padding: 5px 12px; font-size: 0.78rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.15s;
+  margin-bottom: 1.4rem;
+}
+#back-btn.visible { display: flex; }
+#back-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* EXPLORER HEADER */
+.explorer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.2rem; gap: 1rem; flex-wrap: wrap;
+}
+.explorer-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+}
+.explorer-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--muted);
+  background: var(--card); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 999px;
+}
+
+/* FILE LIST */
+.file-list { display: flex; flex-direction: column; gap: 0.45rem; }
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted2); padding: 0.8rem 0 0.3rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.2rem;
+}
+
+.file-row {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer; text-decoration: none; color: var(--text);
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+  user-select: none;
+}
+.file-row:hover { background: #1f2636; transform: translateX(2px); }
+.file-row.dir:hover  { border-color: var(--accent); }
+.file-row.html:hover { border-color: var(--blue); }
+
+.file-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; flex-shrink: 0;
+}
+.file-row.dir  .file-icon { background: rgba(232,160,32,0.12); }
+.file-row.html .file-icon { background: rgba(88,166,255,0.12); }
+
+.file-info { flex: 1; min-width: 0; }
+.file-name {
+  font-size: 0.9rem; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.file-row.dir  .file-name { color: var(--accent); }
+.file-row.html .file-name { color: var(--blue); }
+.file-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.67rem; color: var(--muted2); margin-top: 1px;
+}
+
+.file-arrow { color: var(--muted2); flex-shrink: 0; transition: transform 0.18s, color 0.18s; }
+.file-row:hover .file-arrow { color: var(--text); transform: translateX(2px); }
+
+/* LOADING */
+.loading {
+  text-align: center; padding: 3rem 1rem;
+  color: var(--muted); font-size: 0.88rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+}
+.spin {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border2); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* EMPTY */
+.empty-state {
+  text-align: center; padding: 3rem 1rem;
+  color: var(--muted); font-size: 0.88rem;
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+
+/* ERROR */
+.error-box {
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+  border-radius: var(--radius); padding: 1.1rem 1.3rem;
+  font-size: 0.85rem; color: #f87171; line-height: 1.7;
+}
+.error-box code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
+.error-box a { color: var(--blue); }
+
+/* FOOTER */
+footer {
+  position: relative; z-index: 1;
+  text-align: center; padding: 1.8rem 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.76rem; color: var(--muted2); letter-spacing: 0.02em;
+}
+footer strong { color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Índice de Arquivos</div>
+  <h1>Documentos de <em>Estudo</em></h1>
+  <div class="author-line">by <strong>Franklin</strong></div>
+</header>
+
+<main>
+  <nav id="breadcrumb" aria-label="Localização atual"></nav>
+  <button id="back-btn" onclick="goBack()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Voltar
+  </button>
+  <div id="explorer">
+    <div class="loading"><div class="spin"></div>Carregando documentos…</div>
+  </div>
+</main>
+
+<footer>
+  © 2026 — <strong>Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   CONFIG  ← ajuste aqui se mudar de repositório
+═══════════════════════════════════════════════════════ */
+const GITHUB_USER   = 'franklineto';
+const GITHUB_REPO   = 'docs';
+const GITHUB_BRANCH = 'main';   // troque para 'master' se necessário
+
+// URL onde os arquivos ficam acessíveis via GitHub Pages
+const PAGES_BASE = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}`;
+
+// URL base da GitHub Contents API
+const API_BASE = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents`;
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+// Cada item: { label, path }
+// label = texto exibido no breadcrumb
+// path  = caminho relativo na API ('' = raiz)
+let crumbs = [{ label: '🏠 Raiz', path: '' }];
+
+/* ═══════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => renderPath(''));
+
+/* ═══════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════ */
+async function renderPath(repoPath) {
+  const explorer = document.getElementById('explorer');
+  explorer.innerHTML = '<div class="loading"><div class="spin"></div>Carregando…</div>';
+  updateBreadcrumb();
+  updateBackBtn();
+
+  const apiUrl = repoPath
+    ? `${API_BASE}/${repoPath}?ref=${GITHUB_BRANCH}`
+    : `${API_BASE}?ref=${GITHUB_BRANCH}`;
+
+  let data;
+  try {
+    const res = await fetch(apiUrl, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+
+    if (res.status === 403) {
+      const reset     = res.headers.get('X-RateLimit-Reset');
+      const resetTime = reset
+        ? new Date(Number(reset) * 1000).toLocaleTimeString('pt-BR')
+        : '—';
+      explorer.innerHTML = `
+        <div class="error-box">
+          ⚠ <strong>Limite de requisições da API do GitHub atingido.</strong><br>
+          A API pública permite 60 requisições/hora por IP.
+          Tente novamente às <strong>${resetTime}</strong>.
+        </div>`;
+      return;
+    }
+
+    if (res.status === 404) {
+      explorer.innerHTML = `
+        <div class="error-box">
+          ⚠ <strong>Repositório ou caminho não encontrado.</strong><br>
+          Verifique se o repositório <code>${GITHUB_USER}/${GITHUB_REPO}</code>
+          é público e se o branch <code>${GITHUB_BRANCH}</code> existe.
+          <br><br>
+          Se o branch padrão for <code>master</code>, altere a constante
+          <code>GITHUB_BRANCH</code> no código.
+        </div>`;
+      return;
+    }
+
+    if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+
+    data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Resposta inesperada da API');
+
+  } catch (err) {
+    explorer.innerHTML = `
+      <div class="error-box">
+        ⚠ <strong>Erro ao acessar a API do GitHub:</strong><br>${escHtml(err.message)}
+      </div>`;
+    return;
+  }
+
+  /* Filtra e ordena */
+  const dirs = data
+    .filter(i => i.type === 'dir' && !i.name.startsWith('.'))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+  const htmlFiles = data
+    .filter(i =>
+      i.type === 'file' &&
+      /\.(html|htm)$/i.test(i.name) &&
+      i.name.toLowerCase() !== 'index.html'
+    )
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+  const total = dirs.length + htmlFiles.length;
+
+  /* Rótulo atual */
+  const currentLabel = crumbs[crumbs.length - 1].label.replace('🏠 ', '');
+
+  /* Monta HTML */
+  let html = `
+    <div class="explorer-header">
+      <div class="explorer-title">${escHtml(currentLabel)}</div>
+      <div class="explorer-count">${total} item${total !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="file-list">`;
+
+  if (total === 0) {
+    html += `
+      <div class="empty-state">
+        <div class="empty-icon">📂</div>
+        Nenhum diretório ou arquivo HTML encontrado aqui.
+      </div>`;
+  } else {
+    /* Diretórios */
+    if (dirs.length > 0) {
+      html += `<div class="section-label">📁 Diretórios — ${dirs.length}</div>`;
+      dirs.forEach(dir => {
+        html += `
+          <div class="file-row dir"
+               onclick="enterDir(${JSON.stringify(dir.path)}, ${JSON.stringify(dir.name)})">
+            <div class="file-icon">📁</div>
+            <div class="file-info">
+              <div class="file-name">${escHtml(dir.name)}</div>
+              <div class="file-meta">diretório</div>
+            </div>
+            <div class="file-arrow">${arrowSvg()}</div>
+          </div>`;
+      });
+    }
+
+    /* Arquivos HTML */
+    if (htmlFiles.length > 0) {
+      html += `<div class="section-label">📄 Arquivos HTML — ${htmlFiles.length}</div>`;
+      htmlFiles.forEach(file => {
+        const pageUrl = `${PAGES_BASE}/${file.path}`;
+        html += `
+          <div class="file-row html"
+               onclick="window.open(${JSON.stringify(pageUrl)}, '_blank')">
+            <div class="file-icon">📄</div>
+            <div class="file-info">
+              <div class="file-name">${escHtml(file.name)}</div>
+              <div class="file-meta">${escHtml(file.path)}</div>
+            </div>
+            <div class="file-arrow">${arrowSvg()}</div>
+          </div>`;
+      });
+    }
+  }
+
+  html += '</div>';
+  explorer.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVEGAÇÃO
+═══════════════════════════════════════════════════════ */
+function enterDir(path, name) {
+  crumbs.push({ label: name, path });
+  renderPath(path);
+}
+
+function goBack() {
+  if (crumbs.length <= 1) return;
+  crumbs.pop();
+  renderPath(crumbs[crumbs.length - 1].path);
+}
+
+function goToCrumb(idx) {
+  if (idx >= crumbs.length - 1) return;
+  crumbs = crumbs.slice(0, idx + 1);
+  renderPath(crumbs[crumbs.length - 1].path);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BREADCRUMB
+═══════════════════════════════════════════════════════ */
+function updateBreadcrumb() {
+  const nav = document.getElementById('breadcrumb');
+  nav.className = 'visible';
+  nav.innerHTML = '';
+
+  crumbs.forEach((c, i) => {
+    const isLast = i === crumbs.length - 1;
+
+    const item = document.createElement('span');
+    item.className = 'bc-item' + (isLast ? ' current' : '');
+    item.textContent = c.label;
+    if (!isLast) item.onclick = () => goToCrumb(i);
+    nav.appendChild(item);
+
+    if (!isLast) {
+      const sep = document.createElement('span');
+      sep.className = 'bc-sep';
+      sep.textContent = ' / ';
+      nav.appendChild(sep);
+    }
+  });
+}
+
+function updateBackBtn() {
+  const btn = document.getElementById('back-btn');
+  if (crumbs.length > 1) {
+    btn.className = 'visible';
+    const parentLabel = crumbs[crumbs.length - 2].label.replace('🏠 ', '');
+    btn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Voltar para <em style="font-style:normal;color:var(--text);margin-left:4px;">${escHtml(parentLabel)}</em>`;
+  } else {
+    btn.className = '';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════════ */
+function arrowSvg() {
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
