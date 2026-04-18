@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Services — GCP · AWS · Azure</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d11;
+  --surface: #13161c;
+  --card: #181c24;
+  --border: #252a35;
+  --border2: #2e3444;
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --muted2: #4b5563;
+
+  --aws: #FF9900;
+  --aws-dim: rgba(255,153,0,0.12);
+  --aws-border: rgba(255,153,0,0.25);
+
+  --gcp: #4285F4;
+  --gcp-dim: rgba(66,133,244,0.12);
+  --gcp-border: rgba(66,133,244,0.25);
+
+  --azure: #00B4D8;
+  --azure-dim: rgba(0,180,216,0.12);
+  --azure-border: rgba(0,180,216,0.25);
+
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+
+  --radius: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* subtle grid background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ═══════════ HEADER ═══════════ */
+header {
+  position: relative; z-index: 10;
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(66,133,244,0.04) 0%, transparent 100%);
+}
+.header-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.2rem;
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+}
+.header-eyebrow::before, .header-eyebrow::after {
+  content: ''; width: 40px; height: 1px; background: var(--border2);
+}
+header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 6vw, 3.8rem);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -0.03em; margin-bottom: 0.5rem;
+}
+.title-cloud {
+  display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+}
+.dot-aws { color: var(--aws); }
+.dot-gcp { color: var(--gcp); }
+.dot-azure { color: var(--azure); }
+header p {
+  font-size: 0.92rem; color: var(--muted);
+  max-width: 540px; margin: 1rem auto 0;
+  font-weight: 300;
+}
+.author-tag {
+  display: inline-block; margin-top: 1.4rem;
+  font-size: 0.78rem; color: var(--muted2);
+  font-style: italic; letter-spacing: 0.04em;
+}
+.author-tag strong { color: var(--muted); font-style: normal; font-weight: 500; }
+
+/* ═══════════ CLOUD BADGES ═══════════ */
+.cloud-badges {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.8rem; margin-top: 2rem; flex-wrap: wrap;
+}
+.cbadge {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 6px 14px; border-radius: 999px;
+  font-size: 0.78rem; font-weight: 500;
+  font-family: 'Syne', sans-serif; letter-spacing: 0.03em;
+  border: 1px solid;
+}
+.cbadge.aws  { border-color: var(--aws-border);   background: var(--aws-dim);   color: var(--aws); }
+.cbadge.gcp  { border-color: var(--gcp-border);   background: var(--gcp-dim);   color: var(--gcp); }
+.cbadge.azure{ border-color: var(--azure-border); background: var(--azure-dim); color: var(--azure); }
+.cbadge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* ═══════════ NAV TABS ═══════════ */
+.nav-wrap {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(11,13,17,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 0;
+  padding: 0 2rem; overflow-x: auto;
+}
+.nav-inner::-webkit-scrollbar { height: 2px; }
+.nav-inner::-webkit-scrollbar-thumb { background: var(--border2); }
+.nav-tab {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
+  padding: 0.9rem 1.2rem; border: none; background: none;
+  color: var(--muted); cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all 0.2s;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--text); border-bottom-color: var(--gcp); }
+
+/* ═══════════ MAIN LAYOUT ═══════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem 5rem; position: relative; z-index: 1; }
+
+/* panels */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ═══════════ CATEGORY HEADER ═══════════ */
+.cat-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
+}
+.cat-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem; font-weight: 700;
+}
+.cat-title span { font-size: 0.75rem; font-weight: 400; color: var(--muted); margin-left: 0.6rem; font-family: 'DM Sans', sans-serif; }
+.cat-desc { font-size: 0.85rem; color: var(--muted); max-width: 600px; margin-top: 0.4rem; }
+
+/* ═══════════ SERVICE CARD ═══════════ */
+.service-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.service-block:hover { border-color: var(--border2); }
+
+.service-header {
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+  user-select: none;
+}
+.service-header:hover { background: rgba(255,255,255,0.02); }
+
+.service-header-left { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0; }
+.service-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.service-info { min-width: 0; }
+.service-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem;
+}
+.service-tagline { font-size: 0.78rem; color: var(--muted); }
+
+.service-names-row {
+  display: flex; gap: 0.5rem; flex-wrap: wrap; flex-shrink: 0;
+}
+.sname {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; padding: 3px 9px; border-radius: 4px;
+  border: 1px solid; white-space: nowrap;
+}
+.sname.aws   { background: var(--aws-dim);   border-color: var(--aws-border);   color: var(--aws); }
+.sname.gcp   { background: var(--gcp-dim);   border-color: var(--gcp-border);   color: var(--gcp); }
+.sname.azure { background: var(--azure-dim); border-color: var(--azure-border); color: var(--azure); }
+
+.chevron {
+  width: 18px; height: 18px; flex-shrink: 0; color: var(--muted2);
+  transition: transform 0.25s; display: flex; align-items: center; justify-content: center;
+}
+.service-block.open .chevron { transform: rotate(180deg); }
+
+/* ═══════════ SERVICE BODY ═══════════ */
+.service-body {
+  display: none;
+  border-top: 1px solid var(--border);
+}
+.service-block.open .service-body { display: block; }
+
+.service-body-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+}
+@media (max-width: 860px) {
+  .service-body-inner { grid-template-columns: 1fr; }
+}
+
+.provider-col {
+  padding: 1.4rem 1.5rem;
+  border-right: 1px solid var(--border);
+}
+.provider-col:last-child { border-right: none; }
+
+.provider-col-head {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 1rem; padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.provider-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+}
+.provider-service-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--muted); margin-left: auto;
+}
+
+/* pros/cons */
+.pro-con-section { margin-bottom: 1rem; }
+.pro-con-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 600; margin-bottom: 0.4rem;
+}
+.pro-con-label.pros { color: var(--green); }
+.pro-con-label.cons { color: var(--red); }
+.pro-con-list { list-style: none; }
+.pro-con-list li {
+  font-size: 0.82rem; color: #9ca3af;
+  padding: 0.25rem 0; display: flex; gap: 0.5rem; align-items: flex-start;
+  line-height: 1.45;
+}
+.pro-con-list li::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  margin-top: 5px; flex-shrink: 0;
+}
+.pro-con-list.pros li::before { background: var(--green); }
+.pro-con-list.cons li::before { background: var(--red); }
+
+/* use case */
+.usecase {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.8rem 1rem; margin-top: 0.6rem;
+}
+.usecase-label {
+  font-size: 0.63rem; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 600; color: var(--yellow); margin-bottom: 0.4rem;
+}
+.usecase p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; font-style: italic; }
+
+/* links */
+.provider-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.9rem; }
+.doc-link {
+  font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;
+  padding: 3px 8px; border-radius: 4px; text-decoration: none;
+  border: 1px solid var(--border2); color: var(--muted);
+  transition: all 0.15s;
+}
+.doc-link:hover { border-color: var(--muted); color: var(--text); }
+.doc-link.aws:hover   { border-color: var(--aws);   color: var(--aws); }
+.doc-link.gcp:hover   { border-color: var(--gcp);   color: var(--gcp); }
+.doc-link.azure:hover { border-color: var(--azure); color: var(--azure); }
+
+/* ═══════════ COMPARISON TABLE (overview tab) ═══════════ */
+.overview-intro {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.5rem 1.8rem; margin-bottom: 2rem;
+}
+.overview-intro p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+.overview-intro p + p { margin-top: 0.7rem; }
+
+.cmp-table-wrap { overflow-x: auto; margin-bottom: 2.5rem; }
+.cmp-table {
+  width: 100%; border-collapse: collapse; font-size: 0.82rem;
+  min-width: 700px;
+}
+.cmp-table th {
+  text-align: left; padding: 0.6rem 1rem;
+  background: var(--surface); color: var(--muted);
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 600; border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+}
+.cmp-table th:first-child { border-radius: 6px 0 0 0; }
+.cmp-table th:last-child  { border-radius: 0 6px 0 0; }
+.cmp-table td {
+  padding: 0.7rem 1rem; border-bottom: 1px solid var(--border);
+  vertical-align: top; color: #9ca3af;
+}
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:hover td { background: rgba(255,255,255,0.015); }
+.cmp-table td:first-child {
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  color: var(--text); font-size: 0.85rem; white-space: nowrap;
+}
+.cmp-table td.aws-cell   { color: var(--aws); }
+.cmp-table td.gcp-cell   { color: var(--gcp); }
+.cmp-table td.azure-cell { color: var(--azure); }
+
+/* tier badges */
+.tier { font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.tier-leader  { background: rgba(34,197,94,0.15);  color: #22c55e; }
+.tier-strong  { background: rgba(66,133,244,0.15); color: #60a5fa; }
+.tier-good    { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+/* ═══════════ PROVIDER OVERVIEW CARDS ═══════════ */
+.provider-overview {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+@media (max-width: 700px) { .provider-overview { grid-template-columns: 1fr; } }
+.pov-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.3rem 1.4rem;
+}
+.pov-card.aws   { border-top: 3px solid var(--aws); }
+.pov-card.gcp   { border-top: 3px solid var(--gcp); }
+.pov-card.azure { border-top: 3px solid var(--azure); }
+.pov-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; }
+.pov-logo { font-size: 1.4rem; }
+.pov-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+.pov-sub  { font-size: 0.7rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.pov-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.9rem; }
+.pov-strengths { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.pov-tag {
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid var(--border2); color: var(--muted2);
+}
+
+/* ═══════════ FOOTER ═══════════ */
+.page-footer {
+  text-align: center; padding: 2.5rem 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem; color: var(--muted2);
+  position: relative; z-index: 1;
+}
+.page-footer strong { color: var(--muted); font-weight: 500; }
+
+/* ═══════════ PRINT ═══════════ */
+@media print {
+  body { background: #fff; color: #111; }
+  body::before { display: none; }
+  .nav-wrap, .no-print { display: none !important; }
+  .panel { display: block !important; }
+  .service-body { display: block !important; }
+  .service-body-inner { grid-template-columns: 1fr 1fr 1fr; }
+  .provider-col { border-color: #eee; }
+  .service-block { border-color: #ddd; break-inside: avoid; }
+  .page-footer { display: none; }
+}
+
+@page {
+  margin: 1.8cm 2cm 2.6cm;
+  @bottom-center {
+    content: "\00A9 2026 \2014 Franklin Jos\00E9 de Oliveira Neto. Todos os direitos reservados.";
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt; color: #888888;
+    border-top: 1px solid #dddddd; padding-top: 5pt;
+  }
+  @bottom-right {
+    content: counter(page);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt; color: #aaaaaa;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header>
+  <div class="header-eyebrow">Comparativo de Serviços Cloud</div>
+  <h1>
+    <span class="dot-aws">AWS</span> ·
+    <span class="dot-gcp">GCP</span> ·
+    <span class="dot-azure">Azure</span>
+  </h1>
+  <p>Comparativo interativo dos principais serviços em nuvem — vantagens, desvantagens e exemplos de uso reais.</p>
+  <div class="author-tag">by <strong>Franklin</strong></div>
+  <div class="cloud-badges">
+    <div class="cbadge aws"><div class="cbadge-dot"></div>Amazon Web Services</div>
+    <div class="cbadge gcp"><div class="cbadge-dot"></div>Google Cloud Platform</div>
+    <div class="cbadge azure"><div class="cbadge-dot"></div>Microsoft Azure</div>
+  </div>
+</header>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-tab active" data-panel="overview">Visão Geral</button>
+    <button class="nav-tab" data-panel="compute">Computação</button>
+    <button class="nav-tab" data-panel="storage">Armazenamento</button>
+    <button class="nav-tab" data-panel="database">Banco de Dados</button>
+    <button class="nav-tab" data-panel="network">Rede & CDN</button>
+    <button class="nav-tab" data-panel="ai">IA & Machine Learning</button>
+    <button class="nav-tab" data-panel="containers">Containers & K8s</button>
+    <button class="nav-tab" data-panel="serverless">Serverless</button>
+    <button class="nav-tab" data-panel="security">Segurança & IAM</button>
+    <button class="nav-tab" data-panel="analytics">Analytics & Big Data</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="container">
+
+<!-- ════════ OVERVIEW ════════ -->
+<div class="panel active" id="panel-overview">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Visão Geral <span>3 grandes provedores</span></div>
+      <div class="cat-desc">Entenda o posicionamento, forças e o perfil de cada provedor antes de escolher seus serviços.</div>
+    </div>
+  </div>
+
+  <div class="provider-overview">
+    <div class="pov-card aws">
+      <div class="pov-header">
+        <div class="pov-logo">🟠</div>
+        <div><div class="pov-name">Amazon Web Services</div><div class="pov-sub">AWS · aws.amazon.com</div></div>
+      </div>
+      <div class="pov-desc">Pioneiro e líder absoluto de mercado (~32% de share). Maior portfólio de serviços (200+), ecossistema maduro e enorme comunidade. Escolha padrão para startups e empresas globais.</div>
+      <div class="pov-strengths">
+        <span class="pov-tag">Maior portfólio</span>
+        <span class="pov-tag">Comunidade ampla</span>
+        <span class="pov-tag">Regiões globais</span>
+        <span class="pov-tag">Marketplace rico</span>
+      </div>
+    </div>
+    <div class="pov-card gcp">
+      <div class="pov-header">
+        <div class="pov-logo">🔵</div>
+        <div><div class="pov-name">Google Cloud Platform</div><div class="pov-sub">GCP · cloud.google.com</div></div>
+      </div>
+      <div class="pov-desc">Terceiro em market share (~12%), mas líder em IA/ML, Big Data e Kubernetes (criador do K8s). Infraestrutura de rede global do Google. Favorito de equipes de data science e engenharia de dados.</div>
+      <div class="pov-strengths">
+        <span class="pov-tag">IA/ML líder</span>
+        <span class="pov-tag">BigQuery</span>
+        <span class="pov-tag">Rede Google</span>
+        <span class="pov-tag">Kubernetes nativo</span>
+      </div>
+    </div>
+    <div class="pov-card azure">
+      <div class="pov-header">
+        <div class="pov-logo">🔷</div>
+        <div><div class="pov-name">Microsoft Azure</div><div class="pov-sub">Azure · azure.microsoft.com</div></div>
+      </div>
+      <div class="pov-desc">Segundo em market share (~23%), dominante em empresas com stack Microsoft (Windows, Office 365, Active Directory). Integração nativa com ferramentas corporativas e suporte a workloads híbridas.</div>
+      <div class="pov-strengths">
+        <span class="pov-tag">Integração Microsoft</span>
+        <span class="pov-tag">Híbrido/OnPrem</span>
+        <span class="pov-tag">Compliance Enterprise</span>
+        <span class="pov-tag">Active Directory</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="overview-intro">
+    <p>A tabela abaixo compara os três provedores por categoria. Clique nas abas acima para explorar cada categoria com detalhes, vantagens, desvantagens e exemplos de uso hipotéticos.</p>
+    <p>Nota: os nomes dos serviços mudam entre provedores para a mesma função. Por exemplo: máquinas virtuais são <span style="color:var(--aws)">EC2</span> na AWS, <span style="color:var(--gcp)">Compute Engine</span> no GCP e <span style="color:var(--azure)">Virtual Machines</span> no Azure.</p>
+  </div>
+
+  <div class="cmp-table-wrap">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th>🟠 AWS</th>
+          <th>🔵 GCP</th>
+          <th>🔷 Azure</th>
+          <th>Destaque</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Máquinas Virtuais</td>
+          <td class="aws-cell">EC2</td>
+          <td class="gcp-cell">Compute Engine</td>
+          <td class="azure-cell">Virtual Machines</td>
+          <td><span class="tier tier-leader">AWS</span> maior variedade</td>
+        </tr>
+        <tr>
+          <td>Object Storage</td>
+          <td class="aws-cell">S3</td>
+          <td class="gcp-cell">Cloud Storage</td>
+          <td class="azure-cell">Blob Storage</td>
+          <td><span class="tier tier-leader">AWS S3</span> padrão de mercado</td>
+        </tr>
+        <tr>
+          <td>Banco Relacional</td>
+          <td class="aws-cell">RDS / Aurora</td>
+          <td class="gcp-cell">Cloud SQL / Spanner</td>
+          <td class="azure-cell">Azure SQL / Cosmos DB</td>
+          <td><span class="tier tier-leader">AWS Aurora</span> performance</td>
+        </tr>
+        <tr>
+          <td>Serverless Functions</td>
+          <td class="aws-cell">Lambda</td>
+          <td class="gcp-cell">Cloud Functions</td>
+          <td class="azure-cell">Azure Functions</td>
+          <td><span class="tier tier-leader">AWS Lambda</span> ecossistema</td>
+        </tr>
+        <tr>
+          <td>Kubernetes Gerenciado</td>
+          <td class="aws-cell">EKS</td>
+          <td class="gcp-cell">GKE</td>
+          <td class="azure-cell">AKS</td>
+          <td><span class="tier tier-leader">GKE</span> criador do K8s</td>
+        </tr>
+        <tr>
+          <td>Big Data / Analytics</td>
+          <td class="aws-cell">Redshift / EMR</td>
+          <td class="gcp-cell">BigQuery</td>
+          <td class="azure-cell">Synapse Analytics</td>
+          <td><span class="tier tier-leader">BigQuery</span> serverless e veloz</td>
+        </tr>
+        <tr>
+          <td>IA / ML Gerenciado</td>
+          <td class="aws-cell">SageMaker</td>
+          <td class="gcp-cell">Vertex AI</td>
+          <td class="azure-cell">Azure ML + OpenAI</td>
+          <td><span class="tier tier-leader">GCP Vertex</span> infra de IA</td>
+        </tr>
+        <tr>
+          <td>CDN</td>
+          <td class="aws-cell">CloudFront</td>
+          <td class="gcp-cell">Cloud CDN</td>
+          <td class="azure-cell">Azure CDN / Front Door</td>
+          <td><span class="tier tier-leader">AWS</span> + <span class="tier tier-strong">Azure</span></td>
+        </tr>
+        <tr>
+          <td>IAM / Identidade</td>
+          <td class="aws-cell">IAM + Cognito</td>
+          <td class="gcp-cell">Cloud IAM + Identity</td>
+          <td class="azure-cell">Azure AD / Entra ID</td>
+          <td><span class="tier tier-leader">Azure AD</span> enterprise</td>
+        </tr>
+        <tr>
+          <td>Mensageria / Filas</td>
+          <td class="aws-cell">SQS / SNS / Kinesis</td>
+          <td class="gcp-cell">Pub/Sub</td>
+          <td class="azure-cell">Service Bus / Event Hub</td>
+          <td><span class="tier tier-leader">AWS</span> variedade</td>
+        </tr>
+        <tr>
+          <td>Preço (geral)</td>
+          <td>Médio–alto</td>
+          <td>Competitivo</td>
+          <td>Médio</td>
+          <td><span class="tier tier-leader">GCP</span> descontos automáticos</td>
+        </tr>
+        <tr>
+          <td>Suporte Híbrido</td>
+          <td>Outposts</td>
+          <td>Anthos / Distributed</td>
+          <td>Arc / Stack</td>
+          <td><span class="tier tier-leader">Azure Arc</span> enterprise</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════ COMPUTAÇÃO ════════ -->
+<div class="panel" id="panel-compute">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Computação <span>VMs, auto-scaling, imagens</span></div>
+      <div class="cat-desc">Serviços de máquinas virtuais, processamento e escalabilidade horizontal.</div>
+    </div>
+  </div>
+
+  <!-- VMs -->
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(255,153,0,0.1);">🖥️</div>
+        <div class="service-info">
+          <div class="service-name">Máquinas Virtuais (IaaS)</div>
+          <div class="service-tagline">Servidores virtuais sob demanda com controle total sobre SO e hardware</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">EC2</span>
+        <span class="sname gcp">Compute Engine</span>
+        <span class="sname azure">Azure VMs</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <!-- AWS EC2 -->
+        <div class="provider-col">
+          <div class="provider-col-head">
+            <span style="color:var(--aws);font-size:0.8rem;">🟠</span>
+            <span class="provider-label" style="color:var(--aws);">AWS</span>
+            <span class="provider-service-name">EC2</span>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Maior variedade de tipos de instância (750+ tipos)</li>
+              <li>Spot Instances com até 90% de desconto</li>
+              <li>Reserved Instances com planejamento de custos</li>
+              <li>Ecossistema maduro com Auto Scaling nativo</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Interface complexa para iniciantes</li>
+              <li>Preço pode ser alto sem planejamento</li>
+              <li>Cobrança de egresso de dados elevada</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma fintech processa transações em instâncias c6i.xlarge com Auto Scaling Group que expande de 2 para 50 instâncias nos horários de pico, e usa Spot Instances para backtests noturnos a 1/10 do custo.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/ec2/" target="_blank" class="doc-link aws">📄 Docs EC2</a>
+            <a href="https://aws.amazon.com/ec2/pricing/" target="_blank" class="doc-link aws">💰 Preços</a>
+          </div>
+        </div>
+        <!-- GCP Compute Engine -->
+        <div class="provider-col">
+          <div class="provider-col-head">
+            <span style="color:var(--gcp);font-size:0.8rem;">🔵</span>
+            <span class="provider-label" style="color:var(--gcp);">GCP</span>
+            <span class="provider-service-name">Compute Engine</span>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Sustained Use Discounts automáticos (sem reservar)</li>
+              <li>Preemptible VMs mais baratas que Spots da AWS</li>
+              <li>Custom Machine Types (CPU/RAM exatos)</li>
+              <li>Rede privada do Google de alta performance</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Menos tipos de instância que AWS</li>
+              <li>Comunidade menor de suporte</li>
+              <li>Algumas regiões têm disponibilidade limitada</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa de renderização 3D usa instâncias com GPU T4 no GCP e aproveita os descontos automáticos por uso sustentado — qualquer VM que rodar mais de 25% do mês ganha desconto automático sem ação manual.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/compute" target="_blank" class="doc-link gcp">📄 Docs</a>
+            <a href="https://cloud.google.com/compute/all-pricing" target="_blank" class="doc-link gcp">💰 Preços</a>
+          </div>
+        </div>
+        <!-- Azure VMs -->
+        <div class="provider-col">
+          <div class="provider-col-head">
+            <span style="color:var(--azure);font-size:0.8rem;">🔷</span>
+            <span class="provider-label" style="color:var(--azure);">Azure</span>
+            <span class="provider-service-name">Virtual Machines</span>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Azure Hybrid Benefit (licenças Windows/SQL existentes)</li>
+              <li>Integração nativa com Active Directory</li>
+              <li>Excelente para workloads Windows Server</li>
+              <li>Reservations com até 72% de desconto</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Interface do portal pode ser confusa</li>
+              <li>Documentação às vezes desatualizada</li>
+              <li>Menos opções de instâncias especializadas</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa com 500 licenças Windows Server on-premises migra para Azure VMs usando Azure Hybrid Benefit, aproveitando as licenças já pagas e economizando até 40% no custo das VMs em relação a outras nuvens.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/virtual-machines/" target="_blank" class="doc-link azure">📄 Docs</a>
+            <a href="https://azure.microsoft.com/pricing/details/virtual-machines/" target="_blank" class="doc-link azure">💰 Preços</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto Scaling -->
+  <div class="service-block">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(34,197,94,0.1);">📈</div>
+        <div class="service-info">
+          <div class="service-name">Auto Scaling & Load Balancing</div>
+          <div class="service-tagline">Escalabilidade automática e distribuição de tráfego entre instâncias</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">ASG + ALB</span>
+        <span class="sname gcp">MIG + Cloud LB</span>
+        <span class="sname azure">VMSS + ALB</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head">
+            <span style="color:var(--aws);">🟠</span>
+            <span class="provider-label" style="color:var(--aws);">AWS</span>
+            <span class="provider-service-name">ASG + ALB</span>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Auto Scaling Groups com políticas granulares</li>
+              <li>ALB com roteamento por path, header e host</li>
+              <li>Integração com CloudWatch para scaling baseado em métricas</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Configuração inicial mais complexa</li>
+              <li>Custo do ALB pode ser significativo em alto tráfego</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um e-commerce configura ASG com scaling baseado em CPU > 60%, garantindo que a Black Friday com 10x o tráfego normal seja suportada automaticamente sem intervenção humana.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/autoscaling/" target="_blank" class="doc-link aws">📄 Auto Scaling</a>
+            <a href="https://aws.amazon.com/elasticloadbalancing/" target="_blank" class="doc-link aws">📄 ALB</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head">
+            <span style="color:var(--gcp);">🔵</span>
+            <span class="provider-label" style="color:var(--gcp);">GCP</span>
+            <span class="provider-service-name">MIG + Cloud LB</span>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Global Load Balancer com IP anycast único</li>
+              <li>Managed Instance Groups com rolling updates</li>
+              <li>Scaling baseado em métricas customizadas do Cloud Monitoring</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Configuração do Cloud LB mais verbosa</li>
+              <li>Latência de scale-up ligeiramente maior</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um app global usa o Cloud Load Balancer com IP anycast: usuários no Brasil e no Japão acessam o mesmo IP, sendo roteados automaticamente para a região mais próxima sem configuração de DNS complexa.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/load-balancing" target="_blank" class="doc-link gcp">📄 Cloud LB</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head">
+            <span style="color:var(--azure);">🔷</span>
+            <span class="provider-label" style="color:var(--azure);">Azure</span>
+            <span class="provider-service-name">VMSS + ALB</span>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>VM Scale Sets integrados ao Azure Monitor</li>
+              <li>Application Gateway com WAF integrado</li>
+              <li>Excelente para apps .NET e Windows</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Tempo de provisionamento de novas instâncias maior</li>
+              <li>Custo do Application Gateway é elevado</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa de seguros usa VMSS com Application Gateway + WAF para proteger um portal web ASP.NET, escalando automaticamente de 3 para 30 instâncias em períodos de renovação anual de apólices.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://learn.microsoft.com/azure/virtual-machine-scale-sets/" target="_blank" class="doc-link azure">📄 VMSS</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ STORAGE ════════ -->
+<div class="panel" id="panel-storage">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Armazenamento <span>object, block, file storage</span></div>
+      <div class="cat-desc">Soluções de armazenamento de objetos, blocos e arquivos compartilhados na nuvem.</div>
+    </div>
+  </div>
+
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(255,153,0,0.1);">🗄️</div>
+        <div class="service-info">
+          <div class="service-name">Object Storage</div>
+          <div class="service-tagline">Armazenamento de objetos ilimitado para arquivos, backups, imagens e dados não estruturados</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">S3</span>
+        <span class="sname gcp">Cloud Storage</span>
+        <span class="sname azure">Blob Storage</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">S3</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Padrão de facto do mercado — amplamente compatível</li>
+              <li>S3 Intelligent-Tiering move dados automaticamente</li>
+              <li>Glacier para arquivamento a custo mínimo (~$1/TB/mês)</li>
+              <li>S3 Select para queries SQL direto nos objetos</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Egress (saída de dados) é cobrado e pode ser caro</li>
+              <li>Preço de requisições pode ser surpresa</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um portal de streaming de vídeo armazena 500TB de conteúdo no S3 Standard para vídeos recentes e move automaticamente para Glacier vídeos com mais de 2 anos, reduzindo custo de armazenamento em 80%.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/s3/" target="_blank" class="doc-link aws">📄 S3 Docs</a>
+            <a href="https://aws.amazon.com/s3/pricing/" target="_blank" class="doc-link aws">💰 Preços</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Cloud Storage</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Egress gratuito para outros serviços GCP</li>
+              <li>Classes de storage simples: Standard, Nearline, Coldline, Archive</li>
+              <li>Consistência forte por padrão (sem eventual consistency)</li>
+              <li>Integrado nativamente ao BigQuery e Dataflow</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Egress para fora do GCP também é cobrado</li>
+              <li>Menor ecossistema de ferramentas terceiras</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma equipe de data engineering carrega 10TB de logs diários no Cloud Storage (Nearline) e processa diretamente no BigQuery sem custo de egresso — o pipeline completo fica dentro do ecossistema GCP.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/storage" target="_blank" class="doc-link gcp">📄 Docs</a>
+            <a href="https://cloud.google.com/storage/pricing" target="_blank" class="doc-link gcp">💰 Preços</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Blob Storage</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Tiers: Hot, Cool, Cold e Archive</li>
+              <li>Integração nativa com Azure Data Factory e Synapse</li>
+              <li>Azure Data Lake Storage Gen2 para analytics em escala</li>
+              <li>Lifecycle Management automático entre tiers</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Terminologia diferente pode confundir (containers ≠ blobs)</li>
+              <li>Performance pode ser inconsistente em regiões menores</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um banco usa Azure Blob Storage como Data Lake com hierarquia de pastas por date partition, processando os dados com Synapse Analytics e movendo arquivos frios para Archive automaticamente após 90 dias.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/storage/blobs/" target="_blank" class="doc-link azure">📄 Docs</a>
+            <a href="https://azure.microsoft.com/pricing/details/storage/blobs/" target="_blank" class="doc-link azure">💰 Preços</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ DATABASE ════════ -->
+<div class="panel" id="panel-database">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Banco de Dados <span>relacional, NoSQL, cache</span></div>
+      <div class="cat-desc">Bancos gerenciados relacionais, documentos, chave-valor e distribuídos globalmente.</div>
+    </div>
+  </div>
+
+  <!-- Relacional -->
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(66,133,244,0.1);">🗃️</div>
+        <div class="service-info">
+          <div class="service-name">Banco Relacional Gerenciado</div>
+          <div class="service-tagline">PostgreSQL, MySQL, SQL Server gerenciados com backups, patches e HA automáticos</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">RDS / Aurora</span>
+        <span class="sname gcp">Cloud SQL</span>
+        <span class="sname azure">Azure SQL</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">RDS / Aurora</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Aurora PostgreSQL/MySQL: até 5x mais rápido que RDS padrão</li>
+              <li>Aurora Serverless v2: escala por frações de ACU</li>
+              <li>Multi-AZ e read replicas automáticos</li>
+              <li>Global Database para replicação multi-região</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Aurora pode ser caro para cargas pequenas</li>
+              <li>Vendor lock-in no motor Aurora</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma SaaS com padrão de uso irregular usa Aurora Serverless v2: durante o dia sobe para 64 ACUs, à noite cai para 0.5 ACU, pagando apenas o que usa — custo mensal 60% menor que uma instância fixa.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/rds/" target="_blank" class="doc-link aws">📄 RDS</a>
+            <a href="https://aws.amazon.com/aurora/" target="_blank" class="doc-link aws">📄 Aurora</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Cloud SQL / Spanner</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Cloud SQL: PostgreSQL e MySQL totalmente gerenciados</li>
+              <li>Cloud Spanner: banco relacional distribuído globalmente com SLA 99.999%</li>
+              <li>PITR (Point-in-Time Recovery) nativo</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Cloud SQL tem limitações de escalabilidade vs Aurora</li>
+              <li>Spanner é muito caro para cargas pequenas</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um sistema bancário global usa Cloud Spanner para registros de transações que precisam ser consistentes em múltiplos continentes simultaneamente — ACID distribuído com latência de escrita < 10ms entre regiões.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/sql" target="_blank" class="doc-link gcp">📄 Cloud SQL</a>
+            <a href="https://cloud.google.com/spanner" target="_blank" class="doc-link gcp">📄 Spanner</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Azure SQL</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Melhor SQL Server gerenciado do mercado</li>
+              <li>Intelligent Query Processing automático</li>
+              <li>Hyperscale: escala até 100TB horizontalmente</li>
+              <li>Hybrid Benefit para licenças SQL Server existentes</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>PostgreSQL/MySQL gerenciados menos maduros que AWS</li>
+              <li>Preço do tier Business Critical é elevado</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa com ERP legado em SQL Server on-premises migra para Azure SQL Managed Instance com compatibilidade de 100% com SQL Server — zero mudanças no código da aplicação, com HA e backups automáticos.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/azure-sql/" target="_blank" class="doc-link azure">📄 Azure SQL</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NoSQL -->
+  <div class="service-block">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(0,180,216,0.1);">📋</div>
+        <div class="service-info">
+          <div class="service-name">NoSQL — Documento & Chave-Valor</div>
+          <div class="service-tagline">Bancos não relacionais com escalabilidade horizontal massiva e latência baixa</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">DynamoDB</span>
+        <span class="sname gcp">Firestore / Bigtable</span>
+        <span class="sname azure">Cosmos DB</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">DynamoDB</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Latência single-digit milliseconds garantida</li>
+              <li>On-Demand: paga por request, sem capacity planning</li>
+              <li>DynamoDB Streams para event-driven architectures</li>
+              <li>Global Tables para replicação multi-região</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Modelagem de dados complexa (design de chaves)</li>
+              <li>Queries flexíveis limitadas sem índices secundários</li>
+              <li>Custo alto com dados quentes em alta escala</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma plataforma de jogos armazena sessões de 50 milhões de usuários simultâneos no DynamoDB On-Demand — leituras em < 5ms, escala automática em picos de eventos sem configuração e custo zero em tempo ocioso.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/dynamodb/" target="_blank" class="doc-link aws">📄 DynamoDB</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Firestore / Bigtable</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Firestore: sincronização em tempo real para apps mobile</li>
+              <li>Bigtable: banco de wide-column para petabytes (usado pelo Google internamente)</li>
+              <li>Firestore tem modo serverless sem capacidade provisionada</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Bigtable tem custo mínimo alto (mínimo 1 nó)</li>
+              <li>Firestore tem limitações em queries ad-hoc</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um app de delivery usa Firestore para sincronizar a localização do entregador em tempo real — a posição GPS atualiza a cada 3 segundos no banco e o cliente vê no mapa instantaneamente via Firebase SDK.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/firestore" target="_blank" class="doc-link gcp">📄 Firestore</a>
+            <a href="https://cloud.google.com/bigtable" target="_blank" class="doc-link gcp">📄 Bigtable</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Cosmos DB</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Multi-API: MongoDB, Cassandra, Gremlin, Table na mesma plataforma</li>
+              <li>Distribuição global com um clique para qualquer região Azure</li>
+              <li>SLA de 99.999% de disponibilidade</li>
+              <li>5 níveis de consistência configuráveis</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Custo pode ser alto — RU/s (Request Units) confusos</li>
+              <li>Compatibilidade MongoDB não é 100% — algumas features faltam</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um marketplace global migra seu MongoDB on-premises para Cosmos DB API MongoDB — zero mudanças no código, dados replicados automaticamente para 5 regiões (Europa, Américas, Ásia) com latência < 15ms localmente.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/cosmos-db/" target="_blank" class="doc-link azure">📄 Cosmos DB</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ NETWORK ════════ -->
+<div class="panel" id="panel-network">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Rede & CDN <span>VPC, DNS, entrega de conteúdo</span></div>
+      <div class="cat-desc">Redes virtuais privadas, balanceamento, DNS gerenciado e distribuição de conteúdo global.</div>
+    </div>
+  </div>
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(245,158,11,0.1);">🌐</div>
+        <div class="service-info">
+          <div class="service-name">CDN — Content Delivery Network</div>
+          <div class="service-tagline">Distribuição de conteúdo estático e dinâmico em pontos de presença globais</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">CloudFront</span>
+        <span class="sname gcp">Cloud CDN</span>
+        <span class="sname azure">Azure CDN / Front Door</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">CloudFront</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>600+ PoPs (pontos de presença) globais</li>
+              <li>Lambda@Edge para lógica na borda</li>
+              <li>Integrado nativamente com S3, ALB e API Gateway</li>
+              <li>WAF integrado com regras gerenciadas</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Preço de egresso pode ser alto em alto volume</li>
+              <li>Invalidação de cache tem custo adicional</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um portal de notícias distribui imagens e vídeos pelo CloudFront — usuários em São Paulo, Paris e Tóquio recebem o conteúdo do PoP mais próximo em < 20ms, com Lambda@Edge adicionando headers de segurança em tempo real.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/cloudfront/" target="_blank" class="doc-link aws">📄 CloudFront</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Cloud CDN</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Usa a rede global privada do Google (não a internet pública)</li>
+              <li>Cache automático com HTTP cache headers</li>
+              <li>Integrado ao Cloud Load Balancing</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Menos PoPs que AWS CloudFront</li>
+              <li>Menos recursos de edge computing</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um app de mapas usa Cloud CDN para cachear tiles de mapa estáticos — 95% das requisições são servidas do cache, reduzindo carga no backend e aproveitando a rede privada do Google para latências consistentes.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/cdn" target="_blank" class="doc-link gcp">📄 Cloud CDN</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Front Door</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Azure Front Door: CDN + LB + WAF numa solução só</li>
+              <li>Roteamento baseado em latência, prioridade ou geolocalização</li>
+              <li>Health probes e failover automático entre backends</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Custo pode ser alto para tráfego pequeno</li>
+              <li>Configuração mais complexa que CloudFront</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa com apps em 3 regiões Azure usa Front Door para rotear usuários para a região mais rápida — se a região primária cai, o Front Door detecta em < 30s e redireciona para o backup automaticamente.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/frontdoor/" target="_blank" class="doc-link azure">📄 Front Door</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ AI / ML ════════ -->
+<div class="panel" id="panel-ai">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">IA & Machine Learning <span>treino, inferência, APIs de IA</span></div>
+      <div class="cat-desc">Plataformas de treinamento de modelos, MLOps e APIs de inteligência artificial pré-construídas.</div>
+    </div>
+  </div>
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(139,92,246,0.1);">🤖</div>
+        <div class="service-info">
+          <div class="service-name">Plataforma de ML Gerenciada</div>
+          <div class="service-tagline">Treinamento, experimentação, deploy e monitoramento de modelos de ML em produção</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">SageMaker</span>
+        <span class="sname gcp">Vertex AI</span>
+        <span class="sname azure">Azure ML + OpenAI</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">SageMaker</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>SageMaker Studio: IDE completa para ML</li>
+              <li>SageMaker Autopilot: AutoML com explicabilidade</li>
+              <li>Pipelines de ML com versionamento de modelos</li>
+              <li>Inferência com instâncias Inf2 (chip AWS Inferentia)</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Custo alto — instâncias de treinamento são caras</li>
+              <li>Curva de aprendizado íngreme</li>
+              <li>Integração entre componentes pode ser confusa</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um banco usa SageMaker para treinar modelos de detecção de fraude — datasets de 50M de transações são processados em instâncias ml.p4d com treinamento distribuído, e o modelo é deployado em endpoint com latência < 10ms.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/sagemaker/" target="_blank" class="doc-link aws">📄 SageMaker</a>
+            <a href="https://aws.amazon.com/bedrock/" target="_blank" class="doc-link aws">📄 Bedrock (LLMs)</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Vertex AI</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>TPUs do Google: hardware mais eficiente para deep learning</li>
+              <li>Vertex AI Model Garden: acesso a Gemini, PaLM e modelos open-source</li>
+              <li>AutoML para visão, texto e tabular sem código</li>
+              <li>Melhor integração com BigQuery ML</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>TPUs têm curva de aprendizado adicional</li>
+              <li>Documentação às vezes desatualizada</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa de saúde fine-tuna um modelo Gemini no Vertex AI para classificar exames de imagem — treina em TPU v4 com 2M de imagens DICOM em 3 horas (vs ~18h em GPU), e o endpoint responde em < 200ms.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/vertex-ai" target="_blank" class="doc-link gcp">📄 Vertex AI</a>
+            <a href="https://cloud.google.com/tpu" target="_blank" class="doc-link gcp">📄 TPUs</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Azure ML + OpenAI</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Azure OpenAI Service: GPT-4, DALL-E, Whisper com SLA enterprise</li>
+              <li>Responsible AI dashboard integrado</li>
+              <li>Integração com Power BI e Office 365 para ML sem código</li>
+              <li>Suporte a modelos customizados com dados privados</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Azure OpenAI tem waitlist e aprovação necessária</li>
+              <li>MLOps menos maduro que SageMaker</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma consultoria usa Azure OpenAI Service (GPT-4) com seus documentos internos via Azure Cognitive Search — funciona como um assistente jurídico que responde perguntas com citações de contratos reais, tudo em ambiente privado e seguro.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/machine-learning/" target="_blank" class="doc-link azure">📄 Azure ML</a>
+            <a href="https://azure.microsoft.com/services/openai-service/" target="_blank" class="doc-link azure">📄 Azure OpenAI</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ CONTAINERS ════════ -->
+<div class="panel" id="panel-containers">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Containers & Kubernetes <span>orquestração e registros</span></div>
+      <div class="cat-desc">Kubernetes gerenciado, registro de containers e plataformas de execução de containers.</div>
+    </div>
+  </div>
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(34,197,94,0.1);">⎈</div>
+        <div class="service-info">
+          <div class="service-name">Kubernetes Gerenciado</div>
+          <div class="service-tagline">Orquestração de containers com control plane gerenciado, auto-healing e atualizações automáticas</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">EKS</span>
+        <span class="sname gcp">GKE</span>
+        <span class="sname azure">AKS</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">EKS</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Integração nativa com IAM, VPC e serviços AWS</li>
+              <li>EKS Anywhere: roda on-premises</li>
+              <li>Fargate mode: K8s sem gerenciar nós</li>
+              <li>Karpenter: auto-scaling inteligente de nós</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Custo do control plane: $0.10/hora por cluster</li>
+              <li>Configuração mais complexa que GKE</li>
+              <li>Atualizações do cluster menos automáticas</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa de logística roda 200 microserviços no EKS com Karpenter — durante picos de entrega, o cluster expande de 20 para 150 nós automaticamente usando Spot Instances, reduzindo custo em 70%.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/eks/" target="_blank" class="doc-link aws">📄 EKS</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">GKE</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>GKE Autopilot: K8s totalmente gerenciado (nós, escalabilidade)</li>
+              <li>Google criou o Kubernetes — implementação mais madura</li>
+              <li>Atualizações automáticas de versão</li>
+              <li>Control plane gratuito no plano Standard</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>GKE Autopilot tem restrições em privileged containers</li>
+              <li>Custo de rede pode ser alto entre zonas</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma startup usa GKE Autopilot para seus 30 microserviços — sem equipe de infra dedicada, o Google gerencia 100% dos nós, patches, escalabilidade e HA. A equipe foca só no código, não na infraestrutura.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/kubernetes-engine" target="_blank" class="doc-link gcp">📄 GKE</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">AKS</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Control plane gratuito (paga só pelos nós)</li>
+              <li>Integração com Azure AD para RBAC nativo</li>
+              <li>Azure Policy para governança de clusters</li>
+              <li>KEDA: event-driven auto-scaling para K8s</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Atualizações de versão mais lentas</li>
+              <li>Networking pode ser complexo com Azure CNI</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa regulada usa AKS com Azure AD integrado — times recebem acesso via grupos do Active Directory sem criar usuários separados, e o Azure Policy garante que nenhum container rode como root em produção.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/kubernetes-service/" target="_blank" class="doc-link azure">📄 AKS</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SERVERLESS ════════ -->
+<div class="panel" id="panel-serverless">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Serverless <span>funções, filas, eventos</span></div>
+      <div class="cat-desc">Execute código sem gerenciar servidores — pagando apenas pelo tempo de execução real.</div>
+    </div>
+  </div>
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(255,153,0,0.1);">⚡</div>
+        <div class="service-info">
+          <div class="service-name">Functions as a Service (FaaS)</div>
+          <div class="service-tagline">Execução de funções event-driven sem provisionamento de infraestrutura</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">Lambda</span>
+        <span class="sname gcp">Cloud Functions</span>
+        <span class="sname azure">Azure Functions</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">Lambda</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>1 milhão de execuções/mês grátis para sempre</li>
+              <li>Cold start mínimo com Provisioned Concurrency</li>
+              <li>Suporte a containers Docker até 10GB</li>
+              <li>Triggers de 200+ serviços AWS nativamente</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Timeout máximo de 15 minutos</li>
+              <li>Cold start pode ser lento em runtimes Java/.NET</li>
+              <li>Debugging local mais complexo</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um sistema de processamento de imagens usa Lambda — cada upload no S3 dispara automaticamente uma função que redimensiona em 4 tamanhos, extrai metadados EXIF e salva no DynamoDB, tudo em < 2 segundos por imagem.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/lambda/" target="_blank" class="doc-link aws">📄 Lambda</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Cloud Functions / Run</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Cloud Run: containers serverless com concorrência por instância</li>
+              <li>Sem cold start para requests simultâneos (Cloud Run)</li>
+              <li>Cloud Functions Gen2 suporta até 60 minutos de timeout</li>
+              <li>Tráfego zero = custo zero (escala a zero automático)</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Cloud Functions tem menos triggers que Lambda</li>
+              <li>Ecossistema de ferramentas serverless menor</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma API REST dockerizada é deployada no Cloud Run — durante o dia serve 50k req/min escalando para 200 instâncias, à noite escala a zero e o custo é R$0, diferente de uma VM que custaria 24h/dia.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/functions" target="_blank" class="doc-link gcp">📄 Cloud Functions</a>
+            <a href="https://cloud.google.com/run" target="_blank" class="doc-link gcp">📄 Cloud Run</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Azure Functions</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Durable Functions para orquestração de workflows stateful</li>
+              <li>Bindings declarativos para simplificar integrações</li>
+              <li>Suporte nativo a C#, F# e PowerShell</li>
+              <li>Deploy via Azure DevOps e GitHub Actions nativo</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Cold start em Consumption plan pode ser lento</li>
+              <li>Plano Premium (sem cold start) é caro</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um workflow de aprovação de documentos usa Durable Functions — o processo orquestra: upload → OCR → revisão humana → aprovação → notificação, mantendo estado entre etapas que podem levar dias, sem um servidor rodando.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/functions/" target="_blank" class="doc-link azure">📄 Azure Functions</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SECURITY ════════ -->
+<div class="panel" id="panel-security">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Segurança & IAM <span>identidade, chaves, conformidade</span></div>
+      <div class="cat-desc">Gerenciamento de identidade, controle de acesso, gestão de segredos e conformidade regulatória.</div>
+    </div>
+  </div>
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(239,68,68,0.1);">🔐</div>
+        <div class="service-info">
+          <div class="service-name">IAM — Gerenciamento de Identidade</div>
+          <div class="service-tagline">Controle de quem pode fazer o quê em quais recursos — políticas, roles e SSO</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">AWS IAM</span>
+        <span class="sname gcp">Cloud IAM</span>
+        <span class="sname azure">Azure AD / Entra ID</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">IAM + Cognito</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Políticas JSON granulares por recurso e ação</li>
+              <li>IAM Roles para serviços (sem credentials hardcoded)</li>
+              <li>AWS Organizations para governança multi-conta</li>
+              <li>Cognito para autenticação de usuários finais</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Políticas JSON complexas — curva de aprendizado alta</li>
+              <li>Permission Boundary pode ser confuso</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa configura IAM com princípio do mínimo privilégio — cada microserviço tem uma IAM Role que acessa SOMENTE o S3 bucket e DynamoDB table que precisa, e SCP (Service Control Policy) impede que qualquer conta filial desative CloudTrail.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/iam/" target="_blank" class="doc-link aws">📄 IAM</a>
+            <a href="https://aws.amazon.com/cognito/" target="_blank" class="doc-link aws">📄 Cognito</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">Cloud IAM</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Hierarquia clara: Organização > Pasta > Projeto > Recurso</li>
+              <li>Service Accounts com Workload Identity Federation</li>
+              <li>Bindings mais simples que políticas JSON da AWS</li>
+              <li>Context-Aware Access para acesso baseado em contexto</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Roles predefinidos podem ser muito amplos</li>
+              <li>Custom Roles têm limite de 300 permissões</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa configura Workload Identity Federation no GCP — pipelines do GitHub Actions acessam Cloud Storage sem nenhuma chave de API armazenada, usando tokens OIDC do GitHub diretamente como credenciais temporárias no GCP.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/iam" target="_blank" class="doc-link gcp">📄 Cloud IAM</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Entra ID (Azure AD)</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Líder de mercado em identidade enterprise</li>
+              <li>SSO nativo com 3000+ apps SaaS (Salesforce, SAP, etc.)</li>
+              <li>Conditional Access com MFA adaptativo</li>
+              <li>Privileged Identity Management (PIM) para acesso just-in-time</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Custo de licença P1/P2 para features avançadas</li>
+              <li>RBAC de recursos Azure separado do Entra ID — confuso</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma empresa com 5.000 funcionários usa Azure AD com Conditional Access — acesso ao ERP SAP exige MFA + dispositivo gerenciado + localização corporativa. Alguém tentando logar de país diferente é bloqueado automaticamente.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/active-directory/" target="_blank" class="doc-link azure">📄 Entra ID</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ANALYTICS ════════ -->
+<div class="panel" id="panel-analytics">
+  <div class="cat-header">
+    <div>
+      <div class="cat-title">Analytics & Big Data <span>warehouses, streaming, pipelines</span></div>
+      <div class="cat-desc">Data warehouses, processamento de grandes volumes e pipelines de dados em escala.</div>
+    </div>
+  </div>
+  <div class="service-block open">
+    <div class="service-header" onclick="toggleBlock(this)">
+      <div class="service-header-left">
+        <div class="service-icon" style="background:rgba(66,133,244,0.1);">📊</div>
+        <div class="service-info">
+          <div class="service-name">Data Warehouse & Analytics</div>
+          <div class="service-tagline">Análise de petabytes de dados estruturados com SQL em escala massiva</div>
+        </div>
+      </div>
+      <div class="service-names-row">
+        <span class="sname aws">Redshift</span>
+        <span class="sname gcp">BigQuery</span>
+        <span class="sname azure">Synapse Analytics</span>
+      </div>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="service-body">
+      <div class="service-body-inner">
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--aws);">🟠</span><span class="provider-label" style="color:var(--aws);">AWS</span><span class="provider-service-name">Redshift</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Redshift Serverless: sem cluster provisionado</li>
+              <li>AQUA (Advanced Query Accelerator) em hardware</li>
+              <li>Redshift Spectrum: queries em S3 direto</li>
+              <li>Integrado com QuickSight para BI</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Custo de cluster provisionado fixo é alto</li>
+              <li>Gerenciamento de VACUUM e manutenção necessário</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Um varejista usa Redshift Serverless para relatórios — analistas executam queries ad-hoc sobre 5 anos de vendas (2TB) sem gerenciar clusters. O custo é por segundo de computação, não por cluster rodando 24h.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://aws.amazon.com/redshift/" target="_blank" class="doc-link aws">📄 Redshift</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--gcp);">🔵</span><span class="provider-label" style="color:var(--gcp);">GCP</span><span class="provider-service-name">BigQuery</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Serverless nativo — sem cluster, escala automaticamente</li>
+              <li>Query de 1TB = ~$5, independente do tempo</li>
+              <li>BigQuery ML: treinar modelos SQL direto no warehouse</li>
+              <li>Streaming de dados com latência < 1 segundo</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Queries ad-hoc podem gerar surpresas na fatura</li>
+              <li>Melhor em leitura — INSERTs frequentes são caros</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma plataforma de mídia analisa 500 bilhões de eventos de cliques no BigQuery — uma query que varre 10TB de dados retorna em < 30 segundos sem nenhuma infraestrutura provisionada, resultado impossível em Redshift com cluster pequeno.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://cloud.google.com/bigquery" target="_blank" class="doc-link gcp">📄 BigQuery</a>
+            <a href="https://cloud.google.com/bigquery/docs/bqml-introduction" target="_blank" class="doc-link gcp">📄 BigQuery ML</a>
+          </div>
+        </div>
+        <div class="provider-col">
+          <div class="provider-col-head"><span style="color:var(--azure);">🔷</span><span class="provider-label" style="color:var(--azure);">Azure</span><span class="provider-service-name">Synapse Analytics</span></div>
+          <div class="pro-con-section">
+            <div class="pro-con-label pros">Vantagens</div>
+            <ul class="pro-con-list pros">
+              <li>Combina Data Warehouse + Spark + Data Integration numa plataforma</li>
+              <li>Synapse Link: replicação zero-ETL de Cosmos DB e SQL</li>
+              <li>Integração nativa com Power BI</li>
+              <li>Serverless SQL pool para explorar Data Lake sem custo fixo</li>
+            </ul>
+          </div>
+          <div class="pro-con-section">
+            <div class="pro-con-label cons">Desvantagens</div>
+            <ul class="pro-con-list cons">
+              <li>Interface complexa com muitos conceitos</li>
+              <li>Performance SQL dedicado menor que Redshift em benchmarks</li>
+            </ul>
+          </div>
+          <div class="usecase">
+            <div class="usecase-label">💡 Exemplo de uso</div>
+            <p>Uma indústria usa Synapse Analytics para unificar dados de ERP (SAP), CRM (Dynamics) e IoT de fábrica — tudo em um único workspace com Spark para transformação, SQL para relatórios e Power BI para dashboards executivos.</p>
+          </div>
+          <div class="provider-links">
+            <a href="https://azure.microsoft.com/services/synapse-analytics/" target="_blank" class="doc-link azure">📄 Synapse</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .container -->
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="page-footer">
+  © 2026 — <strong>Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.
+</footer>
+
+<script>
+// Tab navigation
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel = document.getElementById('panel-' + tab.dataset.panel);
+    if (panel) panel.classList.add('active');
+  });
+});
+
+// Accordion toggle
+function toggleBlock(header) {
+  const block = header.closest('.service-block');
+  block.classList.toggle('open');
+}
+</script>
+</body>
+</html>
