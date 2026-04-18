@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentos de Estudo — Franklin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0d1017;
+  --surface: #141820;
+  --card:    #1a1f2b;
+  --border:  #242b38;
+  --border2: #2e3748;
+  --text:    #e2e8f0;
+  --muted:   #64748b;
+  --muted2:  #475569;
+  --accent:  #e8a020;
+  --blue:    #58a6ff;
+  --red:     #f87171;
+  --radius:  10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  line-height: 1.6;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 1;
+  padding: 3.5rem 2rem 2.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(232,160,32,0.05) 0%, transparent 100%);
+}
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.9rem;
+}
+.eyebrow::before, .eyebrow::after {
+  content: ''; width: 36px; height: 1px; background: var(--border2);
+}
+header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
+}
+header h1 em { font-style: normal; color: var(--accent); }
+.author-line {
+  margin-top: 0.9rem; font-size: 0.8rem;
+  color: var(--muted2); font-style: italic; letter-spacing: 0.04em;
+}
+.author-line strong { color: var(--muted); font-style: normal; font-weight: 500; }
+
+/* ── MAIN ── */
+main {
+  flex: 1;
+  max-width: 860px; width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+  position: relative; z-index: 1;
+}
+
+/* ── BREADCRUMB ── */
+#breadcrumb {
+  display: flex; align-items: center; flex-wrap: wrap;
+  margin-bottom: 1.6rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+  min-height: 28px;
+}
+.bc-item {
+  color: var(--muted); cursor: pointer;
+  padding: 3px 6px; border-radius: 4px;
+  transition: color 0.15s; user-select: none;
+}
+.bc-item:hover { color: var(--accent); }
+.bc-item.current { color: var(--text); cursor: default; }
+.bc-sep { color: var(--border2); padding: 0 2px; user-select: none; }
+
+/* ── BACK BTN ── */
+#back-btn {
+  display: none;
+  align-items: center; gap: 0.5rem;
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 6px;
+  padding: 5px 12px; font-size: 0.78rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: all 0.15s;
+  margin-bottom: 1.4rem;
+}
+#back-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── EXPLORER ── */
+.expl-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.2rem; gap: 1rem; flex-wrap: wrap;
+}
+.expl-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+}
+.expl-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--muted);
+  background: var(--card); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 999px;
+}
+
+/* ── FILE LIST ── */
+.file-list { display: flex; flex-direction: column; gap: 0.45rem; }
+
+.sec-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted2); padding: 0.8rem 0 0.3rem;
+  border-bottom: 1px solid var(--border); margin-bottom: 0.2rem;
+}
+
+.file-row {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer; transition: border-color 0.18s, background 0.18s, transform 0.12s;
+  user-select: none;
+}
+.file-row:hover { background: #1f2636; transform: translateX(2px); }
+.file-row.is-dir:hover  { border-color: var(--accent); }
+.file-row.is-html:hover { border-color: var(--blue); }
+
+.file-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; flex-shrink: 0;
+}
+.is-dir  .file-icon { background: rgba(232,160,32,0.12); }
+.is-html .file-icon { background: rgba(88,166,255,0.12); }
+
+.file-info { flex: 1; min-width: 0; }
+.file-name {
+  font-size: 0.9rem; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.is-dir  .file-name { color: var(--accent); }
+.is-html .file-name { color: var(--blue); }
+.file-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.67rem; color: var(--muted2); margin-top: 1px;
+}
+.arrow { color: var(--muted2); flex-shrink: 0; transition: transform 0.18s, color 0.18s; }
+.file-row:hover .arrow { color: var(--text); transform: translateX(2px); }
+
+/* ── STATES ── */
+.state-box {
+  text-align: center; padding: 3rem 1rem;
+  color: var(--muted); font-size: 0.88rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+}
+.state-icon { font-size: 2.5rem; }
+.spin {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border2); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-box {
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+  border-radius: var(--radius); padding: 1.1rem 1.3rem;
+  font-size: 0.84rem; color: var(--red); line-height: 1.7;
+}
+.error-box code {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+  background: rgba(248,113,113,0.1); padding: 1px 5px; border-radius: 3px;
+}
+.error-box a { color: var(--blue); }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  text-align: center; padding: 1.8rem 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.76rem; color: var(--muted2); letter-spacing: 0.02em;
+}
+footer strong { color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Índice de Arquivos</div>
+  <h1>Documentos de <em>Estudo</em></h1>
+  <div class="author-line">by <strong>Franklin</strong></div>
+</header>
+
+<main>
+  <nav id="breadcrumb" aria-label="Localização atual"></nav>
+  <button id="back-btn" aria-label="Voltar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <span id="back-label">Voltar</span>
+  </button>
+  <div id="explorer"></div>
+</main>
+
+<footer>
+  © 2026 — <strong>Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CONFIGURAÇÃO  ← só altere aqui se mudar de repositório
+══════════════════════════════════════════════════════════ */
+const GITHUB_USER = 'franklineto';
+const GITHUB_REPO = 'docs';
+// Branch será detectado automaticamente (main ou master)
+const PAGES_BASE  = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}`;
+const API_BASE    = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents`;
+
+/* ══════════════════════════════════════════════════════════
+   ESTADO
+══════════════════════════════════════════════════════════ */
+let activeBranch = null;            // descoberto no boot
+let crumbs       = [];              // [{label, path}]
+
+/* ══════════════════════════════════════════════════════════
+   BOOT — detecta branch automaticamente
+══════════════════════════════════════════════════════════ */
+async function boot() {
+  setExplorer('<div class="state-box"><div class="spin"></div>Detectando repositório…</div>');
+
+  // Tenta main depois master
+  for (const branch of ['main', 'master']) {
+    try {
+      const res = await fetch(
+        `${API_BASE}?ref=${branch}`,
+        { headers: { Accept: 'application/vnd.github.v3+json' } }
+      );
+      if (res.ok) {
+        activeBranch = branch;
+        crumbs = [{ label: '🏠 Raiz', path: '' }];
+        await renderPath('');
+        return;
+      }
+    } catch (_) { /* rede — tenta o próximo */ }
+  }
+
+  // Nenhum branch funcionou
+  setExplorer(`
+    <div class="error-box">
+      ⚠ <strong>Não foi possível acessar o repositório.</strong><br>
+      Verifique se <code>${GITHUB_USER}/${GITHUB_REPO}</code> é público
+      e se o GitHub Pages está ativado.<br><br>
+      Se o problema persistir, a API do GitHub pode estar retornando
+      rate limit (60 req/hora por IP). Aguarde alguns minutos e recarregue.
+    </div>`);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER — lista um caminho do repositório
+══════════════════════════════════════════════════════════ */
+async function renderPath(repoPath) {
+  setExplorer('<div class="state-box"><div class="spin"></div>Carregando…</div>');
+  updateBreadcrumb();
+  updateBackBtn();
+
+  const apiUrl = repoPath
+    ? `${API_BASE}/${repoPath}?ref=${activeBranch}`
+    : `${API_BASE}?ref=${activeBranch}`;
+
+  let data;
+  try {
+    const res = await fetch(apiUrl, {
+      headers: { Accept: 'application/vnd.github.v3+json' }
+    });
+
+    if (res.status === 403) {
+      const reset = res.headers.get('X-RateLimit-Reset');
+      const t = reset ? new Date(Number(reset) * 1000).toLocaleTimeString('pt-BR') : '—';
+      setExplorer(`
+        <div class="error-box">
+          ⚠ <strong>Limite da API do GitHub atingido (60 req/hora por IP).</strong><br>
+          Tente novamente às <strong>${t}</strong>.
+        </div>`);
+      return;
+    }
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Resposta inesperada da API.');
+
+  } catch (err) {
+    setExplorer(`
+      <div class="error-box">
+        ⚠ <strong>Erro ao buscar conteúdo:</strong> ${esc(err.message)}
+      </div>`);
+    return;
+  }
+
+  /* Filtra e ordena */
+  const dirs = data
+    .filter(i => i.type === 'dir' && !i.name.startsWith('.'))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+  const htmlFiles = data
+    .filter(i =>
+      i.type === 'file' &&
+      /\.(html|htm)$/i.test(i.name) &&
+      i.name.toLowerCase() !== 'index.html'
+    )
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+  const total = dirs.length + htmlFiles.length;
+  const currentLabel = crumbs[crumbs.length - 1].label.replace('🏠 ', '');
+
+  /* Constrói o DOM diretamente (sem innerHTML+onclick) */
+  const wrap = document.createDocumentFragment();
+
+  // Cabeçalho
+  const head = el('div', 'expl-head');
+  head.append(
+    Object.assign(el('div', 'expl-title'), { textContent: currentLabel }),
+    Object.assign(el('div', 'expl-count'), { textContent: `${total} item${total !== 1 ? 's' : ''}` })
+  );
+  wrap.append(head);
+
+  // Lista
+  const list = el('div', 'file-list');
+
+  if (total === 0) {
+    const empty = el('div', 'state-box');
+    empty.innerHTML = '<div class="state-icon">📂</div><div>Nenhum diretório ou arquivo HTML encontrado aqui.</div>';
+    list.append(empty);
+  } else {
+    /* Diretórios */
+    if (dirs.length > 0) {
+      list.append(secLabel(`📁 Diretórios — ${dirs.length}`));
+      dirs.forEach(dir => {
+        const row = fileRow('is-dir', '📁', dir.name, 'diretório');
+        row.addEventListener('click', () => enterDir(dir.path, dir.name));
+        list.append(row);
+      });
+    }
+
+    /* Arquivos HTML */
+    if (htmlFiles.length > 0) {
+      list.append(secLabel(`📄 Arquivos HTML — ${htmlFiles.length}`));
+      htmlFiles.forEach(file => {
+        const pageUrl = `${PAGES_BASE}/${file.path}`;
+        const row = fileRow('is-html', '📄', file.name, file.path);
+        row.addEventListener('click', () => window.open(pageUrl, '_blank', 'noopener'));
+        list.append(row);
+      });
+    }
+  }
+
+  wrap.append(list);
+  const container = document.getElementById('explorer');
+  container.innerHTML = '';
+  container.append(wrap);
+}
+
+/* ══════════════════════════════════════════════════════════
+   NAVEGAÇÃO
+══════════════════════════════════════════════════════════ */
+function enterDir(path, name) {
+  crumbs.push({ label: name, path });
+  renderPath(path);
+}
+
+function goBack() {
+  if (crumbs.length <= 1) return;
+  crumbs.pop();
+  renderPath(crumbs[crumbs.length - 1].path);
+}
+
+function goToCrumb(idx) {
+  if (idx >= crumbs.length - 1) return;
+  crumbs = crumbs.slice(0, idx + 1);
+  renderPath(crumbs[crumbs.length - 1].path);
+}
+
+/* ══════════════════════════════════════════════════════════
+   BREADCRUMB & BACK BTN
+══════════════════════════════════════════════════════════ */
+function updateBreadcrumb() {
+  const nav = document.getElementById('breadcrumb');
+  nav.innerHTML = '';
+  crumbs.forEach((c, i) => {
+    const isLast = i === crumbs.length - 1;
+    const item   = el('span', 'bc-item' + (isLast ? ' current' : ''));
+    item.textContent = c.label;
+    if (!isLast) item.addEventListener('click', () => goToCrumb(i));
+    nav.append(item);
+    if (!isLast) {
+      const sep = el('span', 'bc-sep');
+      sep.textContent = ' / ';
+      nav.append(sep);
+    }
+  });
+}
+
+function updateBackBtn() {
+  const btn   = document.getElementById('back-btn');
+  const label = document.getElementById('back-label');
+  if (crumbs.length > 1) {
+    btn.style.display = 'flex';
+    const parentLabel = crumbs[crumbs.length - 2].label.replace('🏠 ', '');
+    label.textContent = `Voltar para ${parentLabel}`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+document.getElementById('back-btn').addEventListener('click', goBack);
+
+/* ══════════════════════════════════════════════════════════
+   HELPERS DOM
+══════════════════════════════════════════════════════════ */
+function el(tag, cls) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  return e;
+}
+
+function secLabel(text) {
+  const d = el('div', 'sec-label');
+  d.textContent = text;
+  return d;
+}
+
+function fileRow(cls, icon, name, meta) {
+  const row  = el('div', `file-row ${cls}`);
+  const ico  = el('div', 'file-icon');
+  ico.textContent = icon;
+  const info = el('div', 'file-info');
+  const nm   = el('div', 'file-name'); nm.textContent = name;
+  const mt   = el('div', 'file-meta'); mt.textContent = meta;
+  info.append(nm, mt);
+  const arr  = el('div', 'arrow');
+  arr.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+  row.append(ico, info, arr);
+  return row;
+}
+
+function setExplorer(html) {
+  document.getElementById('explorer').innerHTML = html;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ══════════════════════════════════════════════════════════
+   START
+══════════════════════════════════════════════════════════ */
+boot();
+</script>
+</body>
+</html>
