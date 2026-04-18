@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial Databricks — Fundamentos e Conceitos</title>
+<style>
+/* ── PRINT ────────────────────────────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; font-size: 10pt; padding: 0; }
+  .page { max-width: 100%; box-shadow: none; padding: 0; }
+  h1 { page-break-before: always; }
+  h1:first-of-type { page-break-before: avoid; }
+  pre { white-space: pre-wrap; font-size: 8.5pt; }
+  .toc-box { page-break-after: always; }
+  .infobox, .data-table { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  footer { display: none !important; }
+}
+
+@page {
+  margin: 1.8cm 2cm 2.6cm;
+  @bottom-center {
+    content: "\00A9 2026 \2014 Franklin Jos\00E9 de Oliveira Neto. Todos os direitos reservados.";
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #888888;
+    border-top: 1px solid #dddddd;
+    padding-top: 5pt;
+  }
+  @bottom-right {
+    content: counter(page);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #aaaaaa;
+  }
+}
+
+/* ── BASE ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1a1a2e;
+  background: #f4f5f9;
+  padding: 24px 16px 60px;
+}
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.10);
+  padding: 40px 48px 60px;
+}
+
+/* ── COVER ───────────────────────────────────────────────── */
+.cover {
+  text-align: center;
+  padding: 48px 0 40px;
+  border-bottom: 3px solid #FF3621;
+  margin-bottom: 40px;
+}
+.cover-label {
+  font-size: 13px; color: #888; letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.cover-title {
+  font-size: 52px; font-weight: 900; color: #FF3621;
+  letter-spacing: -.02em; line-height: 1;
+  margin-bottom: 14px;
+}
+.cover-subtitle {
+  font-size: 20px; color: #1a1a2e; font-weight: 500; margin-bottom: 8px;
+}
+.cover-tagline {
+  font-size: 14px; color: #666; font-style: italic; margin-bottom: 4px;
+}
+
+/* ── PRINT BUTTON ────────────────────────────────────────── */
+.print-btn {
+  display: block;
+  margin: 0 auto 28px;
+  padding: 10px 32px;
+  background: #FF3621;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .03em;
+}
+.print-btn:hover { background: #cc2200; }
+
+/* ── TOC ─────────────────────────────────────────────────── */
+.toc-box {
+  background: #fff8f7;
+  border: 1px solid #f5c0b8;
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 40px;
+}
+.toc-title {
+  font-size: 16px; font-weight: 700; color: #FF3621;
+  margin-bottom: 16px; letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.toc-h1 {
+  font-size: 13px; font-weight: 700; color: #1a1a2e;
+  margin: 8px 0 2px; display: block;
+}
+.toc-h2 {
+  font-size: 12px; font-weight: 400; color: #555;
+  margin: 2px 0 2px 16px; display: block;
+}
+.toc-box a { text-decoration: none; }
+.toc-box a:hover { color: #FF3621; text-decoration: underline; }
+
+/* ── HEADINGS ────────────────────────────────────────────── */
+h1 {
+  font-size: 26px; font-weight: 800; color: #FF3621;
+  margin: 48px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #FF3621;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 19px; font-weight: 700; color: #1a1a2e;
+  margin: 32px 0 12px;
+}
+h3 {
+  font-size: 16px; font-weight: 700; color: #374151;
+  margin: 24px 0 8px;
+}
+
+/* ── PARAGRAPHS ──────────────────────────────────────────── */
+p {
+  margin: 0 0 12px;
+  color: #2d2d2d;
+}
+p code {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  background: #f4f4f4;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: #c0392b;
+}
+
+/* ── BULLET LISTS ────────────────────────────────────────── */
+ul.content-list {
+  margin: 4px 0 14px 28px;
+  padding: 0;
+}
+ul.content-list li {
+  margin: 4px 0;
+  color: #2d2d2d;
+  line-height: 1.6;
+}
+ul.content-list li code {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  background: #f4f4f4;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: #c0392b;
+}
+
+/* ── CODE BLOCKS ─────────────────────────────────────────── */
+pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-left: 4px solid #FF3621;
+  border-radius: 0 6px 6px 0;
+  padding: 16px 20px;
+  margin: 12px 0 20px;
+  overflow-x: auto;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  white-space: pre;
+}
+pre .cm  { color: #6c7086; }   /* comments */
+pre .kw  { color: #cba6f7; }   /* keywords */
+pre .st  { color: #a6e3a1; }   /* strings */
+pre .fn  { color: #89b4fa; }   /* functions */
+pre .op  { color: #f38ba8; }   /* operators */
+
+/* ── INFO BOXES ──────────────────────────────────────────── */
+.infobox {
+  border-radius: 6px;
+  border: 1px solid;
+  padding: 16px 20px;
+  margin: 16px 0 20px;
+}
+.infobox-title {
+  font-size: 13px; font-weight: 700;
+  margin-bottom: 8px;
+}
+.infobox p, .infobox-line {
+  font-size: 13px;
+  margin: 3px 0;
+  line-height: 1.55;
+}
+
+/* ── TABLES ──────────────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0 22px;
+  font-size: 13px;
+}
+.data-table th, .data-table td {
+  border: 1px solid #dde2ec;
+  padding: 8px 12px;
+  vertical-align: top;
+  line-height: 1.45;
+}
+.data-table th {
+  background: #FF3621;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+}
+.data-table tr:nth-child(even) td { background: #fff8f7; }
+.data-table tr:hover td { background: #fff0ee; }
+
+/* ── MISC ────────────────────────────────────────────────── */
+hr.chapter-sep {
+  border: none;
+  border-top: 2px solid #FF3621;
+  margin: 48px 0 0;
+  opacity: .2;
+}
+</style>
+</head>
+<body>
+<div class="no-print" style="text-align:center;padding:16px 0 4px">
+  <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar PDF</button>
+</div>
+<div class="page">
+<div class="cover">
+  <div class="cover-label">Guia de Estudo Completo</div>
+  <div class="cover-title">DATABRICKS</div>
+  <div class="cover-subtitle">Fundamentos, Conceitos, Exemplos e Boas Práticas</div>
+  <div class="cover-tagline">Do zero ao avançado — passo a passo evolutivo</div>
+  <div class="cover-tagline">Para leitores sem experiência prévia em plataformas de dados</div>
+  <div style="margin-top:18px;font-size:14px;color:#888;font-style:italic;letter-spacing:.04em;">by <strong style="color:#FF3621;font-style:normal;">Franklin</strong></div>
+</div>
+<div class="toc-box no-print">
+<div class="toc-title">Sumário</div>
+<a href="#captulo-1-o-que-o-databricks" class="toc-h1">Capítulo 1 — O que é o Databricks?</a>
+<a href="#11-o-problema-que-o-databricks-resolve" class="toc-h2">1.1  O problema que o Databricks resolve</a>
+<a href="#12-lakehouse-a-arquitetura-central" class="toc-h2">1.2  Lakehouse: a arquitetura central</a>
+<a href="#13-onde-o-databricks-roda" class="toc-h2">1.3  Onde o Databricks roda</a>
+<a href="#14-os-principais-casos-de-uso" class="toc-h2">1.4  Os principais casos de uso</a>
+<a href="#captulo-2-conceitos-fundamentais" class="toc-h1">Capítulo 2 — Conceitos Fundamentais</a>
+<a href="#21-apache-spark-o-motor-de-processamento" class="toc-h2">2.1  Apache Spark — o motor de processamento</a>
+<a href="#22-workspace" class="toc-h2">2.2  Workspace</a>
+<a href="#23-cluster" class="toc-h2">2.3  Cluster</a>
+<a href="#24-notebook" class="toc-h2">2.4  Notebook</a>
+<a href="#25-delta-lake" class="toc-h2">2.5  Delta Lake</a>
+<a href="#26-dataframe" class="toc-h2">2.6  DataFrame</a>
+<a href="#27-rdd-resilient-distributed-dataset" class="toc-h2">2.7  RDD — Resilient Distributed Dataset</a>
+<a href="#28-metastore-e-unity-catalog" class="toc-h2">2.8  Metastore e Unity Catalog</a>
+<a href="#captulo-3-configurando-o-ambiente" class="toc-h1">Capítulo 3 — Configurando o Ambiente</a>
+<a href="#31-criando-uma-conta-gratuita" class="toc-h2">3.1  Criando uma conta gratuita</a>
+<a href="#32-criando-seu-primeiro-cluster" class="toc-h2">3.2  Criando seu primeiro cluster</a>
+<a href="#33-databricks-runtime-dbr" class="toc-h2">3.3  Databricks Runtime (DBR)</a>
+<a href="#34-criando-seu-primeiro-notebook" class="toc-h2">3.4  Criando seu primeiro notebook</a>
+<a href="#captulo-4-apache-spark-na-prtica" class="toc-h1">Capítulo 4 — Apache Spark na Prática</a>
+<a href="#41-sparksession-o-ponto-de-entrada" class="toc-h2">4.1  SparkSession — o ponto de entrada</a>
+<a href="#42-lendo-dados-de-diversas-fontes" class="toc-h2">4.2  Lendo dados de diversas fontes</a>
+<a href="#43-transformaes-e-aes-a-diferena-crucial" class="toc-h2">4.3  Transformações e Ações — a diferença crucial</a>
+<a href="#44-operaes-essenciais-com-dataframes" class="toc-h2">4.4  Operações essenciais com DataFrames</a>
+<a href="#45-joins-entre-dataframes" class="toc-h2">4.5  Joins entre DataFrames</a>
+<a href="#captulo-5-delta-lake-em-profundidade" class="toc-h1">Capítulo 5 — Delta Lake em Profundidade</a>
+<a href="#51-criando-tabelas-delta" class="toc-h2">5.1  Criando tabelas Delta</a>
+<a href="#52-operaes-dml-update-delete-merge" class="toc-h2">5.2  Operações DML — Update, Delete, Merge</a>
+<a href="#53-time-travel-viagem-no-tempo" class="toc-h2">5.3  Time Travel — viagem no tempo</a>
+<a href="#54-optimize-e-vacuum" class="toc-h2">5.4  OPTIMIZE e VACUUM</a>
+<a href="#55-constraints-e-schema-enforcement" class="toc-h2">5.5  Constraints e Schema Enforcement</a>
+<a href="#captulo-6-databricks-sql" class="toc-h1">Capítulo 6 — Databricks SQL</a>
+<a href="#61-sql-warehouses" class="toc-h2">6.1  SQL Warehouses</a>
+<a href="#62-sql-analtico-avanado" class="toc-h2">6.2  SQL analítico avançado</a>
+<a href="#63-criando-e-gerenciando-views" class="toc-h2">6.3  Criando e gerenciando Views</a>
+<a href="#captulo-7-engenharia-de-dados-e-pipelines" class="toc-h1">Capítulo 7 — Engenharia de Dados e Pipelines</a>
+<a href="#71-arquitetura-medalho-bronze-silver-gold" class="toc-h2">7.1  Arquitetura Medalhão — Bronze, Silver, Gold</a>
+<a href="#72-auto-loader-ingesto-incremental-inteligente" class="toc-h2">7.2  Auto Loader — ingestão incremental inteligente</a>
+<a href="#72-delta-live-tables-dlt" class="toc-h2">7.2  Delta Live Tables (DLT)</a>
+<a href="#74-lakeflow-jobs-orquestrao-de-pipelines" class="toc-h2">7.4  Lakeflow Jobs — orquestração de pipelines</a>
+<a href="#captulo-8-asset-bundles-e-versionamento-no-git" class="toc-h1">Capítulo 8 — Asset Bundles e Versionamento no Git</a>
+<a href="#81-databricks-asset-bundles-dab" class="toc-h2">8.1  Databricks Asset Bundles (DAB)</a>
+<a href="#82-versionamento-no-git" class="toc-h2">8.2  Versionamento no Git</a>
+<a href="#captulo-9-machine-learning-no-databricks" class="toc-h1">Capítulo 9 — Machine Learning no Databricks</a>
+<a href="#91-mlflow-rastreamento-de-experimentos" class="toc-h2">9.1  MLflow — rastreamento de experimentos</a>
+<a href="#92-automl-ml-com-um-clique" class="toc-h2">9.2  AutoML — ML com um clique</a>
+<a href="#93-model-registry-e-model-serving" class="toc-h2">9.3  Model Registry e Model Serving</a>
+<a href="#captulo-10-performance-e-otimizao" class="toc-h1">Capítulo 10 — Performance e Otimização</a>
+<a href="#101-particionamento" class="toc-h2">10.1  Particionamento</a>
+<a href="#102-broadcast-join" class="toc-h2">10.2  Broadcast Join</a>
+<a href="#103-caching" class="toc-h2">10.3  Caching</a>
+<a href="#104-evitando-shuffles-desnecessrios" class="toc-h2">10.4  Evitando Shuffles desnecessários</a>
+<a href="#105-liquid-clustering-a-nova-gerao-do-particioname" class="toc-h2">10.5  Liquid Clustering — a nova geração do particionamento</a>
+<a href="#captulo-11-segurana-e-governana" class="toc-h1">Capítulo 11 — Segurança e Governança</a>
+<a href="#111-unity-catalog-controle-de-acesso" class="toc-h2">11.1  Unity Catalog — controle de acesso</a>
+<a href="#112-row-level-e-column-level-security" class="toc-h2">11.2  Row-Level e Column-Level Security</a>
+<a href="#113-secrets-gerenciamento-de-credenciais" class="toc-h2">11.3  Secrets — gerenciamento de credenciais</a>
+<a href="#114-delta-sharing-compartilhamento-seguro-de-dados" class="toc-h2">11.4  Delta Sharing — compartilhamento seguro de dados</a>
+<a href="#captulo-12-processamento-em-streaming" class="toc-h1">Capítulo 12 — Processamento em Streaming</a>
+<a href="#121-structured-streaming-conceitos" class="toc-h2">12.1  Structured Streaming — conceitos</a>
+<a href="#captulo-13-boas-prticas-e-prximos-passos" class="toc-h1">Capítulo 13 — Boas Práticas e Próximos Passos</a>
+<a href="#131-boas-prticas-de-desenvolvimento" class="toc-h2">13.1  Boas práticas de desenvolvimento</a>
+<a href="#132-roteiro-de-estudo-recomendado" class="toc-h2">13.2  Roteiro de estudo recomendado</a>
+<a href="#133-certificaes-databricks" class="toc-h2">13.3  Certificações Databricks</a>
+<a href="#134-recursos-para-continuar-aprendendo" class="toc-h2">13.4  Recursos para continuar aprendendo</a>
+</div>
+<p><span style="color:#666666">Guia de Estudo Completo</span></p>
+<p><strong>DATABRICKS</strong></p>
+<p>Fundamentos, Conceitos, Exemplos e Boas Práticas</p>
+<p><span style="color:#6B7280">Do zero ao avançado — passo a passo evolutivo</span></p>
+<p><span style="color:#9CA3AF">Para leitores sem experiência prévia em plataformas de dados</span></p>
+<hr class="chapter-sep">
+<h1 id="captulo-1-o-que-o-databricks">Capítulo 1 — O que é o Databricks?</h1>
+<p>O Databricks é uma plataforma unificada de dados e inteligência artificial, criada em 2013 pelos criadores originais do Apache Spark — o projeto de processamento de dados que revolucionou a indústria. A empresa nasceu na Universidade de Berkeley (daí o nome Databricks) com o objetivo de tornar o Spark acessível para empresas de qualquer tamanho.</p>
+<p>Pense no Databricks como um ambiente completo onde engenheiros de dados, cientistas de dados e analistas podem trabalhar juntos na mesma plataforma, usando as mesmas ferramentas, acessando os mesmos dados, sem precisar copiar arquivos entre sistemas ou configurar infraestrutura complexa.</p>
+<h2 id="11-o-problema-que-o-databricks-resolve">1.1  O problema que o Databricks resolve</h2>
+<p>Antes do Databricks, as empresas que queriam processar grandes volumes de dados enfrentavam um conjunto frustrante de desafios:</p>
+<ul class="content-list">
+<li>Dados espalhados em dezenas de sistemas diferentes que não se comunicavam</li>
+<li>Equipes de engenharia, ciência de dados e BI usando ferramentas incompatíveis</li>
+<li>Infraestrutura cara e difícil de escalar — comprar servidores levava meses</li>
+<li>Código de transformação de dados frágil, sem versionamento, sem testes</li>
+<li>Dados duplicados em múltiplos lugares, gerando inconsistências e alto custo</li>
+</ul>
+<p>O Databricks resolveu isso criando uma plataforma que roda na nuvem (AWS, Azure ou GCP), que escala automaticamente conforme a demanda e que unifica todos esses casos de uso em um único lugar.</p>
+<h2 id="12-lakehouse-a-arquitetura-central">1.2  Lakehouse: a arquitetura central</h2>
+<p>O conceito mais importante para entender o Databricks é o Lakehouse. Para chegar nele, precisamos entender dois conceitos anteriores:</p>
+<div class="infobox" style="background:#fff0ee;border-color:#fff0ee">
+<div class="infobox-title" style="color:#cc2200"><strong>Data Warehouse vs Data Lake vs Lakehouse</strong></div>
+<div class="infobox-line">Data Warehouse: banco de dados altamente otimizado para análises. Dados estruturados,</div>
+<div class="infobox-line">consultas rápidas, mas caro e rígido. Exemplos: Snowflake, BigQuery, Redshift.</div>
+<div class="infobox-line">Data Lake: armazenamento barato de qualquer tipo de dado (arquivos, imagens, logs).</div>
+<div class="infobox-line">Flexível, mas sem organização — vira facilmente um &#x27;data swamp&#x27; (pântano de dados).</div>
+<div class="infobox-line">Exemplos: S3, ADLS, GCS.</div>
+<div class="infobox-line">Lakehouse: combina o melhor dos dois. Armazenamento barato como o Data Lake,</div>
+<div class="infobox-line">com confiabilidade e performance de consulta como o Data Warehouse.</div>
+<div class="infobox-line">A Databricks popularizou esse conceito com o Delta Lake.</div>
+</div>
+<h2 id="13-onde-o-databricks-roda">1.3  Onde o Databricks roda</h2>
+<p>O Databricks é um serviço gerenciado que roda sobre as três grandes nuvens públicas:</p>
+<table class="data-table">
+<thead><tr><th><strong>Nuvem</strong></th><th>Serviço Databricks</th></tr></thead>
+<tbody>
+<tr><td><strong>Amazon Web Services (AWS)</strong></td><td><span style="color:#333333">Databricks on AWS</span></td></tr>
+<tr><td><strong>Microsoft Azure</strong></td><td><span style="color:#333333">Azure Databricks</span></td></tr>
+<tr><td><strong>Google Cloud Platform (GCP)</strong></td><td><span style="color:#333333">Databricks on GCP</span></td></tr>
+</tbody>
+</table>
+<p>Em todos os casos, o Databricks gerencia a infraestrutura por você. Você não precisa instalar nada, configurar servidores ou gerenciar atualizações. Basta criar uma conta e começar a trabalhar.</p>
+<h2 id="14-os-principais-casos-de-uso">1.4  Os principais casos de uso</h2>
+<ul class="content-list">
+<li>Engenharia de dados: pipelines ETL/ELT para ingerir, transformar e carregar dados</li>
+<li>Machine Learning: treinar, avaliar e colocar modelos em produção</li>
+<li>SQL Analytics: consultas SQL em grandes volumes de dados</li>
+<li>Streaming: processamento de dados em tempo real (Kafka, Event Hubs)</li>
+<li>Governança de dados: controle de acesso, linhagem e qualidade de dados</li>
+</ul>
+<hr class="chapter-sep">
+<h1 id="captulo-2-conceitos-fundamentais">Capítulo 2 — Conceitos Fundamentais</h1>
+<p>Antes de começar a usar o Databricks, é essencial entender um conjunto de conceitos que aparecem em toda a documentação e em qualquer conversa sobre a plataforma. Este capítulo apresenta cada um deles de forma clara, com analogias do mundo real.</p>
+<h2 id="21-apache-spark-o-motor-de-processamento">2.1  Apache Spark — o motor de processamento</h2>
+<p>O Apache Spark é o motor de processamento distribuído que alimenta o Databricks. Ele foi criado para superar as limitações do Hadoop MapReduce, que era lento porque escrevia resultados intermediários no disco a cada etapa do processamento.</p>
+<p>O Spark mantém os dados na memória RAM sempre que possível, o que o torna até 100 vezes mais rápido que o Hadoop para certos tipos de operação. Imagine a diferença entre ler um livro que está na sua mesa (memória RAM) versus ter que ir até a biblioteca cada vez que precisa consultar algo (disco).</p>
+<h3>Como o Spark distribui o trabalho</h3>
+<p>O Spark usa um modelo de cluster: um conjunto de máquinas (nós) trabalhando juntas. Há dois tipos de nó:</p>
+<ul class="content-list">
+<li>Driver: o cérebro do cluster. Recebe o código, cria o plano de execução e coordena os workers.</li>
+<li>Workers (Executors): os braços do cluster. Recebem partes dos dados e executam as tarefas em paralelo.</li>
+</ul>
+<p>Quando você escreve df.count() em um notebook Databricks, o driver divide essa tarefa entre todos os workers disponíveis, cada um conta sua parte dos dados, e o driver soma os resultados parciais. Isso é processamento distribuído.</p>
+<h2 id="22-workspace">2.2  Workspace</h2>
+<p>O Workspace é o ambiente de trabalho do Databricks — pense nele como o seu escritório virtual. Tudo que você cria fica dentro de um Workspace: notebooks, clusters, jobs, pipelines e pastas organizacionais.</p>
+<p>Uma empresa geralmente tem pelo menos dois Workspaces: um para desenvolvimento (onde engenheiros experimentam) e outro para produção (onde processos críticos rodam). Isso evita que um experimento mal sucedido afete dados de produção.</p>
+<h2 id="23-cluster">2.3  Cluster</h2>
+<p>Um cluster é um conjunto de máquinas virtuais que o Databricks cria na nuvem para executar seu código. Você define o tamanho (tipo e quantidade de máquinas) e o Databricks faz todo o resto: instala o Spark, configura a comunicação entre as máquinas e disponibiliza o cluster para uso.</p>
+<table class="data-table">
+<thead><tr><th><strong>Tipo de cluster</strong></th><th>Quando usar</th></tr></thead>
+<tbody>
+<tr><td><strong>All-Purpose</strong></td><td><span style="color:#333333">Desenvolvimento interativo em notebooks. Pode ser iniciado e parado manualmente.</span></td></tr>
+<tr><td><strong>Job Cluster</strong></td><td><span style="color:#333333">Execução automatizada de jobs. Criado automaticamente, destruído ao final do job.</span></td></tr>
+<tr><td><strong>SQL Warehouse</strong></td><td><span style="color:#333333">Consultas SQL via Databricks SQL. Otimizado para queries analíticas.</span></td></tr>
+</tbody>
+</table>
+<div class="infobox" style="background:#fff8e7;border-color:#fff8e7">
+<div class="infobox-title" style="color:#7a5200"><strong>Custo e auto-termination</strong></div>
+<div class="infobox-line">Clusters cobram por hora de uso, mesmo que ninguém esteja rodando código.</div>
+<div class="infobox-line">Configure sempre o &#x27;auto-termination&#x27; (encerramento automático) para evitar cobranças</div>
+<div class="infobox-line">desnecessárias. O padrão recomendado é 30 minutos de inatividade.</div>
+<div class="infobox-line">Clusters do tipo Job são automaticamente destruídos ao final da execução — mais econômico.</div>
+</div>
+<h2 id="24-notebook">2.4  Notebook</h2>
+<p>Um notebook é um documento interativo que mistura código, resultados e texto explicativo. No Databricks, você pode escrever Python, SQL, Scala ou R no mesmo notebook — cada célula pode usar uma linguagem diferente.</p>
+<p>Notebooks são perfeitos para exploração e análise de dados porque você vê o resultado imediatamente abaixo de cada célula, sem precisar rodar o programa inteiro para saber se uma parte funcionou.</p>
+<pre><span class="cm"># Exemplo de célula Python em um notebook Databricks</span>
+df = spark.read.format(&<span class="cm">#x27;parquet&#x27;).load(&#x27;/mnt/dados/vendas/&#x27;)</span>
+df.show(5)    <span class="cm"># exibe as 5 primeiras linhas imediatamente</span>
+<span class="cm">-- Exemplo de célula SQL no mesmo notebook</span>
+%sql
+SELECT regiao, SUM(valor) as total
+FROM vendas
+WHERE ano = 2024
+GROUP BY regiao
+ORDER BY total DESC</pre>
+<h2 id="25-delta-lake">2.5  Delta Lake</h2>
+<p>Delta Lake é o formato de armazenamento open-source criado pela Databricks que resolve o problema central do Data Lake: dados desorganizados, sem confiabilidade e sem suporte a operações como update e delete.</p>
+<p>Pense no Delta Lake como um arquivo Excel, mas para bilhões de linhas. Ele mantém um histórico de todas as alterações (chamado transaction log), permite desfazer operações erradas, e garante que múltiplos processos possam ler e escrever ao mesmo tempo sem corromper os dados.</p>
+<ul class="content-list">
+<li>ACID transactions: garante que operações sejam completas ou não existam (sem dados pela metade)</li>
+<li>Time travel: consultar versões anteriores dos dados com SELECT * FROM tabela VERSION AS OF 5</li>
+<li>Schema enforcement: rejeita dados com colunas erradas ou tipos incompatíveis</li>
+<li>Schema evolution: permite adicionar colunas novas sem quebrar pipelines existentes</li>
+<li>Operações DML: suporte a UPDATE, DELETE e MERGE em arquivos Parquet</li>
+</ul>
+<h2 id="26-dataframe">2.6  DataFrame</h2>
+<p>Um DataFrame é a estrutura de dados central no Spark e no Databricks. É uma tabela distribuída — como uma planilha Excel que está dividida em pedaços espalhados por várias máquinas, mas que parece uma única tabela quando você a consulta.</p>
+<pre><span class="cm"># Criando um DataFrame a partir de um arquivo CSV</span>
+df = spark.read.format(&<span class="cm">#x27;csv&#x27;) \</span>
+.option(&<span class="cm">#x27;header&#x27;, &#x27;true&#x27;) \</span>
+.option(&<span class="cm">#x27;inferSchema&#x27;, &#x27;true&#x27;) \</span>
+.load(&<span class="cm">#x27;/mnt/dados/clientes.csv&#x27;)</span>
+<span class="cm"># Inspecionando o schema (estrutura de colunas e tipos)</span>
+df.printSchema()
+<span class="cm"># Resultado esperado:</span>
+<span class="cm"># root</span>
+<span class="cm">#  |-- id: integer (nullable = true)</span>
+<span class="cm">#  |-- nome: string (nullable = true)</span>
+<span class="cm">#  |-- valor_compra: double (nullable = true)</span></pre>
+<h2 id="27-rdd-resilient-distributed-dataset">2.7  RDD — Resilient Distributed Dataset</h2>
+<p>O RDD é a estrutura de dados de mais baixo nível do Spark — anterior ao DataFrame. Um RDD é uma coleção distribuída e imutável de objetos. Na prática, você raramente usará RDDs diretamente no Databricks moderno, mas é importante conhecer o conceito porque toda a API de alto nível (DataFrames, SQL) é construída sobre RDDs por baixo dos panos.</p>
+<p>A palavra Resilient (resiliente) se refere ao fato de que o Spark consegue reconstruir automaticamente partes perdidas de um RDD em caso de falha de um nó do cluster — sem perder o trabalho feito até então.</p>
+<h2 id="28-metastore-e-unity-catalog">2.8  Metastore e Unity Catalog</h2>
+<p>O Metastore é o catálogo central que guarda as definições das tabelas: onde os dados ficam armazenados, quais são as colunas, seus tipos, estatísticas e permissões. É como o índice de uma biblioteca — sem ele, você saberia que tem livros mas não saberia onde estão.</p>
+<p>O Unity Catalog é a versão moderna e unificada do Metastore no Databricks. Ele adiciona governança centralizada — um único ponto para controlar quem pode acessar o quê, em todos os Workspaces da empresa. Ele opera em três níveis hierárquicos:</p>
+<ul class="content-list">
+<li>Catalog: o nível mais alto — agrupa esquemas relacionados (ex: catalog_producao)</li>
+<li>Schema (Database): agrupa tabelas relacionadas (ex: vendas, rh, financeiro)</li>
+<li>Table/View: as tabelas e visões propriamente ditas</li>
+</ul>
+<pre><span class="cm">-- Acessando uma tabela no Unity Catalog</span>
+SELECT * FROM catalog_producao.vendas.pedidos LIMIT 10;
+<span class="cm">-- Criando uma tabela no Unity Catalog</span>
+CREATE TABLE catalog_producao.vendas.clientes (
+id         BIGINT,
+nome       STRING,
+email      STRING,
+criado_em  TIMESTAMP
+) USING DELTA;</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-3-configurando-o-ambiente">Capítulo 3 — Configurando o Ambiente</h1>
+<p>Antes de escrever qualquer linha de código, você precisa configurar seu ambiente Databricks. Este capítulo guia você desde a criação da conta até a execução do primeiro comando.</p>
+<h2 id="31-criando-uma-conta-gratuita">3.1  Criando uma conta gratuita</h2>
+<p>A Databricks oferece uma versão Community Edition totalmente gratuita, ideal para aprendizado. Para criar sua conta:</p>
+<ul class="content-list">
+<li>Acesse community.cloud.databricks.com</li>
+<li>Clique em &#x27;Get started for free&#x27;</li>
+<li>Preencha nome, e-mail e crie uma senha</li>
+<li>Confirme seu e-mail através do link enviado</li>
+<li>Na primeira vez que entrar, você verá o Workspace vazio</li>
+</ul>
+<div class="infobox" style="background:#e8f4fd;border-color:#e8f4fd">
+<div class="infobox-title" style="color:#1a3a7c"><strong>Community Edition vs Plano Pago</strong></div>
+<div class="infobox-line">A Community Edition tem limitações importantes:</div>
+<div class="infobox-line">- Um único cluster de tamanho fixo (não pode ser customizado)</div>
+<div class="infobox-line">- Sem suporte a múltiplos usuários ou Jobs agendados</div>
+<div class="infobox-line">- Sem Unity Catalog</div>
+<div class="infobox-line">- Cluster encerra automaticamente após 2h de inatividade</div>
+<div class="infobox-line">Para projetos profissionais ou testes de funcionalidades avançadas,</div>
+<div class="infobox-line">use o período de trial gratuito de 14 dias das edições pagas.</div>
+</div>
+<h2 id="32-criando-seu-primeiro-cluster">3.2  Criando seu primeiro cluster</h2>
+<p>Na Community Edition, você tem um único cluster disponível. Em edições pagas, você pode criar quantos quiser. Para criar um cluster:</p>
+<ul class="content-list">
+<li>No menu lateral, clique em &#x27;Compute&#x27;</li>
+<li>Clique em &#x27;Create compute&#x27;</li>
+<li>Dê um nome ao cluster (ex: &#x27;cluster-aprendizado&#x27;)</li>
+<li>Selecione o Databricks Runtime — comece com a versão mais recente LTS</li>
+<li>Em edições pagas, escolha o tipo de instância (ex: Standard_DS3_v2 no Azure)</li>
+<li>Configure o auto-termination para 30 minutos</li>
+<li>Clique em &#x27;Create compute&#x27;</li>
+</ul>
+<p>O cluster leva de 3 a 7 minutos para iniciar. Você verá um círculo verde ao lado do nome quando estiver pronto.</p>
+<h2 id="33-databricks-runtime-dbr">3.3  Databricks Runtime (DBR)</h2>
+<p>O Databricks Runtime é a versão do ambiente de execução instalada no cluster. Cada versão inclui versões específicas do Spark, Python, bibliotecas de ML e outras dependências. A nomenclatura segue o padrão:</p>
+<pre>DBR 14.3 LTS    → versão 14.3, suporte de longo prazo (mais estável)
+DBR 15.2        → versão 15.2 (mais recente, pode ter breaking changes)
+DBR 14.3 LTS ML → inclui bibliotecas de Machine Learning (TensorFlow, PyTorch, etc.)
+DBR 14.3 LTS GPU → otimizado para GPUs (treino de modelos de deep learning)</pre>
+<p>Para aprendizado, use sempre a versão LTS mais recente. Para produção, nunca mude a versão de DBR sem testar antes — atualizações podem quebrar código existente.</p>
+<h2 id="34-criando-seu-primeiro-notebook">3.4  Criando seu primeiro notebook</h2>
+<ul class="content-list">
+<li>No menu lateral, clique em &#x27;New&#x27; e depois em &#x27;Notebook&#x27;</li>
+<li>Dê um nome (ex: &#x27;meu-primeiro-notebook&#x27;)</li>
+<li>Selecione &#x27;Python&#x27; como linguagem padrão</li>
+<li>Selecione o cluster que você criou</li>
+<li>Clique em &#x27;Create&#x27;</li>
+</ul>
+<p>Você verá uma interface com uma célula vazia. Digite o código abaixo e pressione Shift+Enter para executar:</p>
+<pre><span class="cm"># Célula 1 — verificando a versão do Spark</span>
+print(spark.version)
+<span class="cm"># Célula 2 — criando um DataFrame simples</span>
+data = [(&<span class="cm">#x27;Alice&#x27;, 30), (&#x27;Bob&#x27;, 25), (&#x27;Carlos&#x27;, 35)]</span>
+df = spark.createDataFrame(data, [&<span class="cm">#x27;nome&#x27;, &#x27;idade&#x27;])</span>
+df.show()</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-4-apache-spark-na-prtica">Capítulo 4 — Apache Spark na Prática</h1>
+<p>Com o ambiente configurado, chegou a hora de aprender a usar o Spark. Este capítulo cobre as operações mais comuns que você encontrará no dia a dia, do básico ao intermediário.</p>
+<h2 id="41-sparksession-o-ponto-de-entrada">4.1  SparkSession — o ponto de entrada</h2>
+<p>A SparkSession é o objeto que representa sua conexão com o Spark. No Databricks, ela já está disponível automaticamente através da variável spark — você não precisa criá-la. Em um projeto local (fora do Databricks), você precisaria instanciá-la manualmente.</p>
+<pre><span class="cm"># No Databricks, &#x27;spark&#x27; já está disponível automaticamente</span>
+print(type(spark))   <span class="cm"># &lt;class &#x27;pyspark.sql.session.SparkSession&#x27;&gt;</span>
+<span class="cm"># Acessando o SparkContext (nível mais baixo)</span>
+sc = spark.sparkContext
+print(sc.master)     <span class="cm"># local (Community Edition) ou yarn</span>
+<span class="cm"># Configurações do Spark</span>
+spark.conf.set(&<span class="cm">#x27;spark.sql.shuffle.partitions&#x27;, &#x27;200&#x27;)</span>
+print(spark.conf.get(&<span class="cm">#x27;spark.sql.shuffle.partitions&#x27;))  # 200</span></pre>
+<h2 id="42-lendo-dados-de-diversas-fontes">4.2  Lendo dados de diversas fontes</h2>
+<p>O Spark suporta dezenas de fontes de dados. A API é sempre a mesma: spark.read.format().options().load(). Veja os exemplos mais comuns:</p>
+<h3>Lendo CSV</h3>
+<pre>df_csv = spark.read \
+.format(&<span class="cm">#x27;csv&#x27;) \</span>
+.option(&<span class="cm">#x27;header&#x27;, &#x27;true&#x27;)         \  # primeira linha é o cabeçalho</span>
+.option(&<span class="cm">#x27;inferSchema&#x27;, &#x27;true&#x27;)     \  # detecta tipos automaticamente</span>
+.option(&<span class="cm">#x27;delimiter&#x27;, &#x27;;&#x27;)          \  # separador ponto-e-vírgula</span>
+.option(&<span class="cm">#x27;encoding&#x27;, &#x27;UTF-8&#x27;)       \</span>
+.load(&<span class="cm">#x27;/mnt/landing/vendas.csv&#x27;)</span>
+<span class="cm"># Alternativa mais curta (mesmo resultado)</span>
+df_csv = spark.read.csv(&<span class="cm">#x27;/mnt/landing/vendas.csv&#x27;,</span>
+header=True, inferSchema=True, sep=&<span class="cm">#x27;;&#x27;)</span></pre>
+<h3>Lendo JSON</h3>
+<pre><span class="cm"># JSON de uma linha por registro (JSONL - padrão para big data)</span>
+df_json = spark.read.json(&<span class="cm">#x27;/mnt/landing/eventos/&#x27;)</span>
+<span class="cm"># JSON multiline (um JSON completo por arquivo)</span>
+df_json_ml = spark.read \
+.option(&<span class="cm">#x27;multiline&#x27;, &#x27;true&#x27;) \</span>
+.json(&<span class="cm">#x27;/mnt/landing/config.json&#x27;)</span></pre>
+<h3>Lendo Parquet e Delta</h3>
+<pre><span class="cm"># Parquet — formato colunar muito eficiente</span>
+df_parquet = spark.read.parquet(&<span class="cm">#x27;/mnt/silver/clientes/&#x27;)</span>
+<span class="cm"># Delta Lake — formato recomendado no Databricks</span>
+df_delta = spark.read.format(&<span class="cm">#x27;delta&#x27;).load(&#x27;/mnt/gold/vendas_consolidadas/&#x27;)</span>
+<span class="cm"># Delta via nome de tabela (requer Unity Catalog ou Hive Metastore)</span>
+df_tabela = spark.table(&<span class="cm">#x27;vendas.pedidos&#x27;)</span>
+<span class="cm"># Equivalente em SQL</span>
+<span class="cm"># %sql SELECT * FROM vendas.pedidos</span></pre>
+<h3>Lendo de banco de dados relacional (JDBC)</h3>
+<pre>df_jdbc = spark.read \
+.format(&<span class="cm">#x27;jdbc&#x27;) \</span>
+.option(&<span class="cm">#x27;url&#x27;, &#x27;jdbc:sqlserver://servidor:1433;database=meudb&#x27;) \</span>
+.option(&<span class="cm">#x27;dbtable&#x27;, &#x27;dbo.clientes&#x27;) \</span>
+.option(&<span class="cm">#x27;user&#x27;, dbutils.secrets.get(&#x27;kv-escopo&#x27;, &#x27;db-user&#x27;)) \</span>
+.option(&<span class="cm">#x27;password&#x27;, dbutils.secrets.get(&#x27;kv-escopo&#x27;, &#x27;db-pass&#x27;)) \</span>
+.option(&<span class="cm">#x27;driver&#x27;, &#x27;com.microsoft.sqlserver.jdbc.SQLServerDriver&#x27;) \</span>
+.load()</pre>
+<h2 id="43-transformaes-e-aes-a-diferena-crucial">4.3  Transformações e Ações — a diferença crucial</h2>
+<p>Este é um dos conceitos mais importantes para entender a performance do Spark. Existem dois tipos de operações: transformações (lazy) e ações (eager).</p>
+<div class="infobox" style="background:#e8f9f0;border-color:#e8f9f0">
+<div class="infobox-title" style="color:#0a5c38"><strong>Lazy Evaluation — execução preguiçosa</strong></div>
+<div class="infobox-line">Quando você chama df.filter(...).groupBy(...).agg(...), o Spark NÃO executa nada.</div>
+<div class="infobox-line">Ele apenas constrói um plano de execução (DAG - Directed Acyclic Graph).</div>
+<div class="infobox-line">A execução real só acontece quando você chama uma AÇÃO: .show(), .count(),</div>
+<div class="infobox-line">.collect(), .write.save(). Isso permite ao Spark otimizar o plano inteiro antes</div>
+<div class="infobox-line">de processar qualquer dado — juntando operações, eliminando etapas desnecessárias.</div>
+</div>
+<table class="data-table">
+<thead><tr><th><strong>Transformações (lazy)</strong></th><th>Ações (eager — disparam execução)</th></tr></thead>
+<tbody>
+<tr><td><strong>filter() / where()</strong></td><td><span style="color:#333333">show() — exibe N linhas</span></td></tr>
+<tr><td><strong>select() / selectExpr()</strong></td><td><span style="color:#333333">count() — conta linhas</span></td></tr>
+<tr><td><strong>groupBy() / agg()</strong></td><td><span style="color:#333333">collect() — traz todos os dados para o driver</span></td></tr>
+<tr><td><strong>join()</strong></td><td><span style="color:#333333">first() / head() — primeira linha</span></td></tr>
+<tr><td><strong>withColumn() / drop()</strong></td><td><span style="color:#333333">write.save() — grava em disco</span></td></tr>
+<tr><td><strong>orderBy() / sort()</strong></td><td><span style="color:#333333">toPandas() — converte para Pandas DataFrame</span></td></tr>
+<tr><td><strong>limit() / distinct()</strong></td><td><span style="color:#333333">foreach() — aplica função a cada linha</span></td></tr>
+</tbody>
+</table>
+<h2 id="44-operaes-essenciais-com-dataframes">4.4  Operações essenciais com DataFrames</h2>
+<h3>Selecionando e renomeando colunas</h3>
+<pre>from pyspark.sql.functions import col, expr
+<span class="cm"># select básico</span>
+df.select(&<span class="cm">#x27;nome&#x27;, &#x27;valor&#x27;, &#x27;data&#x27;)</span>
+<span class="cm"># select com renomeação</span>
+df.select(
+col(&<span class="cm">#x27;nome&#x27;).alias(&#x27;nome_cliente&#x27;),</span>
+col(&<span class="cm">#x27;valor&#x27;).alias(&#x27;valor_venda&#x27;),</span>
+col(&<span class="cm">#x27;data&#x27;)</span>
+)
+<span class="cm"># selectExpr — SQL dentro do Python</span>
+df.selectExpr(
+&<span class="cm">#x27;nome as nome_cliente&#x27;,</span>
+&<span class="cm">#x27;valor * 1.10 as valor_com_imposto&#x27;,</span>
+&<span class="cm">#x27;year(data) as ano&#x27;</span>
+)</pre>
+<h3>Filtrando dados</h3>
+<pre><span class="cm"># filter e where são equivalentes</span>
+df.filter(col(&<span class="cm">#x27;valor&#x27;) &gt; 1000)</span>
+df.where(&<span class="cm">#x27;valor &gt; 1000&#x27;)   # SQL string também funciona</span>
+<span class="cm"># múltiplos filtros</span>
+df.filter(
+(col(&<span class="cm">#x27;valor&#x27;) &gt; 1000) &amp;</span>
+(col(&<span class="cm">#x27;status&#x27;) == &#x27;aprovado&#x27;) &amp;</span>
+(col(&<span class="cm">#x27;data&#x27;) &gt;= &#x27;2024-01-01&#x27;)</span>
+)
+<span class="cm"># filtro com isin (equivalente ao IN do SQL)</span>
+df.filter(col(&<span class="cm">#x27;regiao&#x27;).isin([&#x27;Sul&#x27;, &#x27;Sudeste&#x27;, &#x27;Centro-Oeste&#x27;]))</span>
+<span class="cm"># filtro por nulos</span>
+df.filter(col(&<span class="cm">#x27;email&#x27;).isNull())     # linhas sem email</span>
+df.filter(col(&<span class="cm">#x27;email&#x27;).isNotNull())  # linhas com email</span></pre>
+<h3>Adicionando e modificando colunas</h3>
+<pre>from pyspark.sql.functions import lit, when, upper, to_date, datediff, current_date
+<span class="cm"># adicionando coluna constante</span>
+df.withColumn(&<span class="cm">#x27;fonte&#x27;, lit(&#x27;sistema_vendas&#x27;))</span>
+<span class="cm"># adicionando coluna calculada</span>
+df.withColumn(&<span class="cm">#x27;valor_com_taxa&#x27;, col(&#x27;valor&#x27;) * 1.05)</span>
+<span class="cm"># coluna condicional (CASE WHEN do SQL)</span>
+df.withColumn(&<span class="cm">#x27;categoria_valor&#x27;,</span>
+when(col(&<span class="cm">#x27;valor&#x27;) &lt; 100, &#x27;baixo&#x27;)</span>
+.when(col(&<span class="cm">#x27;valor&#x27;) &lt; 1000, &#x27;medio&#x27;)</span>
+.otherwise(&<span class="cm">#x27;alto&#x27;)</span>
+)
+<span class="cm"># convertendo tipos</span>
+df.withColumn(&<span class="cm">#x27;data&#x27;, to_date(col(&#x27;data_str&#x27;), &#x27;dd/MM/yyyy&#x27;))</span>
+<span class="cm"># calculando diferença de datas</span>
+df.withColumn(&<span class="cm">#x27;dias_desde_compra&#x27;,</span>
+datediff(current_date(), col(&<span class="cm">#x27;data_compra&#x27;))</span>
+)</pre>
+<h3>Agregações</h3>
+<pre>from pyspark.sql.functions import sum, avg, count, min, max, countDistinct
+<span class="cm"># groupBy simples</span>
+df.groupBy(&<span class="cm">#x27;regiao&#x27;) \</span>
+.agg(
+sum(&<span class="cm">#x27;valor&#x27;).alias(&#x27;total_vendas&#x27;),</span>
+avg(&<span class="cm">#x27;valor&#x27;).alias(&#x27;ticket_medio&#x27;),</span>
+count(&<span class="cm">#x27;*&#x27;).alias(&#x27;qtd_pedidos&#x27;),</span>
+countDistinct(&<span class="cm">#x27;cliente_id&#x27;).alias(&#x27;clientes_unicos&#x27;)</span>
+)
+<span class="cm"># múltiplos groupBy</span>
+df.groupBy(&<span class="cm">#x27;regiao&#x27;, &#x27;ano&#x27;, &#x27;mes&#x27;) \</span>
+.agg(sum(&<span class="cm">#x27;valor&#x27;).alias(&#x27;total&#x27;))</span>
+<span class="cm"># pivot — transforma valores de uma coluna em colunas</span>
+df.groupBy(&<span class="cm">#x27;regiao&#x27;) \</span>
+.pivot(&<span class="cm">#x27;ano&#x27;, [2022, 2023, 2024]) \</span>
+.agg(sum(&<span class="cm">#x27;valor&#x27;))</span></pre>
+<h2 id="45-joins-entre-dataframes">4.5  Joins entre DataFrames</h2>
+<p>Joins no Spark funcionam como joins no SQL, mas com algumas nuances importantes de performance que veremos no capítulo de otimização.</p>
+<pre><span class="cm"># inner join (padrão)</span>
+df_pedidos.join(df_clientes, on=&<span class="cm">#x27;cliente_id&#x27;, how=&#x27;inner&#x27;)</span>
+<span class="cm"># quando as colunas têm nomes diferentes</span>
+df_pedidos.join(df_clientes,
+df_pedidos.cli_id == df_clientes.id,
+how=&<span class="cm">#x27;left&#x27;</span>
+)
+<span class="cm"># tipos de join: inner, left, right, full, left_semi, left_anti, cross</span>
+<span class="cm"># left_semi: retorna apenas linhas do lado esquerdo que têm correspondência</span>
+<span class="cm"># equivale a: SELECT * FROM pedidos WHERE cliente_id IN (SELECT id FROM clientes)</span>
+df_pedidos.join(df_clientes, on=&<span class="cm">#x27;cliente_id&#x27;, how=&#x27;left_semi&#x27;)</span>
+<span class="cm"># left_anti: retorna linhas do lado esquerdo SEM correspondência</span>
+<span class="cm"># equivale a: SELECT * FROM pedidos WHERE cliente_id NOT IN (SELECT id FROM clientes)</span>
+df_pedidos.join(df_clientes, on=&<span class="cm">#x27;cliente_id&#x27;, how=&#x27;left_anti&#x27;)</span></pre>
+<hr class="chapter-sep">
+<h1 id="captulo-5-delta-lake-em-profundidade">Capítulo 5 — Delta Lake em Profundidade</h1>
+<p>O Delta Lake é o coração da arquitetura Lakehouse no Databricks. Entendê-lo bem é fundamental para criar pipelines confiáveis e eficientes. Neste capítulo, vamos explorar cada funcionalidade com exemplos práticos.</p>
+<h2 id="51-criando-tabelas-delta">5.1  Criando tabelas Delta</h2>
+<p>Existem três formas principais de criar uma tabela Delta no Databricks:</p>
+<h3>1. A partir de um DataFrame</h3>
+<pre><span class="cm"># Salva o DataFrame como tabela Delta</span>
+df.write \
+.format(&<span class="cm">#x27;delta&#x27;) \</span>
+.mode(&<span class="cm">#x27;overwrite&#x27;)   \  # ou &#x27;append&#x27;, &#x27;error&#x27;, &#x27;ignore&#x27;</span>
+.option(&<span class="cm">#x27;overwriteSchema&#x27;, &#x27;true&#x27;) \</span>
+.saveAsTable(&<span class="cm">#x27;vendas.pedidos&#x27;)</span>
+<span class="cm"># Salvando em um path específico (sem registrar no metastore)</span>
+df.write.format(&<span class="cm">#x27;delta&#x27;).mode(&#x27;overwrite&#x27;).save(&#x27;/mnt/gold/pedidos/&#x27;)</span></pre>
+<h3>2. Via SQL CREATE TABLE</h3>
+<pre>%sql
+CREATE TABLE IF NOT EXISTS vendas.pedidos (
+id           BIGINT     NOT NULL,
+cliente_id   BIGINT     NOT NULL,
+valor        DECIMAL(12,2),
+status       STRING,
+criado_em    TIMESTAMP  DEFAULT current_timestamp()
+)
+USING DELTA
+PARTITIONED BY (ano INT, mes INT)
+LOCATION &<span class="cm">#x27;/mnt/gold/pedidos/&#x27;</span>
+COMMENT &<span class="cm">#x27;Tabela de pedidos de venda&#x27;;</span></pre>
+<h3>3. Via CTAS (Create Table As Select)</h3>
+<pre>%sql
+CREATE TABLE vendas.resumo_mensal
+USING DELTA
+AS
+SELECT
+year(criado_em)  AS ano,
+month(criado_em) AS mes,
+status,
+COUNT(*)          AS total_pedidos,
+SUM(valor)        AS valor_total
+FROM vendas.pedidos
+GROUP BY 1, 2, 3;</pre>
+<h2 id="52-operaes-dml-update-delete-merge">5.2  Operações DML — Update, Delete, Merge</h2>
+<p>Uma das maiores vantagens do Delta Lake sobre Parquet puro é o suporte nativo a operações de atualização e exclusão, que em um Data Lake tradicional são extremamente difíceis de implementar.</p>
+<h3>UPDATE</h3>
+<pre>%sql
+<span class="cm">-- Atualiza o status de pedidos com mais de 30 dias sem entrega</span>
+UPDATE vendas.pedidos
+SET    status = &<span class="cm">#x27;cancelado_atraso&#x27;</span>
+WHERE  status = &<span class="cm">#x27;enviado&#x27;</span>
+AND    datediff(current_date(), criado_em) &gt; 30;</pre>
+<h3>DELETE</h3>
+<pre>%sql
+<span class="cm">-- Remove pedidos de teste</span>
+DELETE FROM vendas.pedidos
+WHERE cliente_id IN (SELECT id FROM clientes.testes);</pre>
+<h3>MERGE (upsert) — a operação mais poderosa</h3>
+<p>O MERGE atualiza registros existentes e insere novos em uma única operação atômica. É o padrão ouro para pipelines de dados incrementais — você não precisa apagar e recarregar a tabela inteira quando quer atualizar alguns registros.</p>
+<pre>%sql
+MERGE INTO vendas.clientes AS destino
+USING (SELECT * FROM staging.clientes_novos) AS origem
+ON destino.id = origem.id
+<span class="cm">-- se encontrou correspondência: atualiza</span>
+WHEN MATCHED AND origem.email != destino.email THEN
+UPDATE SET
+destino.email        = origem.email,
+destino.atualizado_em = current_timestamp()
+<span class="cm">-- se não encontrou: insere como novo</span>
+WHEN NOT MATCHED THEN
+INSERT (id, nome, email, criado_em)
+VALUES (origem.id, origem.nome, origem.email, current_timestamp())
+<span class="cm">-- se está no destino mas não na origem: pode deletar (opcional)</span>
+WHEN NOT MATCHED BY SOURCE AND destino.ativo = true THEN
+UPDATE SET destino.ativo = false;</pre>
+<h2 id="53-time-travel-viagem-no-tempo">5.3  Time Travel — viagem no tempo</h2>
+<p>O Delta Lake mantém um histórico completo de todas as alterações da tabela. Isso permite consultar versões anteriores dos dados, o que é extremamente útil para auditorias, depuração de erros e recuperação de dados deletados acidentalmente.</p>
+<pre>%sql
+<span class="cm">-- Ver o histórico da tabela</span>
+DESCRIBE HISTORY vendas.pedidos;
+<span class="cm">-- Consultar como a tabela estava ontem</span>
+SELECT * FROM vendas.pedidos TIMESTAMP AS OF &<span class="cm">#x27;2024-06-15 09:00:00&#x27;;</span>
+<span class="cm">-- Consultar versão específica (número da versão do DESCRIBE HISTORY)</span>
+SELECT * FROM vendas.pedidos VERSION AS OF 42;
+<span class="cm">-- Restaurar para uma versão anterior (CUIDADO: irreversível!)</span>
+RESTORE TABLE vendas.pedidos TO VERSION AS OF 42;
+<span class="cm">-- Python equivalente</span>
+df_ontem = spark.read \
+.format(&<span class="cm">#x27;delta&#x27;) \</span>
+.option(&<span class="cm">#x27;timestampAsOf&#x27;, &#x27;2024-06-15&#x27;) \</span>
+.table(&<span class="cm">#x27;vendas.pedidos&#x27;)</span></pre>
+<h2 id="54-optimize-e-vacuum">5.4  OPTIMIZE e VACUUM</h2>
+<p>Com o uso intenso, tabelas Delta acumulam muitos arquivos pequenos, o que degrada a performance de leitura. O OPTIMIZE resolve isso juntando arquivos pequenos em arquivos maiores.</p>
+<pre>%sql
+<span class="cm">-- Compacta arquivos pequenos da tabela (recomendado: rodar semanalmente)</span>
+OPTIMIZE vendas.pedidos;
+<span class="cm">-- OPTIMIZE com Z-ORDER: ordena fisicamente os dados por coluna(s)</span>
+<span class="cm">-- Acelera muito filtros e joins nessas colunas</span>
+OPTIMIZE vendas.pedidos ZORDER BY (cliente_id, criado_em);</pre>
+<p>O VACUUM remove arquivos físicos antigos que não são mais necessários. Por padrão, o Delta mantém 7 dias de histórico. O VACUUM deleta arquivos com mais de N horas de histórico — isso afeta o time travel.</p>
+<pre>%sql
+<span class="cm">-- Remove arquivos com mais de 7 dias (padrão de retenção)</span>
+VACUUM vendas.pedidos;
+<span class="cm">-- Remove arquivos com mais de 168 horas (7 dias)</span>
+VACUUM vendas.pedidos RETAIN 168 HOURS;
+<span class="cm">-- NUNCA faça VACUUM com menos de 7 dias em tabelas com leitores concorrentes</span>
+-- Pode causar erros de &<span class="cm">#x27;file not found&#x27; em jobs em execução</span></pre>
+<h2 id="55-constraints-e-schema-enforcement">5.5  Constraints e Schema Enforcement</h2>
+<p>O Delta Lake permite definir constraints (restrições) nas tabelas para garantir a qualidade dos dados. Dados que violem as constraints são rejeitados com um erro, impedindo que dados inválidos entrem na tabela.</p>
+<pre>%sql
+<span class="cm">-- Adiciona constraint de NOT NULL</span>
+ALTER TABLE vendas.pedidos
+ADD CONSTRAINT pedidos_valor_positivo CHECK (valor &gt; 0);
+<span class="cm">-- Adiciona constraint de domínio</span>
+ALTER TABLE vendas.pedidos
+ADD CONSTRAINT pedidos_status_valido
+CHECK (status IN (&<span class="cm">#x27;novo&#x27;, &#x27;aprovado&#x27;, &#x27;enviado&#x27;, &#x27;entregue&#x27;, &#x27;cancelado&#x27;));</span>
+<span class="cm">-- Lista constraints da tabela</span>
+DESCRIBE DETAIL vendas.pedidos;
+<span class="cm">-- Remove constraint</span>
+ALTER TABLE vendas.pedidos DROP CONSTRAINT pedidos_valor_positivo;</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-6-databricks-sql">Capítulo 6 — Databricks SQL</h1>
+<p>O Databricks SQL é a camada analítica da plataforma — um ambiente otimizado para analistas de dados que preferem trabalhar com SQL em vez de Python. Ele inclui um editor SQL, SQL Warehouses de alta performance, e um construtor de dashboards.</p>
+<h2 id="61-sql-warehouses">6.1  SQL Warehouses</h2>
+<p>Um SQL Warehouse (antigo SQL Endpoint) é um cluster otimizado especificamente para consultas SQL analíticas. Diferente dos clusters all-purpose, ele é gerenciado de forma totalmente automática — escala para cima quando há muitas queries simultâneas e para baixo (ou desliga) quando está ocioso.</p>
+<table class="data-table">
+<thead><tr><th><strong>Tipo de Warehouse</strong></th><th>Quando usar</th></tr></thead>
+<tbody>
+<tr><td><strong>Classic (Serverless off)</strong></td><td><span style="color:#333333">Workloads padrão. Mais controle sobre configuração.</span></td></tr>
+<tr><td><strong>Serverless</strong></td><td><span style="color:#333333">Startup instantâneo, escalonamento automático agressivo. Recomendado.</span></td></tr>
+<tr><td><strong>Pro</strong></td><td><span style="color:#333333">Recursos avançados: materialização de views, Photon engine.</span></td></tr>
+</tbody>
+</table>
+<div class="infobox" style="background:#fff0ee;border-color:#fff0ee">
+<div class="infobox-title" style="color:#cc2200"><strong>Photon Engine</strong></div>
+<div class="infobox-line">O Photon é o motor de execução nativo em C++ da Databricks, que substitui</div>
+<div class="infobox-line">o executor padrão do Spark para consultas SQL. Ele pode ser até 8x mais rápido</div>
+<div class="infobox-line">para queries analíticas complexas. Disponível nas edições Pro e acima.</div>
+<div class="infobox-line">Ativado automaticamente quando compatível — nenhuma alteração de código necessária.</div>
+</div>
+<h2 id="62-sql-analtico-avanado">6.2  SQL analítico avançado</h2>
+<p>O Databricks SQL suporta toda a sintaxe ANSI SQL mais extensões poderosas. Aqui estão os padrões mais importantes:</p>
+<h3>Window Functions (Funções de Janela)</h3>
+<p>Window functions calculam valores com base em um conjunto de linhas relacionadas à linha atual, sem colapsar o resultado em uma única linha (como o GROUP BY faz). São essenciais para análises sequenciais e de ranking.</p>
+<pre>%sql
+SELECT
+cliente_id,
+data_pedido,
+valor,
+<span class="cm">-- Número sequencial do pedido por cliente</span>
+ROW_NUMBER() OVER (
+PARTITION BY cliente_id ORDER BY data_pedido
+) AS numero_pedido,
+<span class="cm">-- Valor acumulado de compras por cliente</span>
+SUM(valor) OVER (
+PARTITION BY cliente_id
+ORDER BY data_pedido
+ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+) AS total_acumulado,
+<span class="cm">-- Diferença para o pedido anterior do mesmo cliente</span>
+valor - LAG(valor, 1, 0) OVER (
+PARTITION BY cliente_id ORDER BY data_pedido
+) AS variacao_vs_anterior,
+<span class="cm">-- Rank por valor dentro de cada mês</span>
+DENSE_RANK() OVER (
+PARTITION BY year(data_pedido), month(data_pedido)
+ORDER BY valor DESC
+) AS rank_valor_mes
+FROM vendas.pedidos
+WHERE status = &<span class="cm">#x27;entregue&#x27;;</span></pre>
+<h3>CTEs — Common Table Expressions</h3>
+<p>CTEs (WITH ...) tornam queries complexas legíveis ao dar nomes a subqueries intermediárias. São especialmente úteis quando a mesma subquery é referenciada múltiplas vezes.</p>
+<pre>%sql
+WITH
+<span class="cm">-- CTE 1: resumo de vendas por cliente</span>
+vendas_cliente AS (
+SELECT
+cliente_id,
+COUNT(*)   AS total_pedidos,
+SUM(valor) AS total_gasto,
+MAX(data_pedido) AS ultima_compra
+FROM vendas.pedidos
+WHERE status = &<span class="cm">#x27;entregue&#x27;</span>
+GROUP BY cliente_id
+),
+<span class="cm">-- CTE 2: classificação RFM (Recência, Frequência, Monetário)</span>
+rfm AS (
+SELECT
+cliente_id,
+total_pedidos,
+total_gasto,
+datediff(current_date(), ultima_compra) AS dias_sem_compra,
+CASE
+WHEN total_gasto &gt; 5000 THEN &<span class="cm">#x27;A&#x27;</span>
+WHEN total_gasto &gt; 1000 THEN &<span class="cm">#x27;B&#x27;</span>
+ELSE &<span class="cm">#x27;C&#x27;</span>
+END AS segmento
+FROM vendas_cliente
+)
+SELECT r.*, c.nome, c.email
+FROM rfm r
+JOIN clientes.base c ON r.cliente_id = c.id
+WHERE r.segmento = &<span class="cm">#x27;A&#x27;</span>
+ORDER BY r.total_gasto DESC;</pre>
+<h2 id="63-criando-e-gerenciando-views">6.3  Criando e gerenciando Views</h2>
+<p>Views são consultas SQL salvas que se comportam como tabelas. São úteis para simplificar queries complexas, aplicar regras de segurança (mostrando apenas certas colunas para certos usuários) e criar camadas de abstração sobre os dados brutos.</p>
+<pre>%sql
+<span class="cm">-- View simples</span>
+CREATE OR REPLACE VIEW vendas.v_pedidos_ativos AS
+SELECT id, cliente_id, valor, status, criado_em
+FROM vendas.pedidos
+WHERE status NOT IN (&<span class="cm">#x27;cancelado&#x27;, &#x27;rascunho&#x27;);</span>
+<span class="cm">-- View materializada (apenas em Pro/Enterprise)</span>
+<span class="cm">-- Mantém o resultado em cache e atualiza automaticamente</span>
+CREATE MATERIALIZED VIEW vendas.v_resumo_diario AS
+SELECT
+date(criado_em) AS data,
+COUNT(*)        AS total_pedidos,
+SUM(valor)      AS receita_total
+FROM vendas.pedidos
+WHERE status = &<span class="cm">#x27;entregue&#x27;</span>
+GROUP BY 1;
+<span class="cm">-- Dynamic Views — restringe dados por usuário (Unity Catalog)</span>
+CREATE VIEW vendas.v_pedidos_seguro AS
+SELECT
+id,
+cliente_id,
+CASE WHEN is_member(&<span class="cm">#x27;grupo_financeiro&#x27;)</span>
+THEN valor
+ELSE NULL
+END AS valor,  <span class="cm">-- oculta valor para não-financeiros</span>
+status
+FROM vendas.pedidos;</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-7-engenharia-de-dados-e-pipelines">Capítulo 7 — Engenharia de Dados e Pipelines</h1>
+<p>Engenharia de dados é a disciplina de construir sistemas confiáveis para mover e transformar dados de fontes diversas até um destino onde analistas e modelos de ML possam consumi-los. O Databricks oferece três abordagens principais para isso.</p>
+<h2 id="71-arquitetura-medalho-bronze-silver-gold">7.1  Arquitetura Medalhão — Bronze, Silver, Gold</h2>
+<p>A arquitetura Medalhão é o padrão recomendado pela Databricks para organizar pipelines de dados no Lakehouse. Divide os dados em três camadas com qualidade crescente:</p>
+<div class="infobox" style="background:#fff0ee;border-color:#fff0ee">
+<div class="infobox-title" style="color:#cc2200"><strong>As três camadas da arquitetura Medalhão</strong></div>
+<div class="infobox-line">BRONZE (Raw): dados brutos como chegam da fonte. Sem transformação.</div>
+<div class="infobox-line">Objetivo: ter uma cópia exata dos dados originais para reprocessamento.</div>
+<div class="infobox-line">Formato: Delta. Particionado por data de ingestão.</div>
+<div class="infobox-line">SILVER (Refined): dados limpos e validados. Sem duplicatas, com tipos corretos,</div>
+<div class="infobox-line">com registros inválidos removidos ou corrigidos. Joins simples aplicados.</div>
+<div class="infobox-line">GOLD (Curated): dados agregados e prontos para consumo. Tabelas de fato e</div>
+<div class="infobox-line">dimensão, KPIs calculados, visões de negócio. Consumidos por BI e ML.</div>
+</div>
+<h2 id="72-auto-loader-ingesto-incremental-inteligente">7.2  Auto Loader — ingestão incremental inteligente</h2>
+<p>O Auto Loader é o mecanismo de ingestão incremental nativa do Databricks. Ele monitora automaticamente um diretório de armazenamento em nuvem (S3, ADLS, GCS) e processa apenas os arquivos novos desde a última execução — sem precisar listar todos os arquivos a cada run, o que seria inviável em pastas com milhões de arquivos.</p>
+<p>Internamente, o Auto Loader usa duas estratégias dependendo do volume de arquivos: para pastas menores, usa listagem diretória com rastreamento de state; para pastas com milhões de arquivos, usa notificações de eventos do storage (SQS no AWS, Event Grid no Azure) — muito mais eficiente.</p>
+<div class="infobox" style="background:#e8f9f0;border-color:#e8f9f0">
+<div class="infobox-title" style="color:#0a5c38"><strong>Por que usar Auto Loader em vez de spark.read simples?</strong></div>
+<div class="infobox-line">spark.read.load() lê TODOS os arquivos da pasta a cada execução — sem memória do que já foi processado.</div>
+<div class="infobox-line">Se você tem 10 TB históricos e chegam 10 GB novos por dia, o spark.read reprocessa os 10 TB todos os dias.</div>
+<div class="infobox-line">O Auto Loader rastreia exatamente quais arquivos já foram lidos (via checkpoint)</div>
+<div class="infobox-line">e processa apenas os arquivos NOVOS desde o último run. Isso reduz custo e tempo drasticamente.</div>
+<div class="infobox-line">Além disso, o Auto Loader detecta e evolui o schema automaticamente quando novos campos chegam.</div>
+</div>
+<h3>Configurações essenciais do Auto Loader</h3>
+<pre><span class="cm"># Configurações do Auto Loader por cloudFiles.option()</span>
+<span class="cm"># Formato dos arquivos de entrada</span>
+<span class="cm"># Suporta: json, csv, parquet, avro, orc, text, binaryFile</span>
+.option(&<span class="cm">#x27;cloudFiles.format&#x27;, &#x27;json&#x27;)</span>
+<span class="cm"># Onde guardar o schema inferido (obrigatório)</span>
+<span class="cm"># Persiste o schema descoberto para não re-inferir a cada run</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaLocation&#x27;, &#x27;/mnt/bronze/_schemas/pedidos/&#x27;)</span>
+<span class="cm"># Inferência automática de tipos (ex: &#x27;123&#x27; vira IntegerType, não StringType)</span>
+.option(&<span class="cm">#x27;cloudFiles.inferColumnTypes&#x27;, &#x27;true&#x27;)</span>
+<span class="cm"># O que fazer quando novos campos chegam nos arquivos</span>
+<span class="cm"># &#x27;addNewColumns&#x27;  — adiciona a coluna nova automaticamente (recomendado)</span>
+<span class="cm"># &#x27;rescue&#x27;         — coloca campos inesperados em _rescued_data (JSON)</span>
+<span class="cm"># &#x27;failOnNewColumns&#x27; — falha o pipeline se houver campo novo (mais rígido)</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaEvolutionMode&#x27;, &#x27;addNewColumns&#x27;)</span>
+<span class="cm"># Notificações de evento (mais eficiente para pastas grandes)</span>
+.option(&<span class="cm">#x27;cloudFiles.useNotifications&#x27;, &#x27;true&#x27;)</span>
+<span class="cm"># Filtro por extensão (evita processar arquivos temporários .tmp, .crc)</span>
+.option(&<span class="cm">#x27;pathGlobFilter&#x27;, &#x27;*.json&#x27;)</span>
+<span class="cm"># Inclui arquivos de subpastas automaticamente</span>
+.option(&<span class="cm">#x27;recursiveFileLookup&#x27;, &#x27;true&#x27;)</span></pre>
+<h3>Implementando Bronze com Auto Loader — exemplo completo</h3>
+<pre>from pyspark.sql.functions import current_timestamp, col, input_file_name
+df_bronze = (
+spark.readStream
+.format(&<span class="cm">#x27;cloudFiles&#x27;)                    # Auto Loader</span>
+.option(&<span class="cm">#x27;cloudFiles.format&#x27;, &#x27;json&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaLocation&#x27;,</span>
+&<span class="cm">#x27;/mnt/bronze/_schemas/pedidos/&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.inferColumnTypes&#x27;, &#x27;true&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaEvolutionMode&#x27;, &#x27;addNewColumns&#x27;)</span>
+.option(&<span class="cm">#x27;pathGlobFilter&#x27;, &#x27;*.json&#x27;)</span>
+.load(&<span class="cm">#x27;/mnt/landing/pedidos/&#x27;)           # pasta monitorada</span>
+<span class="cm"># Metadados de auditoria — de onde veio e quando chegou</span>
+.withColumn(&<span class="cm">#x27;_ingestao_ts&#x27;,    current_timestamp())</span>
+.withColumn(&<span class="cm">#x27;_arquivo_origem&#x27;, col(&#x27;_metadata.file_path&#x27;))</span>
+.withColumn(&<span class="cm">#x27;_tamanho_bytes&#x27;,  col(&#x27;_metadata.file_size&#x27;))</span>
+)
+<span class="cm"># trigger(availableNow=True): processa todos os arquivos pendentes e encerra</span>
+<span class="cm"># Ideal para Jobs agendados (ex: a cada 15 minutos)</span>
+query = (
+df_bronze.writeStream
+.format(&<span class="cm">#x27;delta&#x27;)</span>
+.option(&<span class="cm">#x27;checkpointLocation&#x27;, &#x27;/mnt/bronze/_checkpoints/pedidos/&#x27;)</span>
+.option(&<span class="cm">#x27;mergeSchema&#x27;, &#x27;true&#x27;)   # aceita schema evolution</span>
+.trigger(availableNow=True)
+.table(&<span class="cm">#x27;bronze.pedidos&#x27;)</span>
+)
+query.awaitTermination()
+<span class="cm"># Para stream contínuo (latência baixa), use:</span>
+<span class="cm"># .trigger(processingTime=&#x27;30 seconds&#x27;)</span></pre>
+<h3>Auto Loader com múltiplos formatos</h3>
+<pre><span class="cm"># Lendo CSV com cabeçalho</span>
+df_csv = (
+spark.readStream
+.format(&<span class="cm">#x27;cloudFiles&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.format&#x27;, &#x27;csv&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaLocation&#x27;, &#x27;/mnt/bronze/_schemas/clientes/&#x27;)</span>
+.option(&<span class="cm">#x27;header&#x27;, &#x27;true&#x27;)         # opções do CSV passam direto</span>
+.option(&<span class="cm">#x27;delimiter&#x27;, &#x27;;&#x27;)</span>
+.load(&<span class="cm">#x27;/mnt/landing/clientes/&#x27;)</span>
+)
+<span class="cm"># Lendo Parquet incrementalmente</span>
+df_parquet = (
+spark.readStream
+.format(&<span class="cm">#x27;cloudFiles&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.format&#x27;, &#x27;parquet&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaLocation&#x27;, &#x27;/mnt/bronze/_schemas/eventos/&#x27;)</span>
+.load(&<span class="cm">#x27;/mnt/landing/eventos/&#x27;)</span>
+)
+<span class="cm"># Lendo arquivos binários (imagens, PDFs, etc.)</span>
+df_binario = (
+spark.readStream
+.format(&<span class="cm">#x27;cloudFiles&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.format&#x27;, &#x27;binaryFile&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.schemaLocation&#x27;, &#x27;/mnt/bronze/_schemas/docs/&#x27;)</span>
+.load(&<span class="cm">#x27;/mnt/landing/documentos/&#x27;)</span>
+)
+<span class="cm"># Colunas disponíveis: path, modificationTime, length, content (bytes)</span></pre>
+<h3>Implementando Silver — limpeza e validação</h3>
+<pre>from pyspark.sql.functions import *
+df_silver = (
+spark.readStream.table(&<span class="cm">#x27;bronze.pedidos&#x27;)</span>
+<span class="cm"># Remove duplicatas baseado em id e timestamp</span>
+.dropDuplicates([&<span class="cm">#x27;id&#x27;, &#x27;criado_em&#x27;])</span>
+<span class="cm"># Filtra registros inválidos</span>
+.filter(col(&<span class="cm">#x27;id&#x27;).isNotNull())</span>
+.filter(col(&<span class="cm">#x27;valor&#x27;) &gt; 0)</span>
+.filter(col(&<span class="cm">#x27;status&#x27;).isin([&#x27;novo&#x27;,&#x27;aprovado&#x27;,&#x27;enviado&#x27;,&#x27;entregue&#x27;,&#x27;cancelado&#x27;]))</span>
+<span class="cm"># Padroniza tipos</span>
+.withColumn(&<span class="cm">#x27;criado_em&#x27;, to_timestamp(&#x27;criado_em&#x27;, &#x27;yyyy-MM-dd HH:mm:ss&#x27;))</span>
+.withColumn(&<span class="cm">#x27;valor&#x27;, col(&#x27;valor&#x27;).cast(&#x27;decimal(12,2)&#x27;))</span>
+<span class="cm"># Remove colunas técnicas de Bronze</span>
+.drop(&<span class="cm">#x27;_ingestao_timestamp&#x27;, &#x27;_arquivo_origem&#x27;)</span>
+)
+(df_silver.writeStream
+.format(&<span class="cm">#x27;delta&#x27;)</span>
+.option(&<span class="cm">#x27;checkpointLocation&#x27;, &#x27;/mnt/silver/_checkpoints/pedidos/&#x27;)</span>
+.trigger(availableNow=True)
+.table(&<span class="cm">#x27;silver.pedidos&#x27;)</span>
+).awaitTermination()</pre>
+<h3>Implementando Gold — agregações de negócio</h3>
+<pre><span class="cm"># Gold pode ser batch (mais simples para agregações)</span>
+df_gold = (
+spark.table(&<span class="cm">#x27;silver.pedidos&#x27;)</span>
+.join(spark.table(&<span class="cm">#x27;silver.clientes&#x27;), on=&#x27;cliente_id&#x27;, how=&#x27;left&#x27;)</span>
+.groupBy(
+year(&<span class="cm">#x27;criado_em&#x27;).alias(&#x27;ano&#x27;),</span>
+month(&<span class="cm">#x27;criado_em&#x27;).alias(&#x27;mes&#x27;),</span>
+&<span class="cm">#x27;regiao&#x27;,</span>
+&<span class="cm">#x27;status&#x27;</span>
+)
+.agg(
+count(&<span class="cm">#x27;*&#x27;).alias(&#x27;total_pedidos&#x27;),</span>
+sum(&<span class="cm">#x27;valor&#x27;).alias(&#x27;receita_bruta&#x27;),</span>
+countDistinct(&<span class="cm">#x27;cliente_id&#x27;).alias(&#x27;clientes_ativos&#x27;),</span>
+avg(&<span class="cm">#x27;valor&#x27;).alias(&#x27;ticket_medio&#x27;)</span>
+)
+)
+df_gold.write.format(&<span class="cm">#x27;delta&#x27;).mode(&#x27;overwrite&#x27;).saveAsTable(&#x27;gold.kpi_vendas&#x27;)</span></pre>
+<h2 id="72-delta-live-tables-dlt">7.2  Delta Live Tables (DLT)</h2>
+<p>Delta Live Tables é a evolução das pipelines no Databricks. Em vez de escrever código imperativo (faça isso, depois aquilo), você declara o que cada tabela deve conter e o DLT cuida automaticamente da orquestração, da execução incremental, do tratamento de erros e da qualidade dos dados.</p>
+<pre><span class="cm"># Exemplo de pipeline DLT em Python</span>
+import dlt
+from pyspark.sql.functions import *
+<span class="cm"># Tabela Bronze — lê da fonte</span>
+@dlt.table(
+name=&<span class="cm">#x27;bronze_pedidos&#x27;,</span>
+comment=&<span class="cm">#x27;Dados brutos de pedidos do sistema de vendas&#x27;</span>
+)
+def bronze_pedidos():
+return (
+spark.readStream
+.format(&<span class="cm">#x27;cloudFiles&#x27;)</span>
+.option(&<span class="cm">#x27;cloudFiles.format&#x27;, &#x27;json&#x27;)</span>
+.load(&<span class="cm">#x27;/mnt/landing/pedidos/&#x27;)</span>
+)
+<span class="cm"># Tabela Silver — com expectations (qualidade de dados)</span>
+@dlt.table(
+name=&<span class="cm">#x27;silver_pedidos&#x27;,</span>
+comment=&<span class="cm">#x27;Pedidos limpos e validados&#x27;</span>
+)
+@dlt.expect_all_or_drop({
+&<span class="cm">#x27;id nao nulo&#x27;:     &#x27;id IS NOT NULL&#x27;,</span>
+&<span class="cm">#x27;valor positivo&#x27;:  &#x27;valor &gt; 0&#x27;,</span>
+&<span class="cm">#x27;status valido&#x27;:   &quot;status IN (&#x27;novo&#x27;,&#x27;aprovado&#x27;,&#x27;enviado&#x27;,&#x27;entregue&#x27;,&#x27;cancelado&#x27;)&quot;</span>
+})
+def silver_pedidos():
+return (
+dlt.read_stream(&<span class="cm">#x27;bronze_pedidos&#x27;)</span>
+.dropDuplicates([&<span class="cm">#x27;id&#x27;])</span>
+.withColumn(&<span class="cm">#x27;valor&#x27;, col(&#x27;valor&#x27;).cast(&#x27;decimal(12,2)&#x27;))</span>
+)
+<span class="cm"># Tabela Gold</span>
+@dlt.table(name=&<span class="cm">#x27;gold_kpi_vendas&#x27;)</span>
+def gold_kpi_vendas():
+return (
+dlt.read(&<span class="cm">#x27;silver_pedidos&#x27;)</span>
+.groupBy(year(&<span class="cm">#x27;criado_em&#x27;).alias(&#x27;ano&#x27;), month(&#x27;criado_em&#x27;).alias(&#x27;mes&#x27;))</span>
+.agg(sum(&<span class="cm">#x27;valor&#x27;).alias(&#x27;receita&#x27;), count(&#x27;*&#x27;).alias(&#x27;total&#x27;))</span>
+)</pre>
+<div class="infobox" style="background:#e8f9f0;border-color:#e8f9f0">
+<div class="infobox-title" style="color:#0a5c38"><strong>Expectations (Qualidade de Dados no DLT)</strong></div>
+<div class="infobox-line">@dlt.expect(&#x27;nome&#x27;, &#x27;condição&#x27;) — registra violações mas não as descarta</div>
+<div class="infobox-line">@dlt.expect_or_drop(&#x27;nome&#x27;, &#x27;condição&#x27;) — descarta linhas que violam</div>
+<div class="infobox-line">@dlt.expect_or_fail(&#x27;nome&#x27;, &#x27;condição&#x27;) — falha o pipeline inteiro na violação</div>
+<div class="infobox-line">@dlt.expect_all_or_drop({&#x27;nome&#x27;: &#x27;condição&#x27;, ...}) — múltiplas regras</div>
+<div class="infobox-line">As métricas de qualidade ficam disponíveis no painel de monitoramento do DLT.</div>
+</div>
+<h2 id="74-lakeflow-jobs-orquestrao-de-pipelines">7.4  Lakeflow Jobs — orquestração de pipelines</h2>
+<p>O Lakeflow Jobs (anteriormente chamado de Databricks Workflows) é a solução nativa de orquestração do Databricks. Ele permite criar pipelines de dados complexos com múltiplas tarefas interdependentes, agendamento, retry automático e monitoramento centralizado — tudo sem precisar de ferramentas externas como Airflow ou Prefect.</p>
+<p>A grande vantagem do Lakeflow Jobs em relação a orquestradores externos é a integração profunda com o Databricks: acesso nativo ao Unity Catalog, rastreamento automático de linhagem de dados, monitoramento de qualidade via DLT, e custo otimizado com Job Clusters que sobem e morrem automaticamente.</p>
+<h3>Conceitos fundamentais do Lakeflow Jobs</h3>
+<table class="data-table">
+<thead><tr><th><strong>Conceito</strong></th><th>Descrição</th></tr></thead>
+<tbody>
+<tr><td><strong>Job</strong></td><td><span style="color:#333333">Container que agrupa uma ou mais Tasks relacionadas</span></td></tr>
+<tr><td><strong>Task</strong></td><td><span style="color:#333333">Unidade de trabalho: notebook, script, DLT pipeline, SQL, Python wheel</span></td></tr>
+<tr><td><strong>Dependência</strong></td><td><span style="color:#333333">Define que Task B só inicia após Task A concluir (com sucesso ou erro)</span></td></tr>
+<tr><td><strong>Cluster</strong></td><td><span style="color:#333333">Job Cluster (efêmero) ou All-Purpose Cluster (já existente)</span></td></tr>
+<tr><td><strong>Schedule</strong></td><td><span style="color:#333333">Gatilho: cron, horário fixo, ou acionado por chegada de arquivo</span></td></tr>
+<tr><td><strong>Retry Policy</strong></td><td><span style="color:#333333">Número de tentativas e intervalo em caso de falha</span></td></tr>
+<tr><td><strong>Alertas</strong></td><td><span style="color:#333333">Notificações por e-mail ou webhook em sucesso/falha/início</span></td></tr>
+<tr><td><strong>Run</strong></td><td><span style="color:#333333">Cada execução do Job gera um Run com logs e métricas próprias</span></td></tr>
+</tbody>
+</table>
+<h3>Criando um Job via interface</h3>
+<ul class="content-list">
+<li>No menu lateral, clique em &#x27;Workflows&#x27; e depois em &#x27;Create job&#x27;</li>
+<li>Dê um nome descritivo ao Job (ex: &#x27;pipeline_vendas_diario&#x27;)</li>
+<li>Configure a primeira Task: escolha o tipo (Notebook, Python, DLT, SQL, etc.)</li>
+<li>Selecione o cluster — prefira Job Cluster para produção (mais econômico)</li>
+<li>Adicione Tasks adicionais e defina as dependências entre elas</li>
+<li>Configure o Schedule (ex: diariamente às 06:00 BRT)</li>
+<li>Adicione alertas de e-mail para falhas</li>
+<li>Clique em &#x27;Create&#x27; e use &#x27;Run now&#x27; para testar</li>
+</ul>
+<h3>Definindo um Job como código (YAML — recomendado para produção)</h3>
+<p>Em projetos profissionais, Jobs devem ser definidos como código YAML e versionados no Git. Isso permite revisar mudanças em pull requests, fazer rollback, e reproduzir o ambiente de produção em desenvolvimento.</p>
+<pre><span class="cm"># job_pipeline_vendas.yml</span>
+<span class="cm"># Arquivo de definição de Job para Lakeflow Jobs</span>
+<span class="cm"># Usado com Databricks Asset Bundles (DAB) — veja Cap. 8</span>
+resources:
+jobs:
+pipeline_vendas_diario:
+name: Pipeline de Vendas Diário
+<span class="cm"># Agendamento: todo dia às 06:00 horário de Brasília</span>
+schedule:
+quartz_cron_expression: &<span class="cm">#x27;0 0 6 * * ?&#x27;</span>
+timezone_id: America/Sao_Paulo
+pause_status: UNPAUSED
+<span class="cm"># Notificações</span>
+email_notifications:
+on_failure:
+- engenharia@empresa.com
+on_success:
+- dados@empresa.com
+<span class="cm"># Tentativas em caso de falha</span>
+max_retries: 2
+min_retry_interval_millis: 300000  <span class="cm"># 5 minutos</span>
+<span class="cm"># Tarefas do pipeline</span>
+tasks:
+<span class="cm"># Tarefa 1: Ingestão Bronze</span>
+- task_key: ingesta_bronze
+description: Ingere arquivos novos da landing zone
+notebook_task:
+notebook_path: /pipelines/bronze/ingesta_pedidos
+base_parameters:
+ambiente: prod
+job_cluster_key: cluster_padrao
+timeout_seconds: 1800  <span class="cm"># 30 minutos</span>
+<span class="cm"># Tarefa 2: Transformação Silver (depende do Bronze)</span>
+- task_key: transformacao_silver
+description: Limpa e valida os dados brutos
+depends_on:
+- task_key: ingesta_bronze
+notebook_task:
+notebook_path: /pipelines/silver/processa_pedidos
+job_cluster_key: cluster_padrao
+<span class="cm"># Tarefa 3: Agregação Gold (depende do Silver)</span>
+- task_key: agregacao_gold
+description: Calcula KPIs de vendas
+depends_on:
+- task_key: transformacao_silver
+notebook_task:
+notebook_path: /pipelines/gold/kpi_vendas
+job_cluster_key: cluster_padrao
+<span class="cm"># Tarefas 4a e 4b: rodam em paralelo após Gold</span>
+- task_key: atualiza_dashboard
+depends_on:
+- task_key: agregacao_gold
+sql_task:
+query: {query_id: abc-123}
+warehouse_id: xyz-456
+- task_key: notifica_time
+depends_on:
+- task_key: agregacao_gold
+notebook_task:
+notebook_path: /utils/envia_relatorio_email
+<span class="cm"># Definição do cluster compartilhado entre tarefas</span>
+job_clusters:
+- job_cluster_key: cluster_padrao
+new_cluster:
+spark_version: 14.3.x-scala2.12
+node_type_id: Standard_DS3_v2
+num_workers: 4
+spark_conf:
+spark.sql.shuffle.partitions: &<span class="cm">#x27;50&#x27;</span></pre>
+<h3>Monitoramento e troubleshooting de Jobs</h3>
+<p>O Lakeflow Jobs oferece visibilidade completa sobre cada execução. Para acessar: Workflows &gt; Jobs &gt; clique no Job &gt; Runs.</p>
+<ul class="content-list">
+<li>Gantt chart: visualização do tempo de cada Task na execução</li>
+<li>Logs em tempo real: cada Task tem seus logs de stdout e stderr</li>
+<li>Spark UI por Task: analisa stages lentos, shuffles e uso de memória</li>
+<li>Métricas de run: duração, Tasks com falha, recursos consumidos</li>
+<li>Retry automático: Tasks com falha são reexecutadas automaticamente</li>
+</ul>
+<pre><span class="cm"># Acionando um Job via API REST (útil para integração com sistemas externos)</span>
+import requests
+DATABRICKS_HOST  = &<span class="cm">#x27;https://adb-xxxx.azuredatabricks.net&#x27;</span>
+DATABRICKS_TOKEN = dbutils.secrets.get(&<span class="cm">#x27;escopo&#x27;, &#x27;token-api&#x27;)</span>
+response = requests.post(
+f&<span class="cm">#x27;{DATABRICKS_HOST}/api/2.1/jobs/run-now&#x27;,</span>
+headers={&<span class="cm">#x27;Authorization&#x27;: f&#x27;Bearer {DATABRICKS_TOKEN}&#x27;},</span>
+json={
+&<span class="cm">#x27;job_id&#x27;: 12345,</span>
+&<span class="cm">#x27;python_named_params&#x27;: {</span>
+&<span class="cm">#x27;data_referencia&#x27;: &#x27;2024-06-15&#x27;,</span>
+&<span class="cm">#x27;ambiente&#x27;: &#x27;prod&#x27;</span>
+}
+}
+)
+print(f&<span class="cm">#x27;Run ID: {response.json()[&quot;run_id&quot;]}&#x27;)</span></pre>
+<hr class="chapter-sep">
+<h1 id="captulo-8-asset-bundles-e-versionamento-no-git">Capítulo 8 — Asset Bundles e Versionamento no Git</h1>
+<p>Um dos maiores problemas em projetos Databricks iniciantes é o código espalhado em notebooks sem organização, sem versionamento e impossível de reproduzir em outro ambiente. Este capítulo cobre as ferramentas que resolvem isso: Databricks Asset Bundles (DAB) para infraestrutura como código, e Git para versionamento colaborativo.</p>
+<h2 id="81-databricks-asset-bundles-dab">8.1  Databricks Asset Bundles (DAB)</h2>
+<p>Databricks Asset Bundles é a solução oficial de Infrastructure as Code (IaC) da Databricks. Ele permite definir todos os recursos do seu projeto — notebooks, Jobs, DLT pipelines, SQL warehouses, clusters, permissões — em arquivos YAML versionados no Git. Com um único comando você implanta tudo em qualquer ambiente (dev, staging, prod) de forma reproduzível e auditável.</p>
+<div class="infobox" style="background:#fff0ee;border-color:#fff0ee">
+<div class="infobox-title" style="color:#cc2200"><strong>Por que usar Asset Bundles?</strong></div>
+<div class="infobox-line">Sem DAB: você cria Jobs manualmente pela interface, cada vez que muda algo</div>
+<div class="infobox-line">edita na mão, e se precisar recriar em outro Workspace começa do zero.</div>
+<div class="infobox-line">Com DAB: o projeto inteiro vive em arquivos YAML no Git.</div>
+<div class="infobox-line">databricks bundle deploy  → implanta tudo no ambiente configurado.</div>
+<div class="infobox-line">databricks bundle run     → executa um Job ou pipeline.</div>
+<div class="infobox-line">O time pode revisar mudanças de infraestrutura em Pull Requests,</div>
+<div class="infobox-line">fazer rollback com git revert, e manter dev/staging/prod sincronizados.</div>
+</div>
+<h3>Estrutura de um projeto com Asset Bundles</h3>
+<pre>meu-projeto-databricks/
+├── databricks.yml          ← Arquivo raiz do bundle (obrigatório)
+├── resources/
+│   ├── jobs/
+│   │   ├── job_vendas.yml  ← Definição do Job (visto no Cap. 7)
+│   │   └── job_clientes.yml
+│   ├── pipelines/
+│   │   └── dlt_bronze.yml  ← Definição do DLT pipeline
+│   └── clusters/
+│       └── cluster_dev.yml ← Cluster compartilhado
+├── src/
+│   ├── notebooks/
+│   │   ├── bronze/
+│   │   │   └── ingesta_pedidos.py
+│   │   ├── silver/
+│   │   │   └── processa_pedidos.py
+│   │   └── gold/
+│   │       └── kpi_vendas.py
+│   └── pipelines/
+│       └── dlt_medalhao.py
+└── .github/
+└── workflows/
+└── deploy.yml      ← CI/CD via GitHub Actions</pre>
+<h3>databricks.yml — o arquivo raiz</h3>
+<pre><span class="cm"># databricks.yml</span>
+bundle:
+name: pipeline-vendas
+<span class="cm"># Configurações por ambiente</span>
+targets:
+<span class="cm"># Ambiente de desenvolvimento</span>
+dev:
+mode: development      <span class="cm"># prefixo [dev nome-usuario] em recursos</span>
+default: true          <span class="cm"># ambiente padrão ao rodar bundle deploy</span>
+workspace:
+host: https://adb-dev.azuredatabricks.net
+<span class="cm"># Ambiente de staging</span>
+staging:
+workspace:
+host: https://adb-staging.azuredatabricks.net
+variables:
+cluster_workers: 4
+<span class="cm"># Ambiente de produção</span>
+prod:
+workspace:
+host: https://adb-prod.azuredatabricks.net
+variables:
+cluster_workers: 16
+run_as:
+service_principal_name: sp-databricks-prod
+<span class="cm"># Inclui os arquivos de recursos</span>
+include:
+- resources/jobs/*.yml
+- resources/pipelines/*.yml
+<span class="cm"># Variáveis globais com valores padrão</span>
+variables:
+catalog:         vendas_${bundle.target}
+cluster_workers: 2</pre>
+<h3>Comandos essenciais da CLI do DAB</h3>
+<pre><span class="cm"># Instala a Databricks CLI (necessário apenas uma vez)</span>
+pip install databricks-cli
+<span class="cm"># ou via brew no Mac:</span>
+brew tap databricks/tap &amp;&amp; brew install databricks
+<span class="cm"># Configura autenticação</span>
+databricks configure <span class="cm">--token</span>
+<span class="cm"># Valida o bundle (verifica erros de sintaxe e referências)</span>
+databricks bundle validate
+<span class="cm"># Implanta no ambiente padrão (dev)</span>
+databricks bundle deploy
+<span class="cm"># Implanta em um ambiente específico</span>
+databricks bundle deploy <span class="cm">--target prod</span>
+<span class="cm"># Executa um Job definido no bundle</span>
+databricks bundle run job_pipeline_vendas
+<span class="cm"># Executa com parâmetros</span>
+databricks bundle run job_pipeline_vendas \
+--python-named-params &<span class="cm">#x27;data_referencia=2024-06-15&#x27;</span>
+<span class="cm"># Destroy — remove todos os recursos do Workspace</span>
+<span class="cm"># CUIDADO: irreversível!</span>
+databricks bundle destroy <span class="cm">--target dev</span></pre>
+<h3>CI/CD com GitHub Actions</h3>
+<p>Com o bundle definido como código, é simples configurar um pipeline de CI/CD que implanta automaticamente quando o código é aprovado em Pull Request.</p>
+<pre><span class="cm"># .github/workflows/deploy.yml</span>
+name: Deploy Databricks Bundle
+on:
+push:
+branches: [main]      <span class="cm"># prod</span>
+pull_request:
+branches: [main]      <span class="cm"># valida antes de mergear</span>
+jobs:
+deploy:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v4
+- name: Install Databricks CLI
+run: pip install databricks-cli
+- name: Validate bundle
+env:
+DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STAGING }}
+DATABRICKS_HOST:  ${{ secrets.DATABRICKS_HOST_STAGING }}
+run: databricks bundle validate <span class="cm">--target staging</span>
+- name: Deploy to Staging
+if: github.event_name == &<span class="cm">#x27;pull_request&#x27;</span>
+env:
+DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STAGING }}
+DATABRICKS_HOST:  ${{ secrets.DATABRICKS_HOST_STAGING }}
+run: databricks bundle deploy <span class="cm">--target staging</span>
+- name: Deploy to Production
+if: github.ref == &<span class="cm">#x27;refs/heads/main&#x27;</span>
+env:
+DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+DATABRICKS_HOST:  ${{ secrets.DATABRICKS_HOST_PROD }}
+run: databricks bundle deploy <span class="cm">--target prod</span></pre>
+<h2 id="82-versionamento-no-git">8.2  Versionamento no Git</h2>
+<p>O Git é o sistema de controle de versão padrão da indústria. Versionar código Databricks no Git é essencial para: rastrear o histórico de alterações, trabalhar em equipe sem conflitos, reverter bugs, fazer code review e automatizar deploys via CI/CD.</p>
+<p>O Databricks tem integração nativa com GitHub, GitLab, Bitbucket e Azure DevOps — você configura uma vez e sincroniza notebooks diretamente pela interface do Workspace.</p>
+<h3>Configurando a integração Git no Databricks</h3>
+<ul class="content-list">
+<li>No Databricks, clique no seu nome de usuário no canto superior direito</li>
+<li>Vá em &#x27;Settings&#x27; &gt; &#x27;Linked accounts&#x27;</li>
+<li>Em &#x27;Git provider&#x27;, selecione seu provedor (GitHub, GitLab, etc.)</li>
+<li>Gere um Personal Access Token (PAT) no seu provedor Git com permissões de repo</li>
+<li>Cole o token no Databricks e salve</li>
+<li>A partir de agora, ao criar pastas no Workspace você pode vincular a um repositório Git</li>
+</ul>
+<h3>Clonando um repositório no Workspace</h3>
+<pre><span class="cm"># Pela interface:</span>
+<span class="cm"># 1. No menu lateral, clique em &#x27;Workspace&#x27;</span>
+<span class="cm"># 2. Clique em &#x27;+ Add&#x27; &gt; &#x27;Git folder&#x27;</span>
+<span class="cm"># 3. Cole a URL do repositório Git</span>
+<span class="cm"># 4. Clique em &#x27;Create Git folder&#x27;</span>
+<span class="cm"># Pela CLI (dentro de um notebook):</span>
+import subprocess
+result = subprocess.run([
+&<span class="cm">#x27;git&#x27;, &#x27;clone&#x27;,</span>
+&<span class="cm">#x27;https://github.com/empresa/meu-projeto-databricks.git&#x27;,</span>
+&<span class="cm">#x27;/Workspace/Users/usuario@empresa.com/meu-projeto&#x27;</span>
+], capture_output=True, text=True)
+print(result.stdout)</pre>
+<h3>Fluxo de trabalho Git recomendado para Databricks</h3>
+<p>O fluxo GitFlow adaptado para Databricks funciona assim:</p>
+<pre><span class="cm"># Fluxo de desenvolvimento recomendado:</span>
+<span class="cm"># 1. Sempre trabalhe em uma branch de feature</span>
+<span class="cm">#    main (produção) ← staging ← feature/minha-alteracao</span>
+<span class="cm"># 2. No Databricks Workspace, troque para sua branch:</span>
+<span class="cm">#    Git folder &gt; Branch dropdown &gt; &#x27;Create branch: feature/nova-transformacao&#x27;</span>
+<span class="cm"># 3. Desenvolva e teste no cluster de dev</span>
+<span class="cm"># 4. Ao terminar, commit pelo Workspace:</span>
+<span class="cm">#    Git folder &gt; &#x27;Commit &amp; push&#x27;</span>
+<span class="cm">#    Adicione uma mensagem descritiva: &#x27;feat: adiciona validacao de CPF na camada silver&#x27;</span>
+<span class="cm"># 5. Abra um Pull Request no GitHub/GitLab</span>
+<span class="cm">#    O CI/CD valida e implanta em staging automaticamente</span>
+<span class="cm"># 6. Após aprovação e testes em staging, merge para main</span>
+<span class="cm">#    O CI/CD implanta em produção automaticamente</span></pre>
+<h3>.gitignore para projetos Databricks</h3>
+<pre><span class="cm"># .gitignore — arquivos para NÃO versionar</span>
+<span class="cm"># Credenciais e configurações locais</span>
+.databricks/
+.env
+*.token
+<span class="cm"># Arquivos temporários</span>
+__pycache__/
+*.pyc
+.DS_Store
+<span class="cm"># Saídas de execução (checkpoints, logs locais)</span>
+logs/
+tmp/
+<span class="cm"># Arquivos de dados (nunca versionar dados!)</span>
+*.csv
+*.parquet
+*.json.gz
+<span class="cm"># Configurações de IDE</span>
+.vscode/
+.idea/</pre>
+<h3>Boas práticas de commit para projetos Databricks</h3>
+<ul class="content-list">
+<li>Use Conventional Commits: feat:, fix:, refactor:, docs:, test:, chore:</li>
+<li>Commits pequenos e frequentes — uma alteração lógica por commit</li>
+<li>Nunca commite credenciais, tokens ou dados pessoais</li>
+<li>Inclua testes antes de abrir Pull Request</li>
+<li>Use tags Git para marcar versões de produção (ex: v1.2.0)</li>
+</ul>
+<pre><span class="cm"># Exemplos de boas mensagens de commit:</span>
+feat: adiciona ingestao incremental de pedidos via Auto Loader
+fix: corrige duplicatas na camada silver apos mudanca de schema
+refactor: extrai logica de validacao CPF para funcao reutilizavel
+docs: adiciona README com instrucoes de deploy do bundle
+test: adiciona testes unitarios para transformacoes da camada silver
+chore: atualiza versao do DBR para 14.3 LTS em todos os clusters</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-9-machine-learning-no-databricks">Capítulo 9 — Machine Learning no Databricks</h1>
+<p>O Databricks é uma das plataformas mais completas para Machine Learning em produção. Ele integra nativamente MLflow (rastreamento de experimentos), Feature Store (gerenciamento de features), e Model Serving (deploy de modelos em APIs REST).</p>
+<h2 id="91-mlflow-rastreamento-de-experimentos">9.1  MLflow — rastreamento de experimentos</h2>
+<p>MLflow é uma plataforma open-source para o ciclo de vida do ML, criada pela Databricks. No Databricks, ela está integrada nativamente e não requer nenhuma configuração adicional. Ela resolve o problema clássico: &#x27;qual versão do modelo, com quais parâmetros, produziu qual resultado?&#x27;</p>
+<pre>import mlflow
+import mlflow.sklearn
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, f1_score
+from sklearn.model_selection import train_test_split
+<span class="cm"># Carrega dados</span>
+df_pandas = spark.table(&<span class="cm">#x27;gold.features_churn&#x27;).toPandas()</span>
+X = df_pandas.drop(&<span class="cm">#x27;churn&#x27;, axis=1)</span>
+y = df_pandas[&<span class="cm">#x27;churn&#x27;]</span>
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+<span class="cm"># Inicia um experimento MLflow</span>
+mlflow.set_experiment(&<span class="cm">#x27;/Users/analista@empresa.com/churn_experiment&#x27;)</span>
+with mlflow.start_run(run_name=&<span class="cm">#x27;random_forest_v1&#x27;):</span>
+<span class="cm"># Parâmetros do modelo</span>
+params = {&<span class="cm">#x27;n_estimators&#x27;: 200, &#x27;max_depth&#x27;: 8, &#x27;random_state&#x27;: 42}</span>
+mlflow.log_params(params)
+<span class="cm"># Treina o modelo</span>
+model = RandomForestClassifier(**params)
+model.fit(X_train, y_train)
+<span class="cm"># Avalia e registra métricas</span>
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred, average=&<span class="cm">#x27;weighted&#x27;)</span>
+mlflow.log_metric(&<span class="cm">#x27;accuracy&#x27;, accuracy)</span>
+mlflow.log_metric(&<span class="cm">#x27;f1_score&#x27;, f1)</span>
+<span class="cm"># Salva o modelo no Model Registry</span>
+mlflow.sklearn.log_model(
+model,
+artifact_path=&<span class="cm">#x27;random_forest&#x27;,</span>
+registered_model_name=&<span class="cm">#x27;modelo_churn&#x27;</span>
+)
+print(f&<span class="cm">#x27;Acurácia: {accuracy:.4f} | F1: {f1:.4f}&#x27;)</span></pre>
+<h2 id="92-automl-ml-com-um-clique">9.2  AutoML — ML com um clique</h2>
+<p>O Databricks AutoML testa automaticamente dezenas de algoritmos e configurações de hiperparâmetros, gerando um notebook Python com o melhor modelo encontrado. É o ponto de partida ideal para qualquer problema de ML — mesmo que você depois precise customizar o modelo.</p>
+<pre>from databricks import automl
+<span class="cm"># Classificação (predict se cliente vai cancelar)</span>
+resultado = automl.classify(
+dataset=spark.table(&<span class="cm">#x27;gold.features_churn&#x27;),</span>
+target_col=&<span class="cm">#x27;churn&#x27;,</span>
+timeout_minutes=30,       <span class="cm"># tempo máximo de busca</span>
+primary_metric=&<span class="cm">#x27;f1&#x27;       # métrica a otimizar</span>
+)
+<span class="cm"># Acessa o melhor modelo</span>
+print(resultado.best_trial.mlflow_run_id)
+<span class="cm"># Regressão (prever valor da próxima compra)</span>
+resultado_reg = automl.regress(
+dataset=spark.table(&<span class="cm">#x27;gold.features_ltv&#x27;),</span>
+target_col=&<span class="cm">#x27;valor_proximo_pedido&#x27;,</span>
+timeout_minutes=60,
+primary_metric=&<span class="cm">#x27;rmse&#x27;</span>
+)</pre>
+<h2 id="93-model-registry-e-model-serving">9.3  Model Registry e Model Serving</h2>
+<p>O Model Registry é o catálogo central de modelos de ML do Databricks. Ele armazena versões dos modelos, permite promovê-los entre estágios (Staging, Production) e mantém o histórico completo de cada versão.</p>
+<pre>import mlflow
+from mlflow.tracking import MlflowClient
+client = MlflowClient()
+<span class="cm"># Promove modelo para produção</span>
+client.transition_model_version_stage(
+name=&<span class="cm">#x27;modelo_churn&#x27;,</span>
+version=3,
+stage=&<span class="cm">#x27;Production&#x27;</span>
+)
+<span class="cm"># Carrega modelo de produção para inferência em batch</span>
+model_uri = &<span class="cm">#x27;models:/modelo_churn/Production&#x27;</span>
+modelo = mlflow.sklearn.load_model(model_uri)
+<span class="cm"># Inferência em lote com Spark UDF</span>
+predict_udf = mlflow.pyfunc.spark_udf(
+spark, model_uri=model_uri, result_type=&<span class="cm">#x27;double&#x27;</span>
+)
+features_cols = [&<span class="cm">#x27;idade&#x27;, &#x27;total_compras&#x27;, &#x27;dias_sem_compra&#x27;, &#x27;ticket_medio&#x27;]</span>
+df_predicoes = (
+spark.table(&<span class="cm">#x27;gold.features_churn&#x27;)</span>
+.withColumn(&<span class="cm">#x27;prob_churn&#x27;, predict_udf(*features_cols))</span>
+)
+df_predicoes.write.format(&<span class="cm">#x27;delta&#x27;).mode(&#x27;overwrite&#x27;).table(&#x27;gold.predicoes_churn&#x27;)</span></pre>
+<hr class="chapter-sep">
+<h1 id="captulo-10-performance-e-otimizao">Capítulo 10 — Performance e Otimização</h1>
+<p>À medida que seus dados crescem, a diferença entre um código bem escrito e um mal escrito pode ser de horas versus minutos. Este capítulo cobre as otimizações mais impactantes no Databricks.</p>
+<h2 id="101-particionamento">10.1  Particionamento</h2>
+<p>Particionar uma tabela significa dividir os dados em pastas baseadas em valores de colunas específicas. Quando você filtra por uma coluna de partição, o Spark lê apenas os arquivos daquela partição — ignorando todo o resto. Isso é chamado de partition pruning.</p>
+<pre><span class="cm"># Escrevendo com particionamento por data</span>
+df.write \
+.format(&<span class="cm">#x27;delta&#x27;) \</span>
+.partitionBy(&<span class="cm">#x27;ano&#x27;, &#x27;mes&#x27;) \</span>
+.mode(&<span class="cm">#x27;overwrite&#x27;) \</span>
+.save(&<span class="cm">#x27;/mnt/gold/pedidos/&#x27;)</span>
+<span class="cm"># A estrutura de pastas fica:</span>
+<span class="cm"># /mnt/gold/pedidos/ano=2024/mes=1/</span>
+<span class="cm"># /mnt/gold/pedidos/ano=2024/mes=2/</span>
+<span class="cm"># ...</span>
+<span class="cm"># Esta query lê APENAS a pasta ano=2024/mes=6/ — muito mais rápido!</span>
+df = spark.read.format(&<span class="cm">#x27;delta&#x27;).load(&#x27;/mnt/gold/pedidos/&#x27;)</span>
+df.filter(&<span class="cm">#x27;ano = 2024 AND mes = 6&#x27;).count()</span></pre>
+<div class="infobox" style="background:#fff8e7;border-color:#fff8e7">
+<div class="infobox-title" style="color:#7a5200"><strong>Cuidado com over-partitioning</strong></div>
+<div class="infobox-line">Particionar em excesso é tão ruim quanto não particionar.</div>
+<div class="infobox-line">Se você particionar por &#x27;cliente_id&#x27; e tiver 10 milhões de clientes,</div>
+<div class="infobox-line">vai criar 10 milhões de pastas com arquivos minúsculos — lentíssimo.</div>
+<div class="infobox-line">Regra de ouro: particione apenas por colunas de alta cardinalidade baixa</div>
+<div class="infobox-line">que são frequentemente usadas em filtros (data, status, região).</div>
+<div class="infobox-line">Evite particionar por IDs, timestamps precisos ou e-mails.</div>
+</div>
+<h2 id="102-broadcast-join">10.2  Broadcast Join</h2>
+<p>Quando você faz um join entre uma tabela grande e uma tabela pequena, o Spark normalmente embaralha (shuffle) os dados de ambas as tabelas pelas máquinas do cluster — uma operação cara. O Broadcast Join evita isso: a tabela pequena é copiada inteira para cada worker, eliminando o shuffle.</p>
+<pre>from pyspark.sql.functions import broadcast
+<span class="cm"># Tabela de produtos tem apenas 1.000 linhas — boa candidata para broadcast</span>
+df_pedidos_detalhes = df_pedidos.join(
+broadcast(df_produtos),   <span class="cm"># envia df_produtos inteiro para cada worker</span>
+on=&<span class="cm">#x27;produto_id&#x27;,</span>
+how=&<span class="cm">#x27;left&#x27;</span>
+)
+<span class="cm"># O Spark também decide automaticamente fazer broadcast quando</span>
+<span class="cm"># a tabela é menor que spark.sql.autoBroadcastJoinThreshold (padrão: 10MB)</span>
+<span class="cm"># Para tabelas maiores, force manualmente com broadcast()</span></pre>
+<h2 id="103-caching">10.3  Caching</h2>
+<p>Quando você usa o mesmo DataFrame múltiplas vezes em um notebook (para exploração, diferentes análises, etc.), o Spark recalcula tudo do zero a cada vez. O cache resolve isso armazenando os dados na memória ou disco do cluster.</p>
+<pre><span class="cm"># Cacheia em memória (mais rápido, mas ocupa RAM)</span>
+df.cache()  <span class="cm"># ou df.persist(StorageLevel.MEMORY_ONLY)</span>
+<span class="cm"># Cacheia em memória + disco (mais robusto para dados maiores)</span>
+from pyspark import StorageLevel
+df.persist(StorageLevel.MEMORY_AND_DISK)
+<span class="cm"># Força a materialização do cache (cache é lazy por padrão)</span>
+df.count()   <span class="cm"># qualquer ação dispara a materialização</span>
+<span class="cm"># Use o DataFrame quantas vezes precisar — lê do cache</span>
+df.filter(&<span class="cm">#x27;status = &quot;aprovado&quot;&#x27;).show()</span>
+df.groupBy(&<span class="cm">#x27;regiao&#x27;).count().show()</span>
+<span class="cm"># Limpa o cache quando não precisar mais (libera memória!)</span>
+df.unpersist()</pre>
+<h2 id="104-evitando-shuffles-desnecessrios">10.4  Evitando Shuffles desnecessários</h2>
+<p>O shuffle é a operação mais cara do Spark — é quando ele precisa redistribuir dados entre os workers da rede. Ele acontece em groupBy, join, distinct e orderBy. Algumas técnicas para minimizá-lo:</p>
+<ul class="content-list">
+<li>Filtre os dados ANTES do join — reduza o volume antes de redistribuir</li>
+<li>Use broadcast join para tabelas pequenas (&lt; 200MB)</li>
+<li>Ajuste spark.sql.shuffle.partitions (padrão 200, pode ser muito para dados pequenos)</li>
+<li>Use repartition() para consolidar partições antes de writes grandes</li>
+<li>Use coalesce() para reduzir partições sem fazer shuffle</li>
+</ul>
+<pre><span class="cm"># Ajustando partições para o tamanho dos dados</span>
+spark.conf.set(&<span class="cm">#x27;spark.sql.shuffle.partitions&#x27;, &#x27;50&#x27;)  # para dados &lt; 1GB</span>
+<span class="cm"># repartition: redistribui dados (faz shuffle, mas útil antes de writes)</span>
+df.repartition(10).write.format(&<span class="cm">#x27;delta&#x27;).save(&#x27;/mnt/output/&#x27;)</span>
+<span class="cm"># coalesce: reduz partições SEM shuffle (só combina partições existentes)</span>
+df.coalesce(1).write.format(&<span class="cm">#x27;delta&#x27;).save(&#x27;/mnt/output_single_file/&#x27;)</span></pre>
+<h2 id="105-liquid-clustering-a-nova-gerao-do-particioname">10.5  Liquid Clustering — a nova geração do particionamento</h2>
+<p>O Liquid Clustering é a funcionalidade mais recente da Databricks para otimização de leitura (disponível no DBR 13.3+). Ele substitui o particionamento estático por um sistema que reorganiza fisicamente os dados de forma inteligente e incremental — sem os problemas do over-partitioning.</p>
+<pre>%sql
+<span class="cm">-- Criar tabela com Liquid Clustering</span>
+CREATE TABLE vendas.pedidos_clusterizado
+USING DELTA
+CLUSTER BY (cliente_id, data_pedido)  <span class="cm">-- colunas mais usadas em filtros</span>
+AS SELECT * FROM vendas.pedidos;
+<span class="cm">-- Executar o clustering (reagrupa os dados fisicamente)</span>
+OPTIMIZE vendas.pedidos_clusterizado;
+<span class="cm">-- Verificar status do clustering</span>
+DESCRIBE DETAIL vendas.pedidos_clusterizado;</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-11-segurana-e-governana">Capítulo 11 — Segurança e Governança</h1>
+<p>Em ambientes corporativos, controlar quem pode ver e modificar quais dados é tão importante quanto processar os dados corretamente. O Unity Catalog do Databricks é o mecanismo central de governança.</p>
+<h2 id="111-unity-catalog-controle-de-acesso">11.1  Unity Catalog — controle de acesso</h2>
+<p>O Unity Catalog usa um modelo de permissões baseado em GRANT/REVOKE familiar para quem conhece SQL. As permissões podem ser aplicadas em qualquer nível da hierarquia (catalog, schema, table, column).</p>
+<pre>%sql
+<span class="cm">-- Concede acesso de leitura a um grupo</span>
+GRANT SELECT ON TABLE vendas.pedidos TO `grupo-analistas`;
+<span class="cm">-- Concede acesso de escrita</span>
+GRANT MODIFY ON TABLE vendas.pedidos TO `grupo-engenheiros`;
+<span class="cm">-- Concede acesso a um schema inteiro</span>
+GRANT USE SCHEMA, SELECT ON SCHEMA vendas TO `grupo-analistas`;
+<span class="cm">-- Revoga permissão</span>
+REVOKE SELECT ON TABLE vendas.clientes FROM `grupo-externo`;
+<span class="cm">-- Verifica permissões de uma tabela</span>
+SHOW GRANTS ON TABLE vendas.pedidos;</pre>
+<h2 id="112-row-level-e-column-level-security">11.2  Row-Level e Column-Level Security</h2>
+<p>O Unity Catalog permite criar políticas de acesso que restringem quais LINHAS ou COLUNAS um usuário pode ver, sem precisar criar tabelas separadas para cada grupo.</p>
+<pre>%sql
+<span class="cm">-- Column Masking: oculta CPF para usuários que não são do RH</span>
+CREATE FUNCTION mascara_cpf(cpf STRING)
+RETURN CASE WHEN is_member(&<span class="cm">#x27;rh-confidencial&#x27;)</span>
+THEN cpf
+ELSE regexp_replace(cpf, &<span class="cm">#x27;\\d{3}\\.\\d{3}\\.\\d{3}&#x27;, &#x27;***.***.***&#x27;)</span>
+END;
+ALTER TABLE rh.funcionarios
+ALTER COLUMN cpf SET MASK mascara_cpf;
+<span class="cm">-- Row Filter: filtra linhas baseado em atributo do usuário</span>
+CREATE FUNCTION filtro_regiao(regiao STRING)
+RETURN is_member(&<span class="cm">#x27;admin&#x27;) OR regiao = current_user_attribute(&#x27;regiao&#x27;);</span>
+ALTER TABLE vendas.pedidos
+SET ROW FILTER filtro_regiao ON (regiao);</pre>
+<h2 id="113-secrets-gerenciamento-de-credenciais">11.3  Secrets — gerenciamento de credenciais</h2>
+<p>Nunca coloque senhas, tokens ou chaves de API diretamente no código de um notebook. Use o Databricks Secrets para armazenar credenciais de forma segura e referenciá-las via dbutils.secrets.get().</p>
+<pre><span class="cm"># Criando um secret scope via CLI (fora do notebook, no terminal)</span>
+databricks secrets create-scope meu-scope
+databricks secrets put-secret meu-scope db-password
+<span class="cm"># Usando um secret no notebook (o valor NUNCA aparece no log)</span>
+senha = dbutils.secrets.get(scope=&<span class="cm">#x27;meu-scope&#x27;, key=&#x27;db-password&#x27;)</span>
+<span class="cm"># Uso em conexão JDBC</span>
+df = spark.read \
+.format(&<span class="cm">#x27;jdbc&#x27;) \</span>
+.option(&<span class="cm">#x27;password&#x27;, dbutils.secrets.get(&#x27;meu-scope&#x27;, &#x27;db-password&#x27;)) \</span>
+.load()
+<span class="cm"># Listando secrets disponíveis (sem expor valores)</span>
+dbutils.secrets.list(&<span class="cm">#x27;meu-scope&#x27;)</span></pre>
+<h2 id="114-delta-sharing-compartilhamento-seguro-de-dados">11.4  Delta Sharing — compartilhamento seguro de dados</h2>
+<p>Delta Sharing é um protocolo open-source criado pela Databricks para compartilhar dados com segurança entre organizações diferentes — sem precisar copiar os dados, sem dar acesso ao Workspace da empresa provedora, e sem exigir que o destinatário use Databricks ou qualquer outra ferramenta específica.</p>
+<p>Pense no Delta Sharing como uma API de dados somente leitura. A empresa provedora decide exatamente quais tabelas, schemas ou até partições específicas ela quer expor. O destinatário acessa esses dados via um link de ativação, usando qualquer ferramenta compatível com o protocolo Delta Sharing — Spark, pandas, Power BI, Tableau, entre outros.</p>
+<div class="infobox" style="background:#fff0ee;border-color:#fff0ee">
+<div class="infobox-title" style="color:#cc2200"><strong>O problema que o Delta Sharing resolve</strong></div>
+<div class="infobox-line">Cenário comum: empresa A precisa fornecer dados para empresa B (parceiro, auditor, subsidiária).</div>
+<div class="infobox-line">Abordagem tradicional: exportar para CSV/Parquet, copiar via SFTP ou S3, empresa B reimporta.</div>
+<div class="infobox-line">Problemas: dados desatualizados, custo de storage duplicado, risco de vazamento na transferência,</div>
+<div class="infobox-line">sem controle de quem acessou o quê.</div>
+<div class="infobox-line">Com Delta Sharing: empresa A cria um Share no Unity Catalog, adiciona as tabelas desejadas,</div>
+<div class="infobox-line">cria um Recipient e gera um Activation Link. Empresa B usa o link para acessar os dados</div>
+<div class="infobox-line">diretamente — sempre atualizados, sem cópia, com auditoria completa de acesso.</div>
+</div>
+<h3>Conceitos fundamentais do Delta Sharing</h3>
+<table class="data-table">
+<thead><tr><th><strong>Conceito</strong></th><th>Descrição</th></tr></thead>
+<tbody>
+<tr><td><strong>Share</strong></td><td><span style="color:#333333">Container que agrupa os dados a serem compartilhados. Pode ter N tabelas de N schemas.</span></td></tr>
+<tr><td><strong>Schema (no Share)</strong></td><td><span style="color:#333333">Agrupamento lógico de tabelas dentro do Share — não precisa ser igual ao schema original.</span></td></tr>
+<tr><td><strong>Table</strong></td><td><span style="color:#333333">Tabela Delta adicionada ao Share. Pode expor apenas certas partições (partition filter).</span></td></tr>
+<tr><td><strong>Recipient</strong></td><td><span style="color:#333333">Entidade (empresa, sistema ou usuário) que receberá acesso ao Share.</span></td></tr>
+<tr><td><strong>Activation Link</strong></td><td><span style="color:#333333">URL única gerada para o Recipient ativar o acesso e baixar as credenciais.</span></td></tr>
+<tr><td><strong>Credential</strong></td><td><span style="color:#333333">Token de acesso gerado após ativação — usado para autenticar nas chamadas de leitura.</span></td></tr>
+<tr><td><strong>Open Sharing</strong></td><td><span style="color:#333333">Compartilhamento com qualquer ferramenta via protocolo aberto (sem precisar do Databricks).</span></td></tr>
+<tr><td><strong>Databricks-to-Databricks</strong></td><td><span style="color:#333333">Compartilhamento entre Workspaces Databricks — mais integrado, via Unity Catalog.</span></td></tr>
+</tbody>
+</table>
+<h3>Criando um Share e adicionando tabelas (provedor)</h3>
+<pre>%sql
+<span class="cm">-- Passo 1: Criar o Share</span>
+CREATE SHARE IF NOT EXISTS share_parceiro_logistica
+COMMENT &<span class="cm">#x27;Dados de pedidos compartilhados com a empresa parceira de logística&#x27;;</span>
+<span class="cm">-- Passo 2: Adicionar tabelas ao Share</span>
+<span class="cm">-- Adiciona a tabela completa</span>
+ALTER SHARE share_parceiro_logistica
+ADD TABLE vendas.pedidos;
+<span class="cm">-- Adiciona tabela com nome diferente para o destinatário</span>
+ALTER SHARE share_parceiro_logistica
+ADD TABLE vendas.pedidos
+AS logistica.pedidos_para_entrega;
+-- Adiciona apenas partições específicas (ex: só pedidos &<span class="cm">#x27;enviado&#x27;)</span>
+ALTER SHARE share_parceiro_logistica
+ADD TABLE vendas.pedidos
+PARTITION (status = &<span class="cm">#x27;enviado&#x27;);</span>
+<span class="cm">-- Adiciona um schema inteiro de uma vez</span>
+ALTER SHARE share_parceiro_logistica
+ADD SCHEMA catalogo_publico.dados_abertos;
+<span class="cm">-- Verifica o conteúdo do Share</span>
+SHOW ALL IN SHARE share_parceiro_logistica;</pre>
+<h3>Criando um Recipient e gerando o Activation Link</h3>
+<pre>%sql
+<span class="cm">-- Cria o Recipient (destinatário)</span>
+<span class="cm">-- Open Sharing: destinatário pode usar qualquer ferramenta</span>
+CREATE RECIPIENT IF NOT EXISTS recipient_parceiro_xyz
+COMMENT &<span class="cm">#x27;Acesso para empresa XYZ Logística&#x27;;</span>
+<span class="cm">-- O Activation Link é gerado automaticamente</span>
+<span class="cm">-- Execute para obter o link de ativação (válido por 24h por padrão)</span>
+DESCRIBE RECIPIENT recipient_parceiro_xyz;
+-- O campo &<span class="cm">#x27;activation_link&#x27; contém a URL para o destinatário</span>
+<span class="cm">-- Concede acesso do Recipient ao Share</span>
+GRANT SELECT ON SHARE share_parceiro_logistica
+TO RECIPIENT recipient_parceiro_xyz;
+<span class="cm">-- Verifica quais Recipients têm acesso ao Share</span>
+SHOW GRANTS ON SHARE share_parceiro_logistica;
+<span class="cm">-- Revoga acesso quando necessário</span>
+REVOKE SELECT ON SHARE share_parceiro_logistica
+FROM RECIPIENT recipient_parceiro_xyz;</pre>
+<h3>Consumindo dados compartilhados — lado do destinatário</h3>
+<p>Após receber o Activation Link, o destinatário faz a ativação e recebe um arquivo de credenciais (profile JSON). A partir daí, pode consumir os dados com qualquer ferramenta compatível:</p>
+<pre><span class="cm"># ── Opção 1: Consumindo com PySpark (Databricks ou qualquer Spark) ──</span>
+spark.conf.set(&<span class="cm">#x27;spark.databricks.delta.sharing.profile.path&#x27;,</span>
+&<span class="cm">#x27;/caminho/para/profile.json&#x27;)</span>
+<span class="cm"># Lê os dados compartilhados como um DataFrame normal</span>
+df = spark.read.format(&<span class="cm">#x27;deltaSharing&#x27;) \</span>
+.load(&<span class="cm">#x27;share_parceiro_logistica.logistica.pedidos_para_entrega&#x27;)</span>
+df.show(5)
+df.count()
+<span class="cm"># ── Opção 2: Consumindo com pandas (sem Spark) ──</span>
+from delta_sharing import SharingClient
+<span class="cm"># Carrega o profile de credenciais</span>
+client = SharingClient(&<span class="cm">#x27;/caminho/para/profile.json&#x27;)</span>
+<span class="cm"># Lista os Shares disponíveis</span>
+shares = client.list_shares()
+print(shares)
+<span class="cm"># Lista tabelas dentro de um Share</span>
+tables = client.list_all_tables()
+print(tables)
+<span class="cm"># Lê uma tabela como pandas DataFrame</span>
+import delta_sharing
+df_pandas = delta_sharing.load_as_pandas(
+&<span class="cm">#x27;/caminho/para/profile.json#share_parceiro_logistica.logistica.pedidos_para_entrega&#x27;</span>
+)
+print(df_pandas.head())</pre>
+<h3>Monitorando o acesso — auditoria</h3>
+<p>Uma das grandes vantagens do Delta Sharing é a rastreabilidade. O Unity Catalog registra cada acesso de cada Recipient, permitindo auditar quem acessou o quê e quando.</p>
+<pre>%sql
+<span class="cm">-- Histórico de acessos ao Share (requer Unity Catalog)</span>
+SELECT
+event_time,
+recipient_name,
+share_name,
+table_name,
+operation
+FROM system.access.delta_sharing_events
+WHERE share_name = &<span class="cm">#x27;share_parceiro_logistica&#x27;</span>
+ORDER BY event_time DESC
+LIMIT 100;
+<span class="cm">-- Status dos Recipients (ativo, revogado, nunca ativado)</span>
+SHOW RECIPIENTS;
+<span class="cm">-- Detalhes de um Recipient específico</span>
+DESCRIBE RECIPIENT recipient_parceiro_xyz;</pre>
+<h3>Delta Sharing entre Workspaces Databricks</h3>
+<p>Quando o destinatário também usa Databricks, o fluxo é ainda mais integrado — não é necessário gerenciar arquivos de credenciais manualmente. O destinatário adiciona o Share diretamente ao seu Unity Catalog como um &#x27;Foreign Catalog&#x27;.</p>
+<pre>%sql
+<span class="cm">-- No lado do DESTINATÁRIO (outro Workspace Databricks)</span>
+<span class="cm">-- Cria um Foreign Catalog apontando para o Share recebido</span>
+CREATE FOREIGN CATALOG IF NOT EXISTS dados_parceiro_logistica
+USING SHARE
+provedor.share_parceiro_logistica;
+<span class="cm">--  ^^^^^^^^^^ nome do provedor configurado no Unity Catalog do destinatário</span>
+<span class="cm">-- A partir daqui, as tabelas aparecem como tabelas locais normais</span>
+SELECT * FROM dados_parceiro_logistica.logistica.pedidos_para_entrega
+LIMIT 10;
+<span class="cm">-- Funciona com todos os recursos SQL normais</span>
+SELECT status, COUNT(*) AS total
+FROM dados_parceiro_logistica.logistica.pedidos_para_entrega
+GROUP BY status;</pre>
+<div class="infobox" style="background:#e8f4fd;border-color:#e8f4fd">
+<div class="infobox-title" style="color:#1a3a7c"><strong>Delta Sharing vs Replicação tradicional — resumo comparativo</strong></div>
+<div class="infobox-line">Replicação: dados copiados para o ambiente do destinatário.</div>
+<div class="infobox-line">  → Custo dobrado de storage, dados desatualizados entre sincronizações,</div>
+<div class="infobox-line">    risco de vazamento na transferência, sem controle pós-entrega.</div>
+<div class="infobox-line">Delta Sharing: dados acessados diretamente na fonte, sem cópia.</div>
+<div class="infobox-line">  → Sempre atualizado, custo zero de storage extra para o destinatário,</div>
+<div class="infobox-line">    transferência criptografada, revogação instantânea de acesso,</div>
+<div class="infobox-line">    auditoria completa de quem acessou o quê e quando.</div>
+<div class="infobox-line">    Funciona com qualquer ferramenta: Spark, pandas, Power BI, Tableau, R.</div>
+</div>
+<hr class="chapter-sep">
+<h1 id="captulo-12-processamento-em-streaming">Capítulo 12 — Processamento em Streaming</h1>
+<p>Streaming é o processamento de dados em tempo real ou quase real — à medida que chegam, em vez de esperar acumular um lote. O Databricks usa Structured Streaming, que usa a mesma API do Spark SQL para dados em tempo real e em batch.</p>
+<h2 id="121-structured-streaming-conceitos">12.1  Structured Streaming — conceitos</h2>
+<p>No Structured Streaming, um stream é como uma tabela que cresce infinitamente. A cada micro-lote (micro-batch), o Spark processa as novas linhas chegadas e atualiza o resultado. Isso é chamado de modelo de tabela incremental.</p>
+<div class="infobox" style="background:#e8f4fd;border-color:#e8f4fd">
+<div class="infobox-title" style="color:#1a3a7c"><strong>Trigger modes — quando processar?</strong></div>
+<div class="infobox-line">ProcessingTime(&#x27;5 seconds&#x27;): processa a cada N segundos (micro-batch padrão)</div>
+<div class="infobox-line">AvailableNow: processa tudo disponível e para (equivalente a batch incremental)</div>
+<div class="infobox-line">Once: processa um único micro-batch e para (legado, prefira AvailableNow)</div>
+<div class="infobox-line">Continuous(&#x27;1 second&#x27;): latência muito baixa (~ms), limitado em operações</div>
+</div>
+<h3>Lendo de Kafka</h3>
+<pre>df_stream = (
+spark.readStream
+.format(&<span class="cm">#x27;kafka&#x27;)</span>
+.option(&<span class="cm">#x27;kafka.bootstrap.servers&#x27;, &#x27;broker1:9092,broker2:9092&#x27;)</span>
+.option(&<span class="cm">#x27;subscribe&#x27;, &#x27;topico-pedidos&#x27;)</span>
+.option(&<span class="cm">#x27;startingOffsets&#x27;, &#x27;latest&#x27;)   # ou &#x27;earliest&#x27;</span>
+.option(&<span class="cm">#x27;kafka.security.protocol&#x27;, &#x27;SASL_SSL&#x27;)</span>
+.load()
+)
+<span class="cm"># O Kafka retorna os dados como bytes — decodifica e parseia o JSON</span>
+from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import *
+schema_pedido = StructType([
+StructField(&<span class="cm">#x27;id&#x27;,        LongType(),   True),</span>
+StructField(&<span class="cm">#x27;valor&#x27;,     DoubleType(), True),</span>
+StructField(&<span class="cm">#x27;cliente_id&#x27;, LongType(),  True),</span>
+StructField(&<span class="cm">#x27;criado_em&#x27;, StringType(), True),</span>
+])
+df_pedidos_stream = (
+df_stream
+.select(from_json(col(&<span class="cm">#x27;value&#x27;).cast(&#x27;string&#x27;), schema_pedido).alias(&#x27;data&#x27;))</span>
+.select(&<span class="cm">#x27;data.*&#x27;)</span>
+)</pre>
+<h3>Agregações com janelas de tempo</h3>
+<pre>from pyspark.sql.functions import window
+<span class="cm"># Conta pedidos por janela de 5 minutos</span>
+df_agg = (
+df_pedidos_stream
+.withColumn(&<span class="cm">#x27;criado_em&#x27;, to_timestamp(&#x27;criado_em&#x27;))</span>
+.groupBy(
+window(&<span class="cm">#x27;criado_em&#x27;, &#x27;5 minutes&#x27;),  # janela de 5 min</span>
+&<span class="cm">#x27;status&#x27;</span>
+)
+.agg(
+count(&<span class="cm">#x27;*&#x27;).alias(&#x27;total&#x27;),</span>
+sum(&<span class="cm">#x27;valor&#x27;).alias(&#x27;receita&#x27;)</span>
+)
+)
+<span class="cm"># Escrevendo resultado em Delta (para dashboard em tempo real)</span>
+query = (
+df_agg.writeStream
+.format(&<span class="cm">#x27;delta&#x27;)</span>
+.outputMode(&<span class="cm">#x27;complete&#x27;)   # ou &#x27;append&#x27;, &#x27;update&#x27;</span>
+.option(&<span class="cm">#x27;checkpointLocation&#x27;, &#x27;/mnt/checkpoints/pedidos_stream/&#x27;)</span>
+.trigger(processingTime=&<span class="cm">#x27;10 seconds&#x27;)</span>
+.table(&<span class="cm">#x27;silver.pedidos_stream_agg&#x27;)</span>
+)</pre>
+<hr class="chapter-sep">
+<h1 id="captulo-13-boas-prticas-e-prximos-passos">Capítulo 13 — Boas Práticas e Próximos Passos</h1>
+<p>Este capítulo consolida as boas práticas mais importantes que separam um projeto Databricks amador de um profissional e aponta os caminhos para continuar o aprendizado.</p>
+<h2 id="131-boas-prticas-de-desenvolvimento">13.1  Boas práticas de desenvolvimento</h2>
+<h3>Notebooks</h3>
+<ul class="content-list">
+<li>Mantenha notebooks focados em uma única responsabilidade (ingestão, transformação ou análise)</li>
+<li>Use comentários Markdown (células com %md) para documentar o propósito de cada seção</li>
+<li>Evite hardcode de paths e parâmetros — use widgets ou parâmetros de Job</li>
+<li>Versione notebooks no Git (Databricks tem integração nativa com GitHub, GitLab, Bitbucket)</li>
+</ul>
+<pre><span class="cm"># Usando widgets para parametrização</span>
+dbutils.widgets.text(&<span class="cm">#x27;data_inicio&#x27;, &#x27;2024-01-01&#x27;, &#x27;Data início:&#x27;)</span>
+dbutils.widgets.dropdown(&<span class="cm">#x27;ambiente&#x27;, &#x27;dev&#x27;, [&#x27;dev&#x27;, &#x27;staging&#x27;, &#x27;prod&#x27;])</span>
+data_inicio = dbutils.widgets.get(&<span class="cm">#x27;data_inicio&#x27;)</span>
+ambiente    = dbutils.widgets.get(&<span class="cm">#x27;ambiente&#x27;)</span>
+tabela = f&<span class="cm">#x27;{ambiente}.vendas.pedidos&#x27;</span>
+df = spark.table(tabela).filter(f&<span class="cm">#x27;data &gt;= &quot;{data_inicio}&quot;&#x27;)</span></pre>
+<h3>Desempenho</h3>
+<ul class="content-list">
+<li>Sempre filtre antes de fazer join — reduza o volume de dados o mais cedo possível</li>
+<li>Prefira Delta Lake a Parquet puro — OPTIMIZE e Z-ORDER compensam o overhead</li>
+<li>Use AQE (Adaptive Query Execution) — está habilitado por padrão no DBR 7.3+</li>
+<li>Monitore o Spark UI para identificar stages lentos e skew de dados</li>
+<li>Evite collect() e toPandas() em DataFrames grandes — traz tudo para o driver</li>
+</ul>
+<h3>Segurança</h3>
+<ul class="content-list">
+<li>Nunca coloque credenciais em código — sempre use Databricks Secrets</li>
+<li>Use Unity Catalog para controle granular de acesso a dados</li>
+<li>Revise permissões regularmente — siga o princípio do mínimo privilégio</li>
+<li>Ative auditoria (Audit Logs) para rastrear quem acessou o quê e quando</li>
+</ul>
+<h2 id="132-roteiro-de-estudo-recomendado">13.2  Roteiro de estudo recomendado</h2>
+<p>Para quem está começando do zero, este é o roteiro ideal:</p>
+<ul class="content-list">
+<li>Semanas 1-2: Fundamentos — Capítulos 1, 2 e 3 deste guia</li>
+<li>Semanas 3-4: Spark em prática — Capítulo 4 completo, com exercícios</li>
+<li>Semanas 5-6: Delta Lake — Capítulo 5, criar pipelines Bronze/Silver/Gold simples</li>
+<li>Semanas 7-8: SQL analítico — Capítulo 6, explorar o editor SQL e criar um dashboard</li>
+<li>Semana 9: Pipelines avançados — DLT, Auto Loader e Lakeflow Jobs (Capítulo 7)</li>
+<li>Semana 10: Asset Bundles e Git — Capítulo 8, versionar um projeto completo</li>
+<li>Semana 11: Machine Learning — Capítulo 9, usar AutoML em um dataset público</li>
+<li>Semana 12: Performance e Segurança — Capítulos 10 e 11</li>
+<li>Semana 13: Streaming e boas práticas — Capítulos 12 e 13</li>
+<li>Semana 14: Certificação — Databricks Certified Data Engineer Associate</li>
+</ul>
+<h2 id="133-certificaes-databricks">13.3  Certificações Databricks</h2>
+<table class="data-table">
+<thead><tr><th><strong>Certificação</strong></th><th>Nível</th></tr></thead>
+<tbody>
+<tr><td><strong>Databricks Certified Associate Developer for Apache Spark</strong></td><td><span style="color:#333333">Iniciante — Python ou Scala</span></td></tr>
+<tr><td><strong>Databricks Certified Data Engineer Associate</strong></td><td><span style="color:#333333">Iniciante — Delta Lake, Jobs, DLT</span></td></tr>
+<tr><td><strong>Databricks Certified Data Engineer Professional</strong></td><td><span style="color:#333333">Avançado — todos os tópicos</span></td></tr>
+<tr><td><strong>Databricks Certified Machine Learning Associate</strong></td><td><span style="color:#333333">Iniciante — MLflow, AutoML</span></td></tr>
+<tr><td><strong>Databricks Certified Machine Learning Professional</strong></td><td><span style="color:#333333">Avançado — MLOps, deployment</span></td></tr>
+<tr><td><strong>Databricks Certified Data Analyst Associate</strong></td><td><span style="color:#333333">Iniciante — SQL, Dashboards</span></td></tr>
+</tbody>
+</table>
+<h2 id="134-recursos-para-continuar-aprendendo">13.4  Recursos para continuar aprendendo</h2>
+<ul class="content-list">
+<li>Documentação oficial: docs.databricks.com — a fonte mais completa e atualizada</li>
+<li>Databricks Academy: academy.databricks.com — cursos gratuitos e pagos</li>
+<li>Databricks Community: community.databricks.com — fórum de dúvidas</li>
+<li>The Big Book of Data Engineering (gratuito no site Databricks)</li>
+<li>GitHub Databricks: github.com/databricks — exemplos e projetos open-source</li>
+<li>YouTube Databricks: canal oficial com demos e webinars</li>
+</ul>
+<p><strong>Bons estudos e bons dados! 🚀</strong></p>
+<hr class="chapter-sep" style="opacity:.15;margin-top:60px">
+</div><!-- end .page -->
+
+<footer style="text-align:center;padding:28px 16px 32px;font-size:12px;color:#999;font-family:Arial,Helvetica,sans-serif;letter-spacing:.02em;margin-top:8px;">
+  © 2026 — <strong style="color:#FF3621;font-weight:600;">Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.
+</footer>
+
+</body>
+</html>
