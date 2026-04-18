@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Grammar — C1/C2 Advanced | by Franklin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f4ef;
+  --surface: #ffffff;
+  --card: #fdfcfa;
+  --border: #e2ddd6;
+  --border2: #ccc8c0;
+  --accent: #3d1f6e;        /* deep violet — C1/C2 */
+  --accent2: #2e7d5a;
+  --accent3: #b06010;
+  --text: #1a1814;
+  --muted: #8a857d;
+  --correct: #2e7d5a;
+  --wrong: #b83030;
+  --correct-bg: #edf7f2;
+  --wrong-bg: #fdf0ee;
+  --tag-bg: #1a1814;
+  --tag-text: #f7f4ef;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 2rem 3rem 1.8rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 3px solid var(--accent);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+header .header-left h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #fff;
+}
+header .header-left h1 em { font-style: italic; color: #d4b8ff; }
+.header-meta { margin-top: 0.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.header-author { font-size: 0.8rem; color: #9ca0b0; font-weight: 300; letter-spacing: 0.03em; }
+.header-author span { color: #d4b8ff; font-weight: 500; }
+.header-right { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.level-badge {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 5px 14px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-family: 'Outfit', sans-serif;
+}
+.print-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.85);
+  border-radius: 3px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+}
+.print-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); color: #fff; }
+.print-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── LAYOUT ── */
+.layout { display: grid; grid-template-columns: 270px 1fr; position: relative; z-index: 1; }
+
+/* ── SIDEBAR ── */
+nav {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 2rem 0;
+  position: sticky;
+  top: 103px;
+  height: calc(100vh - 103px);
+  overflow-y: auto;
+}
+nav::-webkit-scrollbar { width: 4px; }
+nav::-webkit-scrollbar-track { background: transparent; }
+nav::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.nav-section-label {
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); padding: 0 1.8rem; margin-bottom: 0.5rem; font-weight: 500;
+}
+nav ul { list-style: none; margin-bottom: 1.5rem; }
+nav ul li a {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.5rem 1.8rem; color: var(--muted);
+  text-decoration: none; font-size: 0.86rem;
+  transition: all 0.15s; border-left: 3px solid transparent; line-height: 1.3;
+}
+nav ul li a:hover, nav ul li a.active {
+  color: var(--accent); border-left-color: var(--accent); background: rgba(61,31,110,0.04);
+}
+nav ul li a.done { color: var(--correct); }
+nav ul li a.done:hover, nav ul li a.done.active {
+  border-left-color: var(--correct); background: rgba(46,125,90,0.04);
+}
+.nav-num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; min-width: 22px; opacity: 0.5; }
+nav ul li a.done .nav-num { opacity: 1; }
+
+/* ── MAIN ── */
+main { padding: 3.5rem 4.5rem; max-width: 960px; }
+
+/* ── TOPIC SECTION ── */
+.topic {
+  margin-bottom: 6rem; padding-bottom: 5rem;
+  border-bottom: 1px solid var(--border);
+  opacity: 0; transform: translateY(16px);
+  animation: rise 0.5s ease forwards;
+}
+.topic:last-child { border-bottom: none; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.topic-eyebrow { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+.topic-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  letter-spacing: 0.1em; color: #fff; background: var(--tag-bg);
+  padding: 3px 10px; border-radius: 2px;
+}
+.topic-level { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.05em; }
+.topic h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 700; line-height: 1.15; color: var(--text); margin-bottom: 0.3rem;
+}
+.topic h2 em { font-style: italic; color: var(--accent); }
+.topic-subtitle { font-size: 0.88rem; color: var(--muted); margin-bottom: 2rem; font-weight: 300; }
+
+/* ── GRAMMAR BOXES ── */
+.grammar-box {
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 1.8rem 2.2rem; margin-bottom: 1.2rem;
+  background: var(--card); position: relative;
+}
+.grammar-box::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--accent); border-radius: 4px 0 0 4px;
+}
+.grammar-box.green::before { background: var(--accent2); }
+.grammar-box.amber::before { background: var(--accent3); }
+.grammar-box.red::before { background: var(--wrong); }
+.grammar-box h3 {
+  font-family: 'Playfair Display', serif; font-size: 0.95rem;
+  font-weight: 700; font-style: italic; color: var(--accent); margin-bottom: 1rem;
+}
+.grammar-box.green h3 { color: var(--accent2); }
+.grammar-box.amber h3 { color: var(--accent3); }
+.grammar-box.red h3 { color: var(--wrong); }
+.grammar-box p, .grammar-box li { font-size: 0.92rem; color: #3a3630; margin-bottom: 0.45rem; }
+.grammar-box ul { padding-left: 1.3rem; }
+.grammar-box li { margin-bottom: 0.35rem; }
+.rule {
+  background: #f2eef9; border: 1px solid #d8c8f0;
+  border-radius: 4px; padding: 0.75rem 1.2rem; margin: 0.8rem 0;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.84rem;
+  color: var(--accent); line-height: 1.6;
+}
+.grammar-box.green .rule { background: #edf7f2; border-color: #b8dece; color: var(--accent2); }
+.grammar-box.amber .rule { background: #fef8ee; border-color: #f0d8b0; color: var(--accent3); }
+.grammar-box.red .rule { background: #fdf0ee; border-color: #f0c8c0; color: var(--wrong); }
+.example-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 0.8rem; }
+.ex-card { padding: 0.7rem 1rem; border-radius: 4px; font-size: 0.87rem; }
+.ex-card.en { background: #f0ede8; border: 1px solid var(--border); color: var(--text); }
+.ex-card.pt { background: #fef8f0; border: 1px solid #f0e0c8; color: #7a4a10; }
+.ex-card .ex-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 0.2rem; font-weight: 500;
+}
+.contrast-table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.87rem; }
+.contrast-table th {
+  background: var(--tag-bg); color: var(--tag-text);
+  padding: 0.45rem 1rem; text-align: left; font-size: 0.76rem;
+  letter-spacing: 0.05em; font-weight: 500;
+}
+.contrast-table td { padding: 0.45rem 1rem; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+.contrast-table tr:nth-child(even) td { background: #f7f4ef; }
+.contrast-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 0.81rem; color: var(--accent); }
+
+/* ── EXERCISES ── */
+.exercises-section { margin-top: 2.5rem; }
+.exercises-section > h3 {
+  font-family: 'Playfair Display', serif; font-size: 1.15rem;
+  font-weight: 700; color: var(--text); margin-bottom: 1.5rem;
+  padding-bottom: 0.7rem; border-bottom: 2px solid var(--tag-bg);
+}
+.exercise {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1.4rem 1.7rem; margin-bottom: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.exercise:hover { border-color: var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.exercise.correct { border-color: var(--correct); background: var(--correct-bg); }
+.exercise.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+.ex-num { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.05em; }
+.ex-prompt { font-size: 0.94rem; margin-bottom: 1rem; color: var(--text); line-height: 1.6; }
+.ex-prompt strong { color: var(--accent); font-weight: 600; }
+.ex-prompt em { color: var(--muted); font-size: 0.84rem; }
+.blank-input {
+  background: var(--bg); border: 1px solid var(--border2); border-radius: 3px;
+  padding: 0.5rem 1rem; color: var(--text);
+  font-family: 'JetBrains Mono', monospace; font-size: 0.87rem;
+  width: 100%; max-width: 400px; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.blank-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(61,31,110,0.1); }
+.blank-input.correct-input { border-color: var(--correct); background: var(--correct-bg); }
+.blank-input.wrong-input { border-color: var(--wrong); background: var(--wrong-bg); }
+.blank-input.wide { max-width: 100%; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.option-btn {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 3px;
+  padding: 0.6rem 1rem; color: var(--muted); cursor: pointer;
+  font-size: 0.88rem; text-align: left; font-family: 'Outfit', sans-serif;
+  transition: all 0.15s; display: flex; align-items: flex-start; gap: 0.7rem; line-height: 1.4;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); background: #f2eef9; }
+.opt-letter {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  border: 1px solid var(--border); border-radius: 2px; padding: 1px 5px;
+  min-width: 22px; text-align: center; margin-top: 1px; flex-shrink: 0; color: var(--muted);
+}
+.option-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(61,31,110,0.05); }
+.option-btn.selected .opt-letter { border-color: var(--accent); color: var(--accent); }
+.option-btn.correct-opt { border-color: var(--correct); color: var(--correct); background: var(--correct-bg); }
+.option-btn.wrong-opt { border-color: var(--wrong); color: var(--wrong); background: var(--wrong-bg); }
+.reorder-words { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
+.word-chip {
+  background: #f0ede8; border: 1px solid var(--border2); border-radius: 3px;
+  padding: 4px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+  cursor: pointer; user-select: none; transition: all 0.15s; color: var(--text);
+}
+.word-chip:hover:not(.used) { border-color: var(--accent); color: var(--accent); background: rgba(61,31,110,0.05); }
+.word-chip.used { opacity: 0.25; cursor: default; }
+.reorder-answer {
+  min-height: 44px; border: 1px dashed var(--border2); border-radius: 3px;
+  padding: 0.5rem 0.8rem; display: flex; flex-wrap: wrap; gap: 0.4rem;
+  margin-bottom: 0.5rem; cursor: pointer; background: #fdfcfa;
+}
+.reorder-answer .word-chip:hover { border-color: var(--wrong); color: var(--wrong); }
+.reorder-placeholder { color: var(--muted); font-size: 0.82rem; display: flex; align-items: center; font-style: italic; }
+.feedback {
+  margin-top: 0.8rem; font-size: 0.85rem; padding: 0.75rem 1.1rem;
+  border-radius: 3px; display: none; line-height: 1.6; border-left: 3px solid;
+}
+.feedback.show { display: block; }
+.feedback.ok { background: var(--correct-bg); border-color: var(--correct); color: #155036; }
+.feedback.err { background: var(--wrong-bg); border-color: var(--wrong); color: #7a1f1f; }
+.feedback .correct-answer { font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; color: var(--correct); font-weight: 500; }
+.check-btn {
+  margin-top: 2rem; background: var(--tag-bg); color: var(--tag-text);
+  border: none; border-radius: 3px; padding: 0.82rem 2.2rem;
+  font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  font-family: 'Outfit', sans-serif; letter-spacing: 0.03em;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.check-btn:hover { background: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(61,31,110,0.35); }
+.check-btn:active { transform: none; }
+.check-btn:disabled { background: var(--border2); color: var(--muted); cursor: default; transform: none; box-shadow: none; }
+.score-bar { margin-top: 1.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1.4rem 1.8rem; display: none; }
+.score-bar.show { display: block; }
+.score-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; }
+.score-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 1rem; }
+.score-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.9s cubic-bezier(0.34,1.56,0.64,1); }
+.score-text { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; }
+.score-text .pct { color: var(--accent); }
+.score-msg { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; font-weight: 300; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  background: var(--tag-bg); color: rgba(255,255,255,0.45);
+  text-align: center; padding: 1.6rem 2rem; font-size: 0.8rem;
+  font-weight: 300; letter-spacing: 0.03em; border-top: 3px solid var(--accent);
+}
+footer strong { color: rgba(212,184,255,0.8); font-weight: 500; }
+
+/* ── PRINT ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body::before { display: none; }
+  header .print-btn, nav, .check-btn, .score-bar, #print-tip { display: none !important; }
+  header { position: static; break-inside: avoid; padding: 1.2rem 2rem 1rem; }
+  .layout { grid-template-columns: 1fr; }
+  main { padding: 1.5rem 2rem; max-width: 100%; }
+  .topic { opacity: 1 !important; transform: none !important; animation: none !important; page-break-before: always; break-before: page; padding-bottom: 2rem; margin-bottom: 2rem; }
+  .topic:first-child { page-break-before: avoid; break-before: avoid; }
+  .grammar-box, .exercise { break-inside: avoid; }
+  .blank-input { border: none; border-bottom: 1px solid #aaa; border-radius: 0; background: transparent; width: 220px; }
+  .blank-input.wide { width: 100%; }
+  .blank-input:disabled { opacity: 1; }
+  .option-btn { border: 1px solid #ccc; }
+  .option-btn.selected, .option-btn.correct-opt, .option-btn.wrong-opt { background: transparent !important; color: var(--text) !important; border-color: #ccc !important; }
+  .reorder-words, .reorder-answer { border-color: #ccc; }
+  .word-chip { background: #f5f5f5; border-color: #ccc; }
+  .feedback { display: none !important; }
+  footer { position: static; break-inside: avoid; margin-top: 2rem; }
+  @page { margin: 1.5cm 2cm; }
+}
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  nav { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  main { padding: 2rem 1.5rem; }
+  .example-grid, .options-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>English <em>Grammar</em></h1>
+    <div class="header-meta">
+      <span class="header-author">by <span>Franklin</span></span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="level-badge">C1 – C2</span>
+    <button class="print-btn" onclick="handlePrint()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      Print / Save PDF
+    </button>
+  </div>
+</header>
+
+<div id="print-tip" style="display:none; background:#f2eef9; border-bottom:1px solid #d8c8f0; padding:0.7rem 2rem; font-size:0.82rem; color:#3d1f6e; position:sticky; top:103px; z-index:99; text-align:center;">
+  💡 <strong>To save as PDF:</strong> in the print dialog, choose <em>"Save as PDF"</em> as destination. Use <em>Portrait</em> orientation for best results.
+  <button onclick="document.getElementById('print-tip').style.display='none'" style="margin-left:1rem;background:none;border:none;cursor:pointer;color:#3d1f6e;font-weight:600;font-size:0.85rem;">✕</button>
+</div>
+
+<div class="layout">
+<nav>
+  <div class="nav-section-label">Topics</div>
+  <ul id="nav-list">
+    <li><a href="#t1"><span class="nav-num">01</span> Inversion</a></li>
+    <li><a href="#t2"><span class="nav-num">02</span> Subjunctive Mood</a></li>
+    <li><a href="#t3"><span class="nav-num">03</span> Cleft Sentences</a></li>
+    <li><a href="#t4"><span class="nav-num">04</span> Ellipsis &amp; Substitution</a></li>
+    <li><a href="#t5"><span class="nav-num">05</span> Advanced Modals</a></li>
+    <li><a href="#t6"><span class="nav-num">06</span> Participle Clauses</a></li>
+    <li><a href="#t7"><span class="nav-num">07</span> Mixed Conditionals</a></li>
+    <li><a href="#t8"><span class="nav-num">08</span> Nominalisation</a></li>
+    <li><a href="#t9"><span class="nav-num">09</span> Advanced Passive</a></li>
+    <li><a href="#t10"><span class="nav-num">10</span> Cohesion &amp; Register</a></li>
+    <li><a href="#t11"><span class="nav-num">11</span> Idiomatic Language</a></li>
+    <li><a href="#t12"><span class="nav-num">12</span> Academic Writing</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ══════════ T1: INVERSION ══════════ -->
+<section class="topic" id="t1" style="animation-delay:0.05s">
+  <div class="topic-eyebrow"><span class="topic-tag">01</span><span class="topic-level">C1 Core</span></div>
+  <h2>Formal <em>Inversion</em></h2>
+  <p class="topic-subtitle">Fronting negative adverbials and conditionals for emphasis</p>
+
+  <div class="grammar-box">
+    <h3>Structure & Triggers</h3>
+    <div class="rule">Negative/restrictive adverbial + auxiliary + subject + main verb</div>
+    <ul>
+      <li><strong>Never, Rarely, Seldom, Hardly, Scarcely, No sooner:</strong> invert after these.</li>
+      <li><strong>Not only… but also, Not until, Only when, Only then:</strong> trigger inversion.</li>
+      <li><strong>Conditional inversion:</strong> drop "if" → <em>Had I known / Should you need / Were it not for</em></li>
+      <li><strong>So/Such… that:</strong> fronted for emphasis → <em>So great was his fear…</em></li>
+    </ul>
+  </div>
+
+  <div class="grammar-box green">
+    <h3>Examples</h3>
+    <div class="example-grid">
+      <div class="ex-card en"><div class="ex-label">Standard</div>I had never seen such a sight.</div>
+      <div class="ex-card en"><div class="ex-label">Inverted</div>Never had I seen such a sight.</div>
+    </div>
+    <div class="example-grid">
+      <div class="ex-card en"><div class="ex-label">Standard</div>If I had known, I would have helped.</div>
+      <div class="ex-card en"><div class="ex-label">Inverted</div>Had I known, I would have helped.</div>
+    </div>
+    <div class="example-grid">
+      <div class="ex-card en"><div class="ex-label">Standard</div>Not only did she win, but she also broke the record.</div>
+      <div class="ex-card pt"><div class="ex-label">Note</div>After "not only", auxiliary precedes subject in both clauses.</div>
+    </div>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Inversion</h3>
+
+    <div class="exercise" data-id="t1e1" data-type="fill" data-answer="never had i seen|never had I seen">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">Rewrite using inversion: "I had never seen anything so beautiful." → _____ anything so beautiful.</div>
+      <input class="blank-input wide" placeholder="Never had I…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e2" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">_____ she arrived than the argument broke out.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Hardly had</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> No sooner had</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Rarely has</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Not until had</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e3" data-type="fill" data-answer="had I known|had i known">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">Rewrite without "if": "If I had known the truth, I would have acted differently." → _____ the truth, I would have acted differently.</div>
+      <input class="blank-input wide" placeholder="Had I…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e4" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">Not only _____ the deadline, but she also exceeded all targets.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> she met</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> she has met</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> did she meet</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> she did meet</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e5" data-type="fill" data-answer="seldom does he|seldom does He">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">Rewrite: "He seldom complains about anything." → _____ complain about anything.</div>
+      <input class="blank-input wide" placeholder="Seldom does he…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e6" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">_____ it not been for her quick thinking, the accident would have been catastrophic.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Were</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Had</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Should</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Did</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e7" data-type="reorder" data-answer="only then did we realise our mistake">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">Put in order: <strong>only / did / realise / then / we / our / mistake</strong></div>
+      <div class="reorder-words" data-words="only,then,did,we,realise,our,mistake"></div>
+      <div class="reorder-answer"><span class="reorder-placeholder">Click words above…</span></div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e8" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">So _____ the situation that the CEO had to resign.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> serious the situation was</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> the situation serious was</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> the situation was serious</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> serious was the situation</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e9" data-type="fill" data-answer="should you need|should you require">
+      <div class="ex-num">Exercise 09</div>
+      <div class="ex-prompt">Rewrite formally without "if": "If you need further assistance, please contact us." → _____ further assistance, please contact us.</div>
+      <input class="blank-input wide" placeholder="Should you…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t1e10" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 10</div>
+      <div class="ex-prompt">Rarely _____ such dedication in a student.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> I have seen</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> have I seen</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> I saw</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> did I see</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t1')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t1"></div>
+  </div>
+</section>
+
+<!-- ══════════ T2: SUBJUNCTIVE ══════════ -->
+<section class="topic" id="t2" style="animation-delay:0.08s">
+  <div class="topic-eyebrow"><span class="topic-tag">02</span><span class="topic-level">C1 Core</span></div>
+  <h2>The <em>Subjunctive</em> Mood</h2>
+  <p class="topic-subtitle">Formal mandative, formulaic and were-subjunctive</p>
+
+  <div class="grammar-box">
+    <h3>Three Types</h3>
+    <ul>
+      <li><strong>Mandative (formal):</strong> after verbs of demand/suggestion + <em>that</em> → base verb for all persons.<br><em>It is essential that every student <u>be</u> present. / We insisted that he <u>leave</u> immediately.</em></li>
+      <li><strong>Were-subjunctive:</strong> hypothetical conditions → <em>If I <u>were</u> you… / Were it possible…</em></li>
+      <li><strong>Formulaic:</strong> fixed expressions → <em>God save the King. Be that as it may. Long live democracy. So be it.</em></li>
+    </ul>
+    <div class="rule">Mandative verbs: demand, insist, recommend, suggest, require, propose, request, urge, move, ask</div>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Subjunctive</h3>
+
+    <div class="exercise" data-id="t2e1" data-type="fill" data-answer="be">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">It is crucial that every participant _____ informed before the vote. <em>(mandative subjunctive)</em></div>
+      <input class="blank-input" placeholder="base verb form…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">The committee insisted that the report _____ rewritten from scratch.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> was</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> is</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> be</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> were</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e3" data-type="fill" data-answer="were">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">If she _____ more experienced, she would handle the pressure better. <em>(were-subjunctive)</em></div>
+      <input class="blank-input" placeholder="were / was">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e4" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">The judge recommended that the defendant _____ released on bail.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> is</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> be</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> was</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> should</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e5" data-type="fill" data-answer="save">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">"God _____ the King!" <em>(formulaic subjunctive)</em></div>
+      <input class="blank-input" placeholder="base verb…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e6" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">It is imperative that the data _____ backed up daily.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> be</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> is</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> are</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> was</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e7" data-type="fill" data-answer="not resign|not be required to resign">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">The board proposed that the director _____ over the scandal. <em>(negative mandative: not resign)</em></div>
+      <input class="blank-input wide" placeholder="not + base verb…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e8" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">"_____ that as it may, we still need to proceed with the plan."</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Is</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Was</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Being</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Be</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e9" data-type="fill" data-answer="attend">
+      <div class="ex-num">Exercise 09</div>
+      <div class="ex-prompt">The protocol requires that each delegate _____ the opening ceremony in person.</div>
+      <input class="blank-input" placeholder="base verb…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t2e10" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 10</div>
+      <div class="ex-prompt">We urged that immediate action _____ taken to address the crisis.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> is</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> was</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> be</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> being</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t2')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t2"></div>
+  </div>
+</section>
+
+<!-- ══════════ T3: CLEFT SENTENCES ══════════ -->
+<section class="topic" id="t3" style="animation-delay:0.11s">
+  <div class="topic-eyebrow"><span class="topic-tag">03</span><span class="topic-level">C1 Core</span></div>
+  <h2><em>Cleft</em> Sentences</h2>
+  <p class="topic-subtitle">It-clefts, wh-clefts and inverted wh-clefts for focus and emphasis</p>
+
+  <div class="grammar-box">
+    <h3>Types of Cleft Sentences</h3>
+    <table class="contrast-table">
+      <tr><th>Type</th><th>Structure</th><th>Example</th></tr>
+      <tr><td>It-cleft</td><td>It is/was + focus + that/who + rest</td><td>It was <em>John</em> who called the police.</td></tr>
+      <tr><td>Wh-cleft</td><td>What + clause + is/was + focus</td><td>What she needs is <em>more time</em>.</td></tr>
+      <tr><td>Inverted wh-cleft</td><td>Focus + is/was + what + clause</td><td><em>More time</em> is what she needs.</td></tr>
+      <tr><td>All-cleft</td><td>All + clause + is/was + focus</td><td>All I want is <em>the truth</em>.</td></tr>
+    </table>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Cleft Sentences</h3>
+
+    <div class="exercise" data-id="t3e1" data-type="fill" data-answer="it was the lack of funding that|it was lack of funding that">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">Rewrite to focus on "the lack of funding": "The lack of funding caused the project to fail." → _____ caused the project to fail.</div>
+      <input class="blank-input wide" placeholder="It was… that…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e2" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">_____ he said that upset her, not how he said it.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> That what</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> It was what</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> What it was</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> It is that</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e3" data-type="fill" data-answer="what he needs is more confidence|what he needs is confidence">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">Rewrite as a wh-cleft: "He needs more confidence." → _____.</div>
+      <input class="blank-input wide" placeholder="What he…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e4" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">It was _____ the contract, not the financial director.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> the CEO which signed</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> the CEO that sign</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> the CEO who signed</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> the CEO whom signed</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e5" data-type="fill" data-answer="all i want is the truth|all i want is truth">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">Rewrite as an all-cleft: "I just want the truth." → _____.</div>
+      <input class="blank-input wide" placeholder="All I…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e6" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">_____ I find most challenging is maintaining a work-life balance.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> What</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> It is that</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Which</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> That</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e7" data-type="reorder" data-answer="it was in paris that they first met">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">Put in order: <strong>it / in Paris / that / was / they / first / met</strong></div>
+      <div class="reorder-words" data-words="it,was,in,Paris,that,they,first,met"></div>
+      <div class="reorder-answer"><span class="reorder-placeholder">Click words above…</span></div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t3e8" data-type="fill" data-answer="a better salary is what he is looking for|a better salary is what he wants">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">Rewrite as an inverted wh-cleft: "What he is looking for is a better salary." → _____.</div>
+      <input class="blank-input wide" placeholder="A better salary is what…">
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t3')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t3"></div>
+  </div>
+</section>
+
+<!-- ══════════ T4: ELLIPSIS & SUBSTITUTION ══════════ -->
+<section class="topic" id="t4" style="animation-delay:0.14s">
+  <div class="topic-eyebrow"><span class="topic-tag">04</span><span class="topic-level">C1–C2</span></div>
+  <h2>Ellipsis &amp; <em>Substitution</em></h2>
+  <p class="topic-subtitle">Omitting and replacing elements for conciseness and cohesion</p>
+
+  <div class="grammar-box">
+    <h3>Key Concepts</h3>
+    <ul>
+      <li><strong>Ellipsis:</strong> omitting recoverable words → <em>"Can you drive?" "I can [drive]."</em></li>
+      <li><strong>Auxiliary ellipsis:</strong> <em>She works harder than he does [work hard].</em></li>
+      <li><strong>So/Not substitution:</strong> <em>"Will it rain?" "I hope so / I hope not."</em></li>
+      <li><strong>Do so:</strong> substitutes for a full verb phrase → <em>He resigned, and his deputy did so too.</em></li>
+      <li><strong>One/ones:</strong> noun substitution → <em>I prefer the red one to the blue ones.</em></li>
+    </ul>
+    <div class="rule">Ellipsis removes; substitution replaces. Both avoid unnecessary repetition.</div>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Ellipsis & Substitution</h3>
+
+    <div class="exercise" data-id="t4e1" data-type="fill" data-answer="so">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">"Is the meeting still on?" — "I believe _____." <em>(substitution for a positive clause)</em></div>
+      <input class="blank-input" placeholder="so / not">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">The board voted to restructure, and the CEO _____ the following week.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> did it</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> did that</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> did so</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> made so</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e3" data-type="fill" data-answer="not">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">"Will there be any delays?" — "I sincerely hope _____." <em>(negative substitution)</em></div>
+      <input class="blank-input" placeholder="so / not">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e4" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">She speaks French far more fluently than he _____.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> speaks French</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> does</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> do</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> is</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e5" data-type="fill" data-answer="ones">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">These regulations are far stricter than the _____ introduced last year. <em>(noun substitution)</em></div>
+      <input class="blank-input" placeholder="one / ones">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e6" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">"Should we postpone the launch?" — "The marketing team thinks _____."</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> it</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> that</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> this</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> so</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e7" data-type="fill" data-answer="do so">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">If you intend to file a formal complaint, please _____ within 14 days. <em>(verb phrase substitution)</em></div>
+      <input class="blank-input" placeholder="do so / do it / do">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t4e8" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">"Has anyone responded to the proposal?" — "A few colleagues have _____."  <em>(ellipsis of verb phrase)</em></div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> [correct — no addition needed]</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> have responded to it</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> have done it</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> responded so</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t4')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t4"></div>
+  </div>
+</section>
+
+<!-- ══════════ T5: ADVANCED MODALS ══════════ -->
+<section class="topic" id="t5" style="animation-delay:0.17s">
+  <div class="topic-eyebrow"><span class="topic-tag">05</span><span class="topic-level">C1–C2</span></div>
+  <h2>Advanced <em>Modal</em> Structures</h2>
+  <p class="topic-subtitle">Perfect modals, semi-modals and nuanced deduction</p>
+
+  <div class="grammar-box">
+    <h3>Perfect Modal Reference</h3>
+    <table class="contrast-table">
+      <tr><th>Structure</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>must have + pp</td><td>Certain past deduction (positive)</td><td>She must have left already.</td></tr>
+      <tr><td>can't/couldn't have + pp</td><td>Certain past deduction (impossible)</td><td>He can't have done it — he was abroad.</td></tr>
+      <tr><td>might/may/could have + pp</td><td>Uncertain past possibility</td><td>They might have misunderstood.</td></tr>
+      <tr><td>should have + pp</td><td>Past unfulfilled expectation / criticism</td><td>You should have called ahead.</td></tr>
+      <tr><td>needn't have + pp</td><td>Unnecessary past action (but it happened)</td><td>You needn't have worried.</td></tr>
+      <tr><td>would have + pp</td><td>Unreal past result</td><td>I would have helped had I known.</td></tr>
+    </table>
+  </div>
+
+  <div class="grammar-box amber">
+    <h3>Semi-modals at C1+</h3>
+    <ul>
+      <li><strong>be bound to:</strong> certainty → <em>This is bound to cause problems.</em></li>
+      <li><strong>be supposed to:</strong> expectation/obligation → <em>You were supposed to submit it yesterday.</em></li>
+      <li><strong>be about to:</strong> imminent action → <em>She was about to resign when the offer came.</em></li>
+      <li><strong>had better:</strong> strong advice → <em>You had better reconsider that decision.</em></li>
+      <li><strong>would rather:</strong> preference → <em>I would rather you didn't mention it.</em></li>
+    </ul>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Advanced Modals</h3>
+
+    <div class="exercise" data-id="t5e1" data-type="fill" data-answer="must have forgotten|must have left">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">Her coat is still here. She _____ it behind. <em>(certain past deduction)</em></div>
+      <input class="blank-input wide" placeholder="must have + pp…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e2" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">You _____ bought so many flowers — it wasn't necessary, but it was kind.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> shouldn't have</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> needn't have</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> mustn't have</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> wouldn't have</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e3" data-type="fill" data-answer="can't have been|couldn't have been">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">The noise _____ coming from upstairs — there's nobody there. <em>(logical impossibility)</em></div>
+      <input class="blank-input wide" placeholder="can't/couldn't have + pp…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e4" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">The announcement is _____ to provoke controversy, given the political climate.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> sure</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> must</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> bound</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> likely</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e5" data-type="fill" data-answer="would rather you didn't|would rather you did not">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">I _____ discuss this in front of the whole team. <em>(would rather + past tense)</em></div>
+      <input class="blank-input wide" placeholder="would rather you…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e6" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">She _____ have been more diplomatic — her remarks caused a great deal of offence.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> should</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> must</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> would</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> could</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e7" data-type="fill" data-answer="were supposed to|was supposed to">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">The documents _____ arrive yesterday, but they still haven't come. <em>(unfulfilled expectation)</em></div>
+      <input class="blank-input wide" placeholder="were supposed to…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e8" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">You had better _____ that contract before Friday, or you'll lose the deal.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> to sign</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> signing</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> signed</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> sign</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e9" data-type="fill" data-answer="might have misread|may have misread|could have misread">
+      <div class="ex-num">Exercise 09</div>
+      <div class="ex-prompt">It's possible that she _____ the instructions — the results don't match expectations. <em>(uncertain past possibility)</em></div>
+      <input class="blank-input wide" placeholder="might/may/could have + pp…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t5e10" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 10</div>
+      <div class="ex-prompt">He was _____ to announce his resignation when his lawyer intervened.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> bound</option>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> about</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> supposed</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> going</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t5')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t5"></div>
+  </div>
+</section>
+
+<!-- ══════════ T6: PARTICIPLE CLAUSES ══════════ -->
+<section class="topic" id="t6" style="animation-delay:0.2s">
+  <div class="topic-eyebrow"><span class="topic-tag">06</span><span class="topic-level">C1 Core</span></div>
+  <h2><em>Participle</em> Clauses</h2>
+  <p class="topic-subtitle">Present, past and perfect participle clauses for concise formal writing</p>
+
+  <div class="grammar-box">
+    <h3>Participle Clause Types</h3>
+    <table class="contrast-table">
+      <tr><th>Type</th><th>Form</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>Active (present)</td><td>verb + -ing</td><td>Simultaneous / causal</td><td><em>Knowing the risks</em>, he proceeded anyway.</td></tr>
+      <tr><td>Passive (past)</td><td>past participle</td><td>Passive relationship</td><td><em>Written in haste</em>, the report contained errors.</td></tr>
+      <tr><td>Perfect active</td><td>having + pp</td><td>Earlier action</td><td><em>Having reviewed the data</em>, she drew her conclusions.</td></tr>
+      <tr><td>Perfect passive</td><td>having been + pp</td><td>Earlier passive</td><td><em>Having been informed</em>, the team acted swiftly.</td></tr>
+    </table>
+    <p style="margin-top:0.8rem"><strong>⚠ Dangling participle:</strong> the implied subject of the clause must match the main clause subject.</p>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Participle Clauses</h3>
+
+    <div class="exercise" data-id="t6e1" data-type="fill" data-answer="having completed|after completing">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">_____ the analysis, the consultants submitted their recommendations. <em>(perfect active participle — earlier action)</em></div>
+      <input class="blank-input wide" placeholder="Having completed…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">_____ in 1851, the building is now a protected heritage site.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Having built</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Building</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Built</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Being built</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e3" data-type="fill" data-answer="knowing the consequences|being aware of the consequences">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">_____, she signed the agreement anyway. <em>(present active participle — causal)</em></div>
+      <input class="blank-input wide" placeholder="Knowing the consequences…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e4" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">_____ been misled by the data, the team made a costly error.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Having</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Having been</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Been</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Being</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e5" data-type="fill" data-answer="faced with|confronted with|dealing with">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">_____ such opposition, the minister withdrew the proposal. <em>(past participle — passive circumstance)</em></div>
+      <input class="blank-input wide" placeholder="Faced with…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e6" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">_____ the contract carefully, the lawyer identified several ambiguities.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Reading</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Having read</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Read</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Both A and B are correct</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e7" data-type="reorder" data-answer="having failed to secure funding the project was abandoned">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">Put in order: <strong>having / secure / funding / to / failed / the project / was / abandoned</strong></div>
+      <div class="reorder-words" data-words="having,failed,to,secure,funding,the,project,was,abandoned"></div>
+      <div class="reorder-answer"><span class="reorder-placeholder">Click words above…</span></div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t6e8" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">Which sentence contains a dangling participle?</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Having read the report, she submitted her findings.</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Built in the 18th century, the castle attracts tourists.</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Knowing the risks, we decided to proceed.</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Walking down the street, the buildings seemed taller.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t6')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t6"></div>
+  </div>
+</section>
+
+<!-- ══════════ T7: MIXED CONDITIONALS ══════════ -->
+<section class="topic" id="t7" style="animation-delay:0.23s">
+  <div class="topic-eyebrow"><span class="topic-tag">07</span><span class="topic-level">C1–C2</span></div>
+  <h2><em>Mixed</em> Conditionals</h2>
+  <p class="topic-subtitle">Combining time frames and advanced conditional structures</p>
+
+  <div class="grammar-box">
+    <h3>Mixed Conditional Types</h3>
+    <table class="contrast-table">
+      <tr><th>Type</th><th>If-clause</th><th>Result clause</th><th>Meaning</th></tr>
+      <tr><td>Past → Present</td><td>If + past perfect</td><td>would + base</td><td>Unreal past cause → present consequence<br><em>If he had studied law, he would be a barrister now.</em></td></tr>
+      <tr><td>Present → Past</td><td>If + past simple</td><td>would have + pp</td><td>Unreal present condition → unreal past result<br><em>If she were more organised, she would have met the deadline.</em></td></tr>
+    </table>
+  </div>
+
+  <div class="grammar-box amber">
+    <h3>Alternatives to If</h3>
+    <ul>
+      <li><strong>Unless</strong> = if not: <em>Unless you act now, the opportunity will be lost.</em></li>
+      <li><strong>Provided / Providing (that):</strong> <em>Provided that all conditions are met…</em></li>
+      <li><strong>As long as / So long as:</strong> <em>I'll support you as long as you're honest.</em></li>
+      <li><strong>Supposing / Suppose (that):</strong> <em>Supposing he refuses, what then?</em></li>
+      <li><strong>Even if:</strong> <em>Even if I apologise, she won't forgive me.</em></li>
+      <li><strong>But for + noun/gerund:</strong> <em>But for her intervention, the deal would have collapsed.</em></li>
+    </ul>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Mixed Conditionals</h3>
+
+    <div class="exercise" data-id="t7e1" data-type="fill" data-answer="would be|would still be">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">If he had accepted that job offer ten years ago, he _____ a senior director today. <em>(past cause → present consequence)</em></div>
+      <input class="blank-input wide" placeholder="would + base verb…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">If she _____ more decisive, she would have secured the funding before the deadline.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> had been</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> would be</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> were</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> is</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e3" data-type="fill" data-answer="but for your support|but for your help">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">_____, we would never have completed the project on time. <em>(But for + noun phrase)</em></div>
+      <input class="blank-input wide" placeholder="But for your…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e4" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">_____ further clarification be required, please do not hesitate to contact us.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Were</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Should</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Had</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> If</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e5" data-type="fill" data-answer="even if|even though">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">_____ the evidence were conclusive, the jury might still acquit him. <em>(concessive condition)</em></div>
+      <input class="blank-input" placeholder="Even if / Unless…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e6" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">If she had emigrated as planned, she _____ here with us right now.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> wouldn't have been</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> hadn't been</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> wouldn't be been</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> wouldn't be</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e7" data-type="fill" data-answer="provided that|providing that|as long as|so long as">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">We will proceed _____ all parties agree to the revised terms. <em>(conditional equivalent of "if")</em></div>
+      <input class="blank-input wide" placeholder="provided that / as long as…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t7e8" data-type="reorder" data-answer="supposing the plan fails what is our contingency">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">Put in order: <strong>supposing / fails / the plan / what / our / contingency / is</strong></div>
+      <div class="reorder-words" data-words="supposing,the,plan,fails,what,is,our,contingency"></div>
+      <div class="reorder-answer"><span class="reorder-placeholder">Click words above…</span></div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t7')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t7"></div>
+  </div>
+</section>
+
+<!-- ══════════ T8: NOMINALISATION ══════════ -->
+<section class="topic" id="t8" style="animation-delay:0.26s">
+  <div class="topic-eyebrow"><span class="topic-tag">08</span><span class="topic-level">C1–C2</span></div>
+  <h2><em>Nominalisation</em></h2>
+  <p class="topic-subtitle">Converting verbs and adjectives into noun phrases for formal register</p>
+
+  <div class="grammar-box">
+    <h3>Common Nominalisation Patterns</h3>
+    <table class="contrast-table">
+      <tr><th>Source</th><th>Suffix</th><th>Example</th></tr>
+      <tr><td>Verb → Noun</td><td>-tion / -sion</td><td>implement → implementation, expand → expansion</td></tr>
+      <tr><td>Verb → Noun</td><td>-ment / -ance / -ence</td><td>develop → development, perform → performance</td></tr>
+      <tr><td>Adjective → Noun</td><td>-ity / -ness / -cy</td><td>complex → complexity, effective → effectiveness</td></tr>
+      <tr><td>Verb → Noun</td><td>-al / -age / -ing</td><td>arrive → arrival, drain → drainage, fund → funding</td></tr>
+    </table>
+    <div class="rule">Informal: "The government decided to invest." → Formal: "The government's decision to invest…"</div>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Nominalisation</h3>
+
+    <div class="exercise" data-id="t8e1" data-type="fill" data-answer="implementation">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">The _____ of the new policy proved more complex than anticipated. <em>(implement → noun)</em></div>
+      <input class="blank-input" placeholder="noun form…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">Rewrite more formally: "The researchers <u>found</u> that levels of pollution had increased." →</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> The researchers' finding were that pollution had increased.</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> The finding of researchers showed pollution increasing.</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> The researchers' findings indicated an increase in pollution levels.</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Researchers found an increase that was in pollution levels.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e3" data-type="fill" data-answer="expansion">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">The company's rapid _____ into new markets attracted considerable investor attention. <em>(expand → noun)</em></div>
+      <input class="blank-input" placeholder="noun form…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e4" data-type="fill" data-answer="complexity|complexities">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">The _____ of the legal framework makes compliance challenging for small businesses. <em>(complex → noun)</em></div>
+      <input class="blank-input" placeholder="noun form…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e5" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">Which is the most formally nominalised version of "They approved the budget"?</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> The approving of the budget happened.</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> The approval of the budget was granted.</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Budget approvement was done.</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> The budget got approved.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e6" data-type="fill" data-answer="effectiveness|efficacy">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">Doubts were raised about the _____ of the proposed measures. <em>(effective → noun)</em></div>
+      <input class="blank-input" placeholder="noun form…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e7" data-type="fill" data-answer="deterioration">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">The _____ of international relations prompted urgent diplomatic talks. <em>(deteriorate → noun)</em></div>
+      <input class="blank-input" placeholder="noun form…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t8e8" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">The _____ of the survey results suggests a need for further research.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> analysis</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> analysation</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> analysing</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> analytical</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t8')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t8"></div>
+  </div>
+</section>
+
+<!-- ══════════ T9: ADVANCED PASSIVE ══════════ -->
+<section class="topic" id="t9" style="animation-delay:0.29s">
+  <div class="topic-eyebrow"><span class="topic-tag">09</span><span class="topic-level">C1–C2</span></div>
+  <h2>Advanced <em>Passive</em> Structures</h2>
+  <p class="topic-subtitle">Reporting verbs, double object passives and complex passives</p>
+
+  <div class="grammar-box">
+    <h3>Advanced Passive Patterns</h3>
+    <table class="contrast-table">
+      <tr><th>Pattern</th><th>Example</th></tr>
+      <tr><td>It + passive + that-clause</td><td>It is believed that the economy will recover.</td></tr>
+      <tr><td>Subject + passive + to-inf</td><td>The economy is believed to be recovering.</td></tr>
+      <tr><td>Subject + passive + to have + pp</td><td>The suspect is alleged to have fled the country.</td></tr>
+      <tr><td>Double object passive</td><td>She was offered a promotion. / A promotion was offered to her.</td></tr>
+      <tr><td>have/get + object + pp</td><td>We had the building inspected. / She got her hair cut.</td></tr>
+      <tr><td>need/want + -ing</td><td>The contract needs reviewing. (= needs to be reviewed)</td></tr>
+    </table>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Advanced Passive</h3>
+
+    <div class="exercise" data-id="t9e1" data-type="fill" data-answer="is thought to have caused|is believed to have caused">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">The power surge _____ the data loss. <em>(reporting verb passive: thought/believed + to have + pp)</em></div>
+      <input class="blank-input wide" placeholder="is thought/believed to have…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e2" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">It _____ that the new regulations will significantly impact small businesses.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> expects</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> is expected</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> has expected</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> was expecting</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e3" data-type="fill" data-answer="needs reviewing|needs to be reviewed">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">This clause in the contract _____ before you sign anything. <em>(need + gerund/passive infinitive)</em></div>
+      <input class="blank-input wide" placeholder="needs reviewing / needs to be…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e4" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">The suspect is alleged _____ the country using a false passport.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> to flee</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> fleeing</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> to have fled</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> having fled</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e5" data-type="fill" data-answer="had the office refurbished|had the premises refurbished">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">The company _____ before the new staff arrived. <em>(causative have: had + object + pp)</em></div>
+      <input class="blank-input wide" placeholder="had the office…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e6" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">The accused is reported _____ approached the witness before the trial.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> to have</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> to</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> having</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> have</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e7" data-type="reorder" data-answer="it is widely believed that the merger will fail">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">Put in order: <strong>widely / it / that / believed / the merger / is / fail / will</strong></div>
+      <div class="reorder-words" data-words="it,is,widely,believed,that,the,merger,will,fail"></div>
+      <div class="reorder-answer"><span class="reorder-placeholder">Click words above…</span></div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t9e8" data-type="fill" data-answer="was offered|has been offered">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">She _____ a senior position at the rival firm. <em>(double object passive — person as subject)</em></div>
+      <input class="blank-input wide" placeholder="was offered / has been offered…">
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t9')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t9"></div>
+  </div>
+</section>
+
+<!-- ══════════ T10: COHESION & REGISTER ══════════ -->
+<section class="topic" id="t10" style="animation-delay:0.32s">
+  <div class="topic-eyebrow"><span class="topic-tag">10</span><span class="topic-level">C1–C2</span></div>
+  <h2>Cohesion &amp; <em>Register</em></h2>
+  <p class="topic-subtitle">Textual cohesion, discourse markers and register appropriacy</p>
+
+  <div class="grammar-box">
+    <h3>Advanced Discourse Markers</h3>
+    <table class="contrast-table">
+      <tr><th>Function</th><th>Formal / C1–C2 markers</th></tr>
+      <tr><td>Concession</td><td>admittedly, granted, notwithstanding, that said, even so</td></tr>
+      <tr><td>Exemplification</td><td>notably, in particular, as evidenced by, to illustrate</td></tr>
+      <tr><td>Summation</td><td>in sum, to recapitulate, all things considered, on balance</td></tr>
+      <tr><td>Reformulation</td><td>in other words, that is to say, to put it differently, namely</td></tr>
+      <tr><td>Logical result</td><td>hence, thereby, accordingly, it follows that, as a consequence</td></tr>
+      <tr><td>Contrast</td><td>conversely, by the same token, on the contrary, in contrast</td></tr>
+    </table>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Cohesion & Register</h3>
+
+    <div class="exercise" data-id="t10e1" data-type="fill" data-answer="notwithstanding|despite|in spite of">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">_____ these concerns, the board unanimously approved the merger. <em>(formal concession before a noun phrase)</em></div>
+      <input class="blank-input wide" placeholder="Notwithstanding / Despite…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">The policy has broad support. _____, certain minority groups remain excluded from its benefits.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> In sum</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Hence</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> That said</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Namely</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e3" data-type="fill" data-answer="hence|accordingly|therefore|consequently|as a consequence">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">The trial data was inconclusive; _____, further research is warranted. <em>(formal logical result)</em></div>
+      <input class="blank-input wide" placeholder="hence / accordingly / therefore…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e4" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">The informal register is: "This shows that the plan won't work." The formal equivalent is:</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> This goes to show that the plan is going to fail.</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> This evidence suggests that the viability of the plan is questionable.</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> So the plan is probably not going to be very successful.</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> The plan will not work, obviously.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e5" data-type="fill" data-answer="conversely|by contrast|in contrast">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">The northern regions recorded significant growth. _____, the southern provinces experienced a marked decline. <em>(formal contrast)</em></div>
+      <input class="blank-input wide" placeholder="Conversely / By contrast…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e6" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">Which word best fills the gap? "The data indicates a strong correlation; _____, we cannot establish causation."</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> accordingly</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> furthermore</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> hence</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> nonetheless</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e7" data-type="fill" data-answer="namely|that is to say|in other words">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">The study focuses on one key variable, _____ the effect of sleep deprivation on cognitive performance. <em>(reformulation/specification)</em></div>
+      <input class="blank-input wide" placeholder="namely / that is to say…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t10e8" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">Admittedly, the sample size was small; _____, the results are statistically significant.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> even so</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> therefore</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> in sum</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> on the contrary</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t10')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t10"></div>
+  </div>
+</section>
+
+<!-- ══════════ T11: IDIOMATIC LANGUAGE ══════════ -->
+<section class="topic" id="t11" style="animation-delay:0.35s">
+  <div class="topic-eyebrow"><span class="topic-tag">11</span><span class="topic-level">C1–C2</span></div>
+  <h2><em>Idiomatic</em> Language &amp; Collocation</h2>
+  <p class="topic-subtitle">Fixed expressions, idioms, collocations and metaphorical language</p>
+
+  <div class="grammar-box">
+    <h3>Key C1–C2 Idioms & Collocations</h3>
+    <table class="contrast-table">
+      <tr><th>Expression</th><th>Meaning</th></tr>
+      <tr><td>to sit on the fence</td><td>to avoid committing to a position</td></tr>
+      <tr><td>to bite the bullet</td><td>to endure a painful situation with courage</td></tr>
+      <tr><td>to draw a blank</td><td>to fail to recall or find something</td></tr>
+      <tr><td>to gain the upper hand</td><td>to achieve a position of advantage</td></tr>
+      <tr><td>beyond the pale</td><td>outside the bounds of acceptable behaviour</td></tr>
+      <tr><td>to bear the brunt of</td><td>to suffer the worst part of something</td></tr>
+      <tr><td>to fly in the face of</td><td>to contradict or be contrary to</td></tr>
+      <tr><td>to be at loggerheads</td><td>to be in strong disagreement</td></tr>
+    </table>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Idiomatic Language</h3>
+
+    <div class="exercise" data-id="t11e1" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">The politician refused to commit to either side of the debate. He was clearly _____.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> flying in the face of it</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> sitting on the fence</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> bearing the brunt</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> at loggerheads</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e2" data-type="fill" data-answer="bite the bullet">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">The redundancies were painful, but management decided to _____ and implement them swiftly. <em>(endure something unpleasant)</em></div>
+      <input class="blank-input wide" placeholder="idiom…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e3" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">The junior employees _____ the brunt of the economic downturn.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> carried</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> took</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> bore</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> held</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e4" data-type="fill" data-answer="flies in the face of|flies in the face">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">This new evidence completely _____ the established theory. <em>(contradicts dramatically)</em></div>
+      <input class="blank-input wide" placeholder="flies in the face of…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e5" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">His behaviour at the conference was considered _____ and several delegates walked out.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> beyond the pale</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> above the mark</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> over the line</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> past the point</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e6" data-type="fill" data-answer="drew a blank|drew blanks">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">Despite extensive research, investigators _____ — no new leads emerged. <em>(found nothing)</em></div>
+      <input class="blank-input wide" placeholder="drew a blank…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e7" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">The two factions were _____ over the proposed changes to the constitution.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> at standstill</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> in loggerheads</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> on loggerheads</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> at loggerheads</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e8" data-type="fill" data-answer="gain the upper hand|gained the upper hand">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">Through a series of strategic acquisitions, the consortium managed to _____ in the market. <em>(achieve dominance)</em></div>
+      <input class="blank-input wide" placeholder="gain the upper hand…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e9" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 09</div>
+      <div class="ex-prompt">Choose the correct collocation: "The company _____ a significant loss last quarter."</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> made</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> incurred</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> did</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> had</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t11e10" data-type="fill" data-answer="sweeping|far-reaching|significant|major|radical">
+      <div class="ex-num">Exercise 10</div>
+      <div class="ex-prompt">The new administration introduced _____ reforms to the healthcare system. <em>(collocation: a powerful adjective that collocates with "reforms")</em></div>
+      <input class="blank-input" placeholder="sweeping / far-reaching / radical…">
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t11')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t11"></div>
+  </div>
+</section>
+
+<!-- ══════════ T12: ACADEMIC WRITING ══════════ -->
+<section class="topic" id="t12" style="animation-delay:0.38s">
+  <div class="topic-eyebrow"><span class="topic-tag">12</span><span class="topic-level">C2 Mastery</span></div>
+  <h2>Academic &amp; <em>Formal Writing</em></h2>
+  <p class="topic-subtitle">Hedging, stance markers, complex syntax and formal alternatives</p>
+
+  <div class="grammar-box">
+    <h3>Hedging Language</h3>
+    <ul>
+      <li><strong>Modal hedges:</strong> <em>may, might, could, would</em> → <em>This could suggest that…</em></li>
+      <li><strong>Lexical hedges:</strong> <em>appear, seem, tend to, be likely to</em> → <em>The results appear to indicate…</em></li>
+      <li><strong>Approximators:</strong> <em>approximately, roughly, around, in the region of</em></li>
+      <li><strong>Attribution:</strong> <em>It is argued that, According to X, As noted by…</em></li>
+    </ul>
+  </div>
+
+  <div class="grammar-box amber">
+    <h3>Informal → Formal Register Shifts</h3>
+    <table class="contrast-table">
+      <tr><th>Informal</th><th>Formal / Academic</th></tr>
+      <tr><td>get better / worse</td><td>improve / deteriorate</td></tr>
+      <tr><td>find out</td><td>ascertain / determine / establish</td></tr>
+      <tr><td>look into</td><td>investigate / examine / scrutinise</td></tr>
+      <tr><td>go up / go down</td><td>increase / rise / decline / decrease</td></tr>
+      <tr><td>a lot of</td><td>a considerable number/amount of, numerous, substantial</td></tr>
+      <tr><td>show</td><td>demonstrate, indicate, reveal, illustrate, suggest</td></tr>
+    </table>
+  </div>
+
+  <div class="exercises-section">
+    <h3>📝 Exercises — Academic Writing</h3>
+
+    <div class="exercise" data-id="t12e1" data-type="fill" data-answer="appears to suggest|appears to indicate|seems to suggest|tends to suggest">
+      <div class="ex-num">Exercise 01</div>
+      <div class="ex-prompt">The data _____ a causal relationship between the two variables. <em>(hedge with appear/seem + to)</em></div>
+      <input class="blank-input wide" placeholder="appears to suggest / indicate…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e2" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 02</div>
+      <div class="ex-prompt">Choose the most academically appropriate sentence:</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> Lots of studies show that stress is bad for you.</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> Many studies show stress causes health problems.</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> A substantial body of research indicates that chronic stress may have deleterious effects on health outcomes.</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Research has found that stress is really bad for people's health in a big way.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e3" data-type="fill" data-answer="ascertain|determine|establish|investigate">
+      <div class="ex-num">Exercise 03</div>
+      <div class="ex-prompt">Further studies are required to _____ whether these findings are replicable. <em>(formal alternative to "find out")</em></div>
+      <input class="blank-input wide" placeholder="ascertain / determine / establish…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e4" data-type="choice" data-answer="B">
+      <div class="ex-num">Exercise 04</div>
+      <div class="ex-prompt">The following year, sales _____ by approximately 23 per cent.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> went up</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> increased</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> got bigger</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> jumped up</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e5" data-type="fill" data-answer="it could be argued that|it might be argued that|it can be argued that">
+      <div class="ex-num">Exercise 05</div>
+      <div class="ex-prompt">_____ the current policy fails to address the root causes of inequality. <em>(hedged attribution / stance marker)</em></div>
+      <input class="blank-input wide" placeholder="It could be argued that…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e6" data-type="choice" data-answer="D">
+      <div class="ex-num">Exercise 06</div>
+      <div class="ex-prompt">Replace the underlined verb: "Researchers <u>looked into</u> the long-term effects of sleep deprivation."</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> checked out</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> had a look at</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> went through</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> examined</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e7" data-type="fill" data-answer="deteriorated|worsened|declined">
+      <div class="ex-num">Exercise 07</div>
+      <div class="ex-prompt">The patient's condition _____ significantly over the following six months. <em>(formal alternative to "got worse")</em></div>
+      <input class="blank-input wide" placeholder="deteriorated / worsened / declined…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e8" data-type="reorder" data-answer="it would appear that further investigation is warranted">
+      <div class="ex-num">Exercise 08</div>
+      <div class="ex-prompt">Put in order: <strong>it / that / would / further / appear / investigation / warranted / is</strong></div>
+      <div class="reorder-words" data-words="it,would,appear,that,further,investigation,is,warranted"></div>
+      <div class="reorder-answer"><span class="reorder-placeholder">Click words above…</span></div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e9" data-type="choice" data-answer="A">
+      <div class="ex-num">Exercise 09</div>
+      <div class="ex-prompt">Which sentence uses hedging most appropriately for an academic paper?</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> These findings may suggest a link between diet and cognitive decline.</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> These findings definitely prove that diet causes cognitive decline.</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> Obviously, diet and cognitive decline are connected.</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> Diet is clearly the main reason for cognitive decline.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e10" data-type="fill" data-answer="a considerable number of|a substantial number of|numerous|a large number of">
+      <div class="ex-num">Exercise 10</div>
+      <div class="ex-prompt">_____ studies have been conducted on this topic, yet consensus remains elusive. <em>(formal alternative to "a lot of")</em></div>
+      <input class="blank-input wide" placeholder="A considerable number of / Numerous…">
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e11" data-type="choice" data-answer="C">
+      <div class="ex-num">Exercise 11</div>
+      <div class="ex-prompt">The study _____ that exposure to green spaces reduces stress levels.</div>
+      <div class="options-grid">
+        <button class="option-btn" data-opt="A"><span class="opt-letter">A</span> says</button>
+        <button class="option-btn" data-opt="B"><span class="opt-letter">B</span> tells</button>
+        <button class="option-btn" data-opt="C"><span class="opt-letter">C</span> demonstrates</button>
+        <button class="option-btn" data-opt="D"><span class="opt-letter">D</span> talks about</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="exercise" data-id="t12e12" data-type="fill" data-answer="scrutinised|examined|investigated|analysed">
+      <div class="ex-num">Exercise 12</div>
+      <div class="ex-prompt">The committee _____ the evidence thoroughly before reaching a verdict. <em>(formal alternative for "looked at carefully")</em></div>
+      <input class="blank-input wide" placeholder="scrutinised / examined / analysed…">
+      <div class="feedback"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkTopic('t12')">✓ Check all answers</button>
+    <div class="score-bar" id="score-t12"></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <p>© 2026 — <strong>Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+const EXP = {
+  // T1 — Inversion
+  t1e1:{ok:"✓ Correct! 'Never had I seen' — negative adverb fronted, auxiliary inverted before subject.",err:"✗ After 'never' at the start of a sentence, invert: auxiliary (had) + subject (I) + main verb. → 'Never had I seen…'"},
+  t1e2:{ok:"✓ Correct! 'No sooner had… than' is a fixed inverted structure for two rapid sequential events.",err:"✗ 'No sooner… than' is the correct pair. 'Hardly/Scarcely… when/before' are alternatives. All require inversion: 'No sooner had she arrived than…'"},
+  t1e3:{ok:"✓ Correct! 'Had I known' = conditional inversion without 'if'. Drop 'if', move 'had' before subject.",err:"✗ Conditional inversion: remove 'if', move the auxiliary to the front. 'If I had known' → 'Had I known'. This is a hallmark of formal English."},
+  t1e4:{ok:"✓ Correct! After 'Not only', invert auxiliary + subject in the first clause: 'did she meet'.",err:"✗ After 'Not only', subject-auxiliary inversion is required: 'Not only did she meet…' — the auxiliary 'did' precedes the subject 'she'."},
+  t1e5:{ok:"✓ Correct! 'Seldom does he' — negative adverb fronted, auxiliary 'does' precedes subject.",err:"✗ After 'Seldom', invert: auxiliary (does) + subject (he) + base verb. → 'Seldom does he complain…'"},
+  t1e6:{ok:"✓ Correct! 'Were it not for' = formal inverted structure for 'If it were not for'. Uses 'were' (subjunctive).",err:"✗ 'Were it not for' is the correct formal inversion of 'If it were not for'. 'Had it not been' is different in meaning."},
+  t1e7:{ok:"✓ Correct! 'Only then did we realise' — 'only + adverbial' triggers inversion.",err:"✗ After 'Only then', invert: auxiliary (did) + subject (we) + verb (realise). → 'Only then did we realise our mistake.'"},
+  t1e8:{ok:"✓ Correct! 'So + adjective + was the subject' — fronted intensifier triggers inversion.",err:"✗ With fronted 'so + adjective', the subject and verb invert: 'So serious was the situation that…'"},
+  t1e9:{ok:"✓ Correct! 'Should you need' = formal conditional inversion of 'If you need'. Used in formal correspondence.",err:"✗ Conditional inversion with 'should': drop 'if', move 'should' before subject. 'If you need' → 'Should you need'. Very common in formal writing."},
+  t1e10:{ok:"✓ Correct! 'Rarely have I seen' — negative adverb fronted, present perfect inverted.",err:"✗ After 'Rarely', invert the auxiliary: 'Rarely have I seen…' — the present perfect auxiliary 'have' precedes the subject 'I'."},
+
+  // T2 — Subjunctive
+  t2e1:{ok:"✓ Correct! Mandative subjunctive: after 'it is crucial that', use the base form 'be' for all persons.",err:"✗ The mandative subjunctive uses the bare infinitive (base form) for all persons. 'It is crucial that every participant be informed' — not 'is' or 'was'."},
+  t2e2:{ok:"✓ Correct! After 'insisted that', the mandative subjunctive requires the base form 'be' (not 'was' or 'is').",err:"✗ After mandative verbs like 'insist', 'demand', 'recommend', use the base form: 'that the report be rewritten'. This applies regardless of subject."},
+  t2e3:{ok:"✓ Correct! Were-subjunctive: 'If she were' is the formal/subjunctive form for hypothetical present conditions.",err:"✗ In formal/written English, the subjunctive 'were' is used for all persons in hypothetical conditions: 'If she were…' (not 'was', which is informal)."},
+  t2e4:{ok:"✓ Correct! 'Recommended that… be released' — mandative subjunctive base form after 'recommended'.",err:"✗ After 'recommend', the subjunctive takes the base form: 'be released'. 'Is' or 'was' would be informal. 'Should' + base is also acceptable but more formal."},
+  t2e5:{ok:"✓ Correct! 'God save the King' — formulaic/optative subjunctive. The base form 'save' expresses a wish.",err:"✗ 'God save the King' is a formulaic subjunctive (optative) — it expresses a wish or prayer. The base form 'save' is used, not 'saves'."},
+  t2e6:{ok:"✓ Correct! 'It is imperative that the data be backed up' — mandative subjunctive base form.",err:"✗ 'Imperative' is a mandative adjective. It triggers the subjunctive: 'that the data be' (base form). Never 'is' or 'are' in formal usage."},
+  t2e7:{ok:"✓ Correct! Negative mandative subjunctive: 'not + base verb'. → 'that the director not resign'.",err:"✗ Negative mandative subjunctive: insert 'not' before the base verb. 'Proposed that he not resign' — not 'doesn't resign' or 'did not resign'."},
+  t2e8:{ok:"✓ Correct! 'Be that as it may' is a fixed formulaic subjunctive expression meaning 'even if that is so'.",err:"✗ 'Be that as it may' is a fixed idiom using the subjunctive 'be'. It concedes a point while indicating it doesn't change the conclusion."},
+  t2e9:{ok:"✓ Correct! 'Requires that each delegate attend' — mandative subjunctive base form 'attend'.",err:"✗ 'Require' is a mandative verb → subjunctive base form: 'that each delegate attend' (not 'attends')."},
+  t2e10:{ok:"✓ Correct! 'Urged that action be taken' — mandative subjunctive, passive: 'be + past participle'.",err:"✗ After 'urged that', use the subjunctive base form. In the passive: 'be taken' (not 'is' or 'was'). → 'urged that action be taken'."},
+
+  // T3 — Cleft Sentences
+  t3e1:{ok:"✓ Correct! It-cleft: 'It was the lack of funding that caused…' — places emphasis on the cause.",err:"✗ It-cleft structure: 'It was + [focus element] + that + [rest of clause]'. The focus here is 'the lack of funding'. → 'It was the lack of funding that caused…'"},
+  t3e2:{ok:"✓ Correct! 'It was what he said' — the cleft focuses on the content of what he said, not the manner.",err:"✗ 'It was what he said' begins a it-cleft with an embedded wh-clause as the focus. 'That what' is ungrammatical; 'What it was' inverts the structure incorrectly."},
+  t3e3:{ok:"✓ Correct! Wh-cleft: 'What he needs is more confidence' — focuses attention on the needed thing.",err:"✗ Wh-cleft: 'What + subject + verb + is + [focus]'. → 'What he needs is more confidence.' The wh-clause functions as subject, 'is' links it to the focus element."},
+  t3e4:{ok:"✓ Correct! It-cleft with a person focus → use 'who': 'It was the CEO who signed…'",err:"✗ When the focus is a person in an it-cleft, use 'who' (not 'which'): 'It was the CEO who signed the contract.'"},
+  t3e5:{ok:"✓ Correct! All-cleft: 'All I want is the truth' — restricts and emphasises a single focus.",err:"✗ All-cleft: 'All + subject + verb + is + [focus]'. → 'All I want is the truth.' It implies that only that one thing matters."},
+  t3e6:{ok:"✓ Correct! Wh-cleft begins with 'What': 'What I find most challenging is…'",err:"✗ A wh-cleft starts with 'What + clause + is + focus'. 'It is that' creates an it-cleft differently. 'Which' cannot begin a cleft in this way."},
+  t3e7:{ok:"✓ Correct! 'It was in Paris that they first met' — it-cleft emphasising the location.",err:"✗ It-cleft: 'It was + in Paris + that + they first met'. The focus is the place. → 'It was in Paris that they first met.'"},
+  t3e8:{ok:"✓ Correct! Inverted wh-cleft: [focus] + is + what + clause. Puts the focus element at the start.",err:"✗ Inverted wh-cleft: move the focus to the front. 'What he is looking for is a better salary' → 'A better salary is what he is looking for.' The focus leads the sentence."},
+
+  // T4 — Ellipsis & Substitution
+  t4e1:{ok:"✓ Correct! 'I believe so' — 'so' substitutes for the positive clause 'the meeting is still on'.",err:"✗ 'So' substitutes for a positive affirmative clause: 'I believe so' = 'I believe the meeting is still on'. 'Not' substitutes for negative clauses."},
+  t4e2:{ok:"✓ Correct! 'Did so' is a formal verb phrase substitute. It replaces the whole action just mentioned.",err:"✗ 'Do so' (past: 'did so') is the standard formal substitute for a verb phrase already mentioned. 'Did it' is possible but informal; 'did that' is less precise."},
+  t4e3:{ok:"✓ Correct! 'I hope not' — 'not' substitutes for the negative proposition (delays are undesirable).",err:"✗ 'Not' substitutes for a negative clause: 'I hope not' = 'I hope there will not be any delays'. Use 'so' for positive, 'not' for negative."},
+  t4e4:{ok:"✓ Correct! 'He does' — auxiliary ellipsis avoids repeating 'speaks French fluently'.",err:"✗ In comparative clauses, repeat only the auxiliary verb to avoid repeating the full predicate: 'he does' = 'he speaks French'. Using 'do/does' is auxiliary ellipsis."},
+  t4e5:{ok:"✓ Correct! 'Ones' substitutes for the plural countable noun 'regulations'.",err:"✗ 'One' substitutes for singular countable nouns; 'ones' for plural countable nouns. 'The ones introduced last year' = 'the regulations introduced last year'."},
+  t4e6:{ok:"✓ Correct! 'The marketing team thinks so' — 'so' substitutes for the proposition 'we should postpone'.",err:"✗ 'So' substitutes for the full clause (a proposition). 'The team thinks so' = 'the team thinks we should postpone.' 'It', 'that', 'this' do not carry this same substitutive function."},
+  t4e7:{ok:"✓ Correct! 'Do so' formally substitutes for the specific action 'file a formal complaint'.",err:"✗ 'Do so' is preferred in formal writing to avoid repeating a verb phrase. 'Do it' is more informal. 'Do so' refers back precisely to the action described."},
+  t4e8:{ok:"✓ Correct! Auxiliary ellipsis: 'A few colleagues have [responded]' — the main verb is omitted as recoverable from context.",err:"✗ In English, after an auxiliary verb, the main verb can be omitted if it is recoverable: 'A few have [responded to the proposal].' This is auxiliary ellipsis — natural and grammatically correct."},
+
+  // T5 — Advanced Modals
+  t5e1:{ok:"✓ Correct! 'Must have forgotten/left' — strong past deduction: the coat being there is evidence she forgot it.",err:"✗ For certain past deduction, use 'must have + pp'. The visible evidence (coat still here) justifies certainty → 'must have forgotten' or 'must have left'."},
+  t5e2:{ok:"✓ Correct! 'Needn't have bought' — the action happened but was unnecessary. 'Shouldn't have' implies it was wrong.",err:"✗ 'Needn't have + pp' = the action happened but was not necessary. 'Shouldn't have' = the action was wrong/regrettable. Here it wasn't wrong — just unnecessary."},
+  t5e3:{ok:"✓ Correct! 'Can't/couldn't have been' — logical impossibility. Nobody upstairs = it cannot have come from there.",err:"✗ For logical impossibility in the past, use 'can't have been' or 'couldn't have been' + past participle. The negative evidence (nobody upstairs) makes it impossible."},
+  t5e4:{ok:"✓ Correct! 'Bound to' + base verb expresses near-certainty based on current evidence.",err:"✗ 'Be bound to' = it is almost certain to happen (based on logic/evidence). 'Sure' collocates differently; 'must' and 'likely' don't fit this semi-modal pattern."},
+  t5e5:{ok:"✓ Correct! 'Would rather you didn't' — past tense after 'would rather' to refer to present/future preference about another's behaviour.",err:"✗ After 'would rather' referring to someone else's action, use a past tense: 'would rather you didn't' (not 'don't'). This is a subjunctive-like distancing construction."},
+  t5e6:{ok:"✓ Correct! 'Should have been' — criticism of a past failure to act appropriately.",err:"✗ 'Should have + pp' expresses that something was the right course but didn't happen. Here: she failed to be diplomatic → 'should have been more diplomatic'."},
+  t5e7:{ok:"✓ Correct! 'Were supposed to' — planned expectation that wasn't met (the documents didn't arrive).",err:"✗ 'Be supposed to' expresses an expectation or arrangement. Past form 'were supposed to' implies the expectation was not fulfilled."},
+  t5e8:{ok:"✓ Correct! 'Had better + base verb' — no 'to', no -ing. This is a fixed semi-modal structure.",err:"✗ 'Had better' is always followed by the bare infinitive (base verb): 'had better sign'. Never 'to sign', 'signing', or 'signed'."},
+  t5e9:{ok:"✓ Correct! 'Might/may/could have misread' — uncertain past possibility (we don't know if she did).",err:"✗ For uncertain past possibilities, use 'might have', 'may have', or 'could have' + past participle. 'Must have' would imply certainty, which is not the case here."},
+  t5e10:{ok:"✓ Correct! 'Be about to' = on the verge of doing something (imminent action that was interrupted).",err:"✗ 'Be about to' expresses imminent action. 'Was about to announce' = he was on the verge of announcing when something interrupted. 'Bound to' = certainty; 'supposed to' = expectation."},
+
+  // T6 — Participle Clauses
+  t6e1:{ok:"✓ Correct! 'Having completed' — perfect active participle for an action completed before the main clause.",err:"✗ Perfect active participle: 'Having + past participle' shows the first action is completed before the second. 'Having completed the analysis' → then they submitted."},
+  t6e2:{ok:"✓ Correct! 'Built' — past participle (passive) for a building constructed in the past by others.",err:"✗ The past participle 'built' creates a passive participle clause: 'Built in 1851, the building…' = 'As it was built in 1851…'. The building didn't build itself."},
+  t6e3:{ok:"✓ Correct! 'Knowing the consequences' — present active participle expressing a simultaneous/causal circumstance.",err:"✗ Present active participle '-ing' shows a simultaneous or causal action. 'Knowing the consequences' = 'Because she knew…' / 'Although she knew…'"},
+  t6e4:{ok:"✓ Correct! 'Having been misled' — perfect passive participle: earlier passive action before the main event.",err:"✗ Perfect passive participle: 'Having been + past participle'. The misleading happened before the error. → 'Having been misled by the data, the team made an error.'"},
+  t6e5:{ok:"✓ Correct! 'Faced with' — past participle expressing a passive circumstance the minister encountered.",err:"✗ 'Faced with such opposition' = 'As he was faced with…'. This is a reduced adverbial passive participle clause showing circumstance."},
+  t6e6:{ok:"✓ Correct! 'Reading' — simultaneous action. 'Having read' would also work, implying the reading was completed first.",err:"✗ 'Reading the contract carefully, the lawyer identified…' = simultaneous or immediately prior action. 'Having read' emphasises completion before identifying. Both are grammatically correct here; 'Reading' better suggests the process."},
+  t6e7:{ok:"✓ Correct! 'Having failed to secure funding, the project was abandoned.' — perfect participle + passive main clause.",err:"✗ Order: 'Having + failed + to + secure + funding' (perfect participle), then 'the project was abandoned' (passive main clause)."},
+  t6e8:{ok:"✓ Correct! D contains a dangling participle — 'walking down the street' should modify the subject, but 'the buildings' cannot walk.",err:"✗ A dangling participle occurs when the implied subject of the participle doesn't match the grammatical subject of the main clause. In D, 'Walking down the street' implies a person walking, but 'the buildings' is the subject — buildings can't walk."},
+
+  // T7 — Mixed Conditionals
+  t7e1:{ok:"✓ Correct! Mixed conditional (past cause → present result): If + past perfect… would + base verb.",err:"✗ Past → Present mixed conditional: 'If he had accepted' (past perfect) + 'he would be' (present result). The past choice affects the current state."},
+  t7e2:{ok:"✓ Correct! Present → Past mixed conditional: 'If she were' (present unreal state) → 'would have secured' (past result).",err:"✗ Present → Past mixed conditional: 'If she were' (present unreal condition) + 'would have + pp' (past unreal result). The present character trait affected a past outcome."},
+  t7e3:{ok:"✓ Correct! 'But for your support' = 'If it had not been for your support' — a formal concessive conditional.",err:"✗ 'But for + noun phrase' is a formal negative conditional: 'But for your support' = 'If it had not been for your support'. The result clause uses 'would have + pp'."},
+  t7e4:{ok:"✓ Correct! 'Should + subject + base verb' — formal conditional inversion replacing 'If… should…'.",err:"✗ 'Should further clarification be required' = 'If further clarification should be required'. 'Should' inversion is used in formal correspondence. 'Were' is for present unreal; 'Had' is for past perfect conditionals."},
+  t7e5:{ok:"✓ Correct! 'Even if' — concessive conditional: the condition does not change the outcome.",err:"✗ 'Even if' introduces a concessive condition: it doesn't matter whether the condition is true or not. 'Unless' means 'if not' and changes the meaning."},
+  t7e6:{ok:"✓ Correct! 'Wouldn't be' — past cause + present result. She emigrated (past), so she is not here (present).",err:"✗ Past → Present mixed conditional: the result clause is 'would/wouldn't + base verb' (present). 'Would have been' would refer to a past result. Since 'right now' is mentioned, the present result applies."},
+  t7e7:{ok:"✓ Correct! 'Provided that / as long as / providing that / so long as' — conditional alternatives to 'if' with conditions.",err:"✗ These are all formal conditional conjunctions meaning 'on condition that': 'provided that', 'providing that', 'as long as', 'so long as'. 'Unless' means 'if not'."},
+  t7e8:{ok:"✓ Correct! 'Supposing the plan fails, what is our contingency?' — 'Supposing' introduces a hypothetical.",err:"✗ Word order: 'Supposing + subject + verb' (hypothetical clause), then the question. → 'Supposing the plan fails, what is our contingency?'"},
+
+  // T8 — Nominalisation
+  t8e1:{ok:"✓ Correct! 'Implementation' is the noun form of 'implement' (verb → -tion suffix).",err:"✗ 'Implement' → 'implementation' (-tion suffix). Nominalisation makes writing more formal and impersonal."},
+  t8e2:{ok:"✓ Correct! Option C uses nominalisation ('findings', 'increase') and hedging ('indicated'), making it the most formal.",err:"✗ The most formal version uses nouns where the original uses verbs: 'found' → 'findings'; 'increased' → 'an increase in'. It also hedges: 'indicated' rather than 'showed'."},
+  t8e3:{ok:"✓ Correct! 'Expansion' is the noun form of 'expand' (-sion suffix).",err:"✗ 'Expand' → 'expansion'. Other -sion nominalisations: extend → extension, include → inclusion, persuade → persuasion."},
+  t8e4:{ok:"✓ Correct! 'Complexity' is the noun form of 'complex' (-ity suffix).",err:"✗ 'Complex' (adjective) → 'complexity' (-ity suffix). Other examples: diverse → diversity, able → ability, secure → security."},
+  t8e5:{ok:"✓ Correct! 'The approval of the budget was granted' — fully nominalised, formal, and in the passive.",err:"✗ 'Approval' is the correct nominalisation of 'approved'. 'Approvement' is not a real word. Option A is awkward; D is informal (got). The passive voice in B adds further formality."},
+  t8e6:{ok:"✓ Correct! 'Effectiveness' or 'efficacy' are the noun forms of 'effective'.",err:"✗ 'Effective' → 'effectiveness' (-ness suffix) or 'efficacy' (a more specialised formal term). Both are correct in formal contexts."},
+  t8e7:{ok:"✓ Correct! 'Deterioration' is the noun form of 'deteriorate' (-tion suffix).",err:"✗ 'Deteriorate' → 'deterioration'. This word is common in formal academic writing about decline (economic deterioration, relationship deterioration, etc.)."},
+  t8e8:{ok:"✓ Correct! 'Analysis' is the correct noun for 'analyse'. 'Analysation' is not standard English.",err:"✗ The noun form of 'analyse' is 'analysis' (irregular). 'Analysation' is not an accepted word. 'Analysing' is a gerund (verbal noun), not the preferred formal noun."},
+
+  // T9 — Advanced Passive
+  t9e1:{ok:"✓ Correct! 'Is thought/believed to have caused' — reporting verb passive + perfect infinitive for past action.",err:"✗ For past actions with reporting verbs: Subject + is + believed/thought + to have + pp. This is more formal than 'It is believed that the surge caused…'"},
+  t9e2:{ok:"✓ Correct! 'It is expected that' — impersonal passive construction with reporting verb.",err:"✗ Impersonal passive: 'It + is + reporting verb (passive) + that clause'. → 'It is expected that…'. 'Expects' is active; 'has expected' changes the time reference."},
+  t9e3:{ok:"✓ Correct! 'Needs reviewing' or 'needs to be reviewed' — both express passive necessity.",err:"✗ 'Need + gerund (-ing)' is equivalent to 'need + to be + past participle'. Both convey passive necessity. 'Needs reviewing' = 'needs to be reviewed'."},
+  t9e4:{ok:"✓ Correct! 'Alleged to have fled' — perfect infinitive passive: the fleeing is in the past relative to now.",err:"✗ When the reported action occurred in the past relative to the reporting, use 'to have + pp': 'alleged to have fled'. 'To flee' would imply a present/future action."},
+  t9e5:{ok:"✓ Correct! Causative 'have': had + object + past participle. 'Had the office refurbished' = arranged for it to be done.",err:"✗ Causative 'have': subject + had + object + past participle. 'Had the office refurbished' = arranged for someone else to refurbish it. This is a common C1+ structure."},
+  t9e6:{ok:"✓ Correct! 'Is reported to have' — the 'having' is the key: perfect infinitive after the passive reporting verb.",err:"✗ Passive reporting verb + 'to have' + pp: 'is reported to have approached'. The infinitive 'to have' signals that the approaching happened in the past."},
+  t9e7:{ok:"✓ Correct! 'It is widely believed that the merger will fail.' — impersonal passive with adverb.",err:"✗ Structure: It + is + adverb (widely) + past participle (believed) + that + clause. → 'It is widely believed that the merger will fail.'"},
+  t9e8:{ok:"✓ Correct! Double object passive — the person becomes subject: 'She was offered a promotion.'",err:"✗ Double object passive: with verbs like 'offer, give, send', the person (indirect object) can become the subject. 'She was offered a promotion' = 'A promotion was offered to her.'"},
+
+  // T10 — Cohesion & Register
+  t10e1:{ok:"✓ Correct! 'Notwithstanding' / 'Despite' / 'In spite of' — formal concession before a noun phrase.",err:"✗ Before a noun phrase, use 'notwithstanding', 'despite', or 'in spite of'. Use 'although' or 'even though' before a clause (subject + verb)."},
+  t10e2:{ok:"✓ Correct! 'That said' — concessive marker acknowledging a previous point before a contrasting qualification.",err:"✗ 'That said' = 'having said that' — it acknowledges the previous point (broad support) but introduces a limitation. 'Hence' and 'in sum' show result/summary, not contrast."},
+  t10e3:{ok:"✓ Correct! 'Hence / Accordingly / Therefore / Consequently' — all express logical result/consequence.",err:"✗ 'Hence', 'accordingly', 'therefore', 'consequently', 'as a consequence' all signal that what follows is a logical result of what preceded. 'Furthermore' adds; 'admittedly' concedes."},
+  t10e4:{ok:"✓ Correct! Option B uses nominalisation ('viability', 'questionable'), passive stance, and hedging — the hallmarks of formal academic register.",err:"✗ Formal register requires: nominalisation, impersonal constructions, hedging, and avoiding colloquialisms. Option C uses 'probably' and 'very successful' (informal). Option D uses 'obviously' (too direct/assertive). Option A has awkward syntax."},
+  t10e5:{ok:"✓ Correct! 'Conversely' / 'By contrast' / 'In contrast' — formal markers of antithetical contrast.",err:"✗ For direct contrast between two parallel situations (northern growth vs. southern decline), use 'conversely', 'by contrast', or 'in contrast'. 'However' is also possible but 'conversely' is more precise for opposites."},
+  t10e6:{ok:"✓ Correct! 'Nonetheless' — concessive contrast: despite the correlation, causation cannot be established.",err:"✗ 'Nonetheless' (or 'nevertheless') signals: despite what was just said, this other thing is still true. The correlation exists, yet causation cannot be inferred. 'Accordingly' and 'hence' would imply causation."},
+  t10e7:{ok:"✓ Correct! 'Namely' / 'That is to say' / 'In other words' — reformulation / specification markers.",err:"✗ 'Namely' (and equivalents: 'that is to say', 'i.e.') specify or name the item just referred to ('one key variable'). 'Furthermore' would add, not specify."},
+  t10e8:{ok:"✓ Correct! 'Even so' — despite the small sample size (conceded), the results are still significant.",err:"✗ 'Even so' = despite what was just said (the small sample), the following is still true. It maintains a concessive contrast already opened by 'admittedly'. 'Therefore' would imply causation; 'in sum' would summarise."},
+
+  // T11 — Idiomatic Language
+  t11e1:{ok:"✓ Correct! 'Sitting on the fence' = refusing to commit to either side of a debate.",err:"✗ 'Sitting on the fence' describes someone who avoids taking a clear position. The politician refused to commit → 'sitting on the fence'."},
+  t11e2:{ok:"✓ Correct! 'Bite the bullet' = face and endure a painful situation with determination.",err:"✗ 'Bite the bullet' means to accept and endure something difficult. The company knew the redundancies were painful but went ahead anyway."},
+  t11e3:{ok:"✓ Correct! 'Bear the brunt' collocates with 'bore' (past) — the correct verb is 'bear'.",err:"✗ The correct collocation is 'bear the brunt of' (past: 'bore the brunt'). 'Take', 'carry', and 'hold' do not collocate with 'brunt'."},
+  t11e4:{ok:"✓ Correct! 'Flies in the face of' = directly contradicts or defies (established theory, evidence, convention).",err:"✗ 'Fly in the face of' = to openly contradict or defy something. The new evidence contradicts the established theory → 'flies in the face of'."},
+  t11e5:{ok:"✓ Correct! 'Beyond the pale' = outside the bounds of acceptable behaviour.",err:"✗ 'Beyond the pale' means unacceptable, outside normal limits. The other options ('above the mark', 'over the line', 'past the point') are not standard idioms in English."},
+  t11e6:{ok:"✓ Correct! 'Drew a blank' = found nothing, came up with no result or answer.",err:"✗ 'Draw a blank' = to fail to find anything or recall something. Investigators found no leads → 'drew a blank'."},
+  t11e7:{ok:"✓ Correct! 'At loggerheads' — the correct preposition is 'at', meaning in a state of persistent disagreement.",err:"✗ The correct form is 'at loggerheads' (not 'in' or 'on'). It means to be in strong, persistent disagreement. 'At a standstill' means stopped, not the same thing."},
+  t11e8:{ok:"✓ Correct! 'Gain the upper hand' = achieve a position of dominance or advantage.",err:"✗ 'Gain the upper hand' = to achieve dominance or a winning position. Through acquisitions, the consortium achieved market dominance."},
+  t11e9:{ok:"✓ Correct! 'Incurred a loss' is the correct formal business collocation.",err:"✗ 'Incur a loss' is the standard business English collocation. 'Make a loss' is also used but less formal. 'Do a loss' and 'have a loss' are not standard collocations."},
+  t11e10:{ok:"✓ Correct! 'Sweeping / far-reaching / radical / significant / major reforms' — all are strong collocations with 'reforms'.",err:"✗ 'Reforms' collocates strongly with: 'sweeping', 'far-reaching', 'radical', 'major', 'significant', 'comprehensive'. Avoid weak or generic adjectives like 'big' or 'huge'."},
+
+  // T12 — Academic Writing
+  t12e1:{ok:"✓ Correct! 'Appears to suggest / seems to suggest / tends to suggest' — hedged verb + to + reporting verb.",err:"✗ Academic hedging: 'appear to' + reporting verb (suggest, indicate, show) softens the claim. The data cannot definitively prove a causal relationship → hedge with 'appears to suggest'."},
+  t12e2:{ok:"✓ Correct! Option C uses nominalisation ('body of research'), hedging ('may have'), formal vocabulary ('deleterious', 'outcomes'), and impersonal structure.",err:"✗ Academic writing requires: formal vocabulary, hedging, nominalisation, impersonal structures. 'Lots of' (A), 'really bad' (D), and 'obviously' (C implied) are informal markers. Option C is the most appropriate."},
+  t12e3:{ok:"✓ Correct! 'Ascertain / Determine / Establish / Investigate' — formal alternatives to 'find out'.",err:"✗ Formal alternatives to 'find out': 'ascertain', 'determine', 'establish', 'investigate'. These are standard in academic and scientific writing."},
+  t12e4:{ok:"✓ Correct! 'Increased by approximately 23 per cent' — formal verb + approximator. 'Went up' is colloquial.",err:"✗ 'Increased' is the formal register equivalent of 'went up'. Academic writing also prefers 'approximately' over 'about', and spells out 'per cent' in formal text."},
+  t12e5:{ok:"✓ Correct! 'It could be argued that / It might be argued that' — hedged stance marker distancing the writer from the claim.",err:"✗ Stance markers like 'It could be argued that' / 'It might be argued that' allow a writer to present a potentially controversial position with appropriate epistemic distance."},
+  t12e6:{ok:"✓ Correct! 'Examined' is the formal academic equivalent of 'looked into'.",err:"✗ Formal alternatives to 'look into': 'examine', 'investigate', 'scrutinise', 'study', 'analyse'. 'Checked out' and 'had a look at' are colloquial. 'Went through' is informal."},
+  t12e7:{ok:"✓ Correct! 'Deteriorated / Worsened / Declined' are the formal equivalents of 'got worse'.",err:"✗ Academic register prefers: 'deteriorate', 'worsen', 'decline' over 'get worse'. These Latinate verbs convey the same meaning with appropriate formality."},
+  t12e8:{ok:"✓ Correct! 'It would appear that further investigation is warranted.' — hedged impersonal structure.",err:"✗ Order: It + would appear + that + subject + verb + complement. 'Warranted' = justified/necessary. → 'It would appear that further investigation is warranted.'"},
+  t12e9:{ok:"✓ Correct! Option A hedges appropriately: 'may suggest' — neither overclaims nor underclaims.",err:"✗ Option A is correct: 'may suggest' signals possibility without certainty. B ('definitely prove') overclaims. C ('obviously') is too assertive. D ('clearly the main reason') lacks epistemic humility required in academic writing."},
+  t12e10:{ok:"✓ Correct! 'A considerable number of / A substantial number of / Numerous / A large number of' — formal quantifiers.",err:"✗ Formal alternatives to 'a lot of' (countable): 'a considerable number of', 'a substantial number of', 'numerous', 'a large number of', 'a great many'. 'A lot of' is informal and should be avoided in academic writing."},
+  t12e11:{ok:"✓ Correct! 'Demonstrates' — the precise formal reporting verb for presenting research findings.",err:"✗ Academic reporting verbs: 'demonstrate', 'indicate', 'reveal', 'illustrate', 'suggest'. 'Says' is too informal; 'tells' is used for people, not studies; 'talks about' is colloquial."},
+  t12e12:{ok:"✓ Correct! 'Scrutinised / Examined / Investigated / Analysed' — all formal alternatives to 'looked at carefully'.",err:"✗ 'Scrutinise', 'examine', 'investigate', and 'analyse' are all formal equivalents of 'look at carefully'. 'Scrutinise' implies particularly careful, critical examination."},
+};
+
+// ── Init reorder ──────────────────────────────────────────────────────────────
+document.querySelectorAll('.reorder-words[data-words]').forEach(wb => {
+  wb.getAttribute('data-words').split(',').forEach(w => {
+    const chip = document.createElement('span');
+    chip.className = 'word-chip';
+    chip.textContent = w;
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('used')) return;
+      chip.classList.add('used');
+      const ab = wb.nextElementSibling;
+      const ph = ab.querySelector('.reorder-placeholder');
+      if (ph) ph.remove();
+      const cl = chip.cloneNode(true);
+      cl.classList.remove('used');
+      ab.appendChild(cl);
+    });
+    wb.appendChild(chip);
+  });
+  const ab = wb.nextElementSibling;
+  ab.addEventListener('click', e => {
+    const chip = e.target.closest('.word-chip');
+    if (!chip) return;
+    wb.querySelectorAll('.word-chip').forEach(orig => {
+      if (orig.textContent === chip.textContent && orig.classList.contains('used')) {
+        orig.classList.remove('used');
+      }
+    });
+    chip.remove();
+    if (!ab.querySelector('.word-chip')) {
+      const ph = document.createElement('span');
+      ph.className = 'reorder-placeholder';
+      ph.textContent = 'Click words above to build the sentence…';
+      ab.appendChild(ph);
+    }
+  });
+});
+
+// ── Multiple choice ───────────────────────────────────────────────────────────
+document.querySelectorAll('.option-btn').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const ex = this.closest('.exercise');
+    if (ex.classList.contains('correct') || ex.classList.contains('wrong')) return;
+    ex.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+  });
+});
+
+// ── Check topic ───────────────────────────────────────────────────────────────
+function checkTopic(topicId) {
+  const section = document.getElementById(topicId);
+  const exercises = section.querySelectorAll('.exercise');
+  let correct = 0;
+  const total = exercises.length;
+
+  exercises.forEach(ex => {
+    const id = ex.dataset.id;
+    const type = ex.dataset.type;
+    const accepted = ex.dataset.answer.split('|').map(a => a.trim().toLowerCase());
+    const exp = EXP[id] || {};
+    let isCorrect = false;
+
+    if (type === 'fill') {
+      const inp = ex.querySelector('.blank-input');
+      const userAnswer = inp.value.trim().toLowerCase();
+      isCorrect = accepted.includes(userAnswer);
+      inp.classList.toggle('correct-input', isCorrect);
+      inp.classList.toggle('wrong-input', !isCorrect);
+      inp.disabled = true;
+    } else if (type === 'choice') {
+      const sel = ex.querySelector('.option-btn.selected');
+      if (sel) {
+        isCorrect = accepted.includes(sel.dataset.opt.toLowerCase());
+        ex.querySelectorAll('.option-btn').forEach(b => {
+          b.disabled = true;
+          if (b.dataset.opt === ex.dataset.answer) b.classList.add('correct-opt');
+          else if (b.classList.contains('selected') && !isCorrect) b.classList.add('wrong-opt');
+        });
+      }
+    } else if (type === 'reorder') {
+      const ab = ex.querySelector('.reorder-answer');
+      const userAnswer = Array.from(ab.querySelectorAll('.word-chip')).map(c => c.textContent).join(' ').toLowerCase();
+      isCorrect = accepted.includes(userAnswer);
+      ex.querySelectorAll('.word-chip').forEach(c => c.style.pointerEvents = 'none');
+    }
+
+    ex.classList.toggle('correct', isCorrect);
+    ex.classList.toggle('wrong', !isCorrect);
+    if (isCorrect) correct++;
+
+    const fb = ex.querySelector('.feedback');
+    fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'err');
+    fb.innerHTML = isCorrect
+      ? (exp.ok || '✓ Correct!')
+      : (exp.err || '✗ Incorrect.') + `<br><span style="display:block;margin-top:4px">Correct: <span class="correct-answer">${accepted[0]}</span></span>`;
+  });
+
+  const pct = Math.round((correct / total) * 100);
+  const scoreEl = document.getElementById('score-' + topicId);
+  scoreEl.classList.add('show');
+  const msg = pct === 100 ? '🏆 Flawless! Outstanding command of this topic.'
+    : pct >= 80 ? '🌟 Excellent! Only a few nuances to refine.'
+    : pct >= 60 ? '📚 Good progress. Revisit the rules and examples above.'
+    : '💡 This area needs focused attention. Study the grammar box carefully.';
+  scoreEl.innerHTML = `
+    <div class="score-label">Your result</div>
+    <div class="score-track"><div class="score-fill" style="width:0"></div></div>
+    <div class="score-text"><span class="pct">${correct}/${total}</span> &nbsp;— ${pct}%</div>
+    <div class="score-msg">${msg}</div>
+  `;
+  setTimeout(() => { scoreEl.querySelector('.score-fill').style.width = pct + '%'; }, 60);
+
+  document.querySelectorAll('#nav-list a').forEach(a => {
+    if (a.getAttribute('href') === '#' + topicId) {
+      a.classList.add('done');
+      a.querySelector('.nav-num').textContent = '✓';
+    }
+  });
+  section.querySelector('.check-btn').disabled = true;
+}
+
+// ── Print ─────────────────────────────────────────────────────────────────────
+function handlePrint() {
+  document.getElementById('print-tip').style.display = 'block';
+  setTimeout(() => { window.print(); }, 300);
+}
+
+// ── Active nav on scroll ──────────────────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('#nav-list a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`#nav-list a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.topic').forEach(t => obs.observe(t));
+</script>
+</body>
+</html>
