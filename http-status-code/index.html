@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Códigos de Status HTTP — Referência Completa</title>
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff; padding: 0; }
+    .page { box-shadow: none; }
+    .footer { display: none !important; }
+  }
+
+  @page {
+    margin: 1.8cm 2cm 2.6cm;
+    @bottom-center {
+      content: "\00A9 2026 \2014 Franklin Jos\00E9 de Oliveira Neto. Todos os direitos reservados.";
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 8pt;
+      color: #888888;
+      border-top: 1px solid #dddddd;
+      padding-top: 5pt;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 8pt;
+      color: #aaaaaa;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f5f5;
+    color: #111;
+    padding: 20px 16px;
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 32px 36px;
+    border-radius: 8px;
+    box-shadow: 0 1px 8px rgba(0,0,0,.10);
+  }
+
+  /* CABEÇALHO */
+  .print-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid #222;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+  }
+  .print-header h1 { font-size: 20px; font-weight: 700; color: #111; }
+  .print-header span { font-size: 12px; color: #666; }
+
+  /* BOTÃO IMPRIMIR */
+  .print-btn {
+    display: block;
+    margin: 0 auto 20px;
+    padding: 9px 28px;
+    background: #222;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .print-btn:hover { background: #444; }
+
+  /* LAYOUT DE COLUNAS */
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 28px;
+  }
+  .full { grid-column: 1 / -1; }
+  .half-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 28px;
+  }
+
+  /* GRUPO POR FAMÍLIA */
+  .group { margin-bottom: 22px; break-inside: avoid; }
+  .group-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    display: inline-block;
+  }
+
+  /* TABELA */
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 5px 8px;
+    border-bottom: 1.5px solid #ddd;
+    color: #555;
+  }
+  td {
+    padding: 5px 8px;
+    border-bottom: .5px solid #eee;
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  .code { font-family: 'Courier New', monospace; font-weight: 700; font-size: 13px; white-space: nowrap; }
+  .name { font-weight: 600; white-space: nowrap; }
+  .desc { color: #444; font-size: 12px; }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+    letter-spacing: .03em;
+  }
+
+  /* CORES POR FAMÍLIA */
+  .g1 .group-title { background: #e8f0fd; color: #1a3a7c; }
+  .g1 .code { color: #1a3a7c; }
+  .g1 .tag-comum { background: #c5d8fa; color: #1a3a7c; }
+
+  .g2 .group-title { background: #e6f9ef; color: #145c35; }
+  .g2 .code { color: #145c35; }
+  .g2 .tag-comum { background: #b6efd4; color: #145c35; }
+
+  .g3 .group-title { background: #fef8e7; color: #7a5200; }
+  .g3 .code { color: #7a5200; }
+  .g3 .tag-comum { background: #fde9a0; color: #7a5200; }
+
+  .g4 .group-title { background: #fce9e9; color: #8b1a1a; }
+  .g4 .code { color: #c0392b; }
+  .g4 .tag-comum { background: #f8c3c3; color: #8b1a1a; }
+
+  .g5 .group-title { background: #f2ecfd; color: #4a1a8b; }
+  .g5 .code { color: #6b2fb3; }
+  .g5 .tag-comum { background: #ddd0f8; color: #4a1a8b; }
+
+  .tag-rest { background: #e0f0ff; color: #1155aa; }
+
+  /* RODAPÉ */
+  .footer {
+    font-size: 10.5px;
+    color: #aaa;
+    text-align: center;
+    margin-top: 20px;
+    border-top: .5px solid #eee;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print" style="text-align:center; padding: 12px 0 4px;">
+  <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar PDF</button>
+</div>
+
+<div class="page">
+  <div class="print-header">
+    <div>
+      <h1>Códigos de Status HTTP</h1>
+      <div style="margin-top:4px;font-size:11px;color:#999;font-style:italic;letter-spacing:.03em;">by <strong style="color:#222;font-style:normal;">Franklin</strong></div>
+    </div>
+    <span>Referência completa — RFC 9110 / IANA</span>
+  </div>
+
+  <div class="cols">
+
+    <!-- 1xx -->
+    <div class="group g1">
+      <div class="group-title">1xx — Informacional</div>
+      <table>
+        <tr>
+          <th style="width:52px">Código</th>
+          <th style="width:165px">Nome</th>
+          <th>Descrição</th>
+        </tr>
+        <tr>
+          <td class="code">100</td>
+          <td class="name">Continue</td>
+          <td class="desc">Servidor recebeu os headers; cliente pode continuar enviando o body.</td>
+        </tr>
+        <tr>
+          <td class="code">101</td>
+          <td class="name">Switching Protocols</td>
+          <td class="desc">Servidor aceita troca de protocolo (ex: HTTP → WebSocket).</td>
+        </tr>
+        <tr>
+          <td class="code">102</td>
+          <td class="name">Processing</td>
+          <td class="desc">Servidor está processando; evita timeout em operações longas.</td>
+        </tr>
+        <tr>
+          <td class="code">103</td>
+          <td class="name">Early Hints</td>
+          <td class="desc">Envia headers de pré-carregamento antes da resposta final.</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 2xx -->
+    <div class="group g2">
+      <div class="group-title">2xx — Sucesso</div>
+      <table>
+        <tr>
+          <th style="width:52px">Código</th>
+          <th style="width:165px">Nome</th>
+          <th>Descrição</th>
+        </tr>
+        <tr>
+          <td class="code">200</td>
+          <td class="name">OK <span class="tag tag-comum">comum</span></td>
+          <td class="desc">Requisição bem-sucedida. Usado em GET, PUT, PATCH.</td>
+        </tr>
+        <tr>
+          <td class="code">201</td>
+          <td class="name">Created <span class="tag tag-comum">comum</span></td>
+          <td class="desc">Recurso criado com sucesso. Retornado em POST.</td>
+        </tr>
+        <tr>
+          <td class="code">202</td>
+          <td class="name">Accepted</td>
+          <td class="desc">Requisição aceita para processamento assíncrono.</td>
+        </tr>
+        <tr>
+          <td class="code">203</td>
+          <td class="name">Non-Authoritative Info</td>
+          <td class="desc">Resposta de proxy com conteúdo modificado.</td>
+        </tr>
+        <tr>
+          <td class="code">204</td>
+          <td class="name">No Content <span class="tag tag-comum">comum</span></td>
+          <td class="desc">Sucesso sem body. Usado em DELETE e PATCH sem retorno.</td>
+        </tr>
+        <tr>
+          <td class="code">205</td>
+          <td class="name">Reset Content</td>
+          <td class="desc">Sucesso; cliente deve limpar o formulário.</td>
+        </tr>
+        <tr>
+          <td class="code">206</td>
+          <td class="name">Partial Content</td>
+          <td class="desc">Entrega parcial de arquivo (download resumível, streaming).</td>
+        </tr>
+        <tr>
+          <td class="code">207</td>
+          <td class="name">Multi-Status</td>
+          <td class="desc">Múltiplos status em um único response (WebDAV).</td>
+        </tr>
+        <tr>
+          <td class="code">208</td>
+          <td class="name">Already Reported</td>
+          <td class="desc">Membro já listado em resposta DAV anterior.</td>
+        </tr>
+        <tr>
+          <td class="code">226</td>
+          <td class="name">IM Used</td>
+          <td class="desc">Resposta é resultado de manipulação de instância.</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 3xx -->
+    <div class="group g3">
+      <div class="group-title">3xx — Redirecionamento</div>
+      <table>
+        <tr>
+          <th style="width:52px">Código</th>
+          <th style="width:165px">Nome</th>
+          <th>Descrição</th>
+        </tr>
+        <tr>
+          <td class="code">300</td>
+          <td class="name">Multiple Choices</td>
+          <td class="desc">Múltiplas representações disponíveis para o recurso.</td>
+        </tr>
+        <tr>
+          <td class="code">301</td>
+          <td class="name">Moved Permanently <span class="tag tag-comum">comum</span></td>
+          <td class="desc">URL mudou permanentemente. Browsers atualizam o bookmark.</td>
+        </tr>
+        <tr>
+          <td class="code">302</td>
+          <td class="name">Found <span class="tag tag-comum">comum</span></td>
+          <td class="desc">Redirecionamento temporário. URL original permanece válida.</td>
+        </tr>
+        <tr>
+          <td class="code">303</td>
+          <td class="name">See Other</td>
+          <td class="desc">Redireciona para outro recurso via GET (pós-POST).</td>
+        </tr>
+        <tr>
+          <td class="code">304</td>
+          <td class="name">Not Modified <span class="tag tag-comum">comum</span></td>
+          <td class="desc">Recurso em cache ainda é válido. Sem body na resposta.</td>
+        </tr>
+        <tr>
+          <td class="code">307</td>
+          <td class="name">Temporary Redirect</td>
+          <td class="desc">Redirecionamento temporário preservando o método HTTP.</td>
+        </tr>
+        <tr>
+          <td class="code">308</td>
+          <td class="name">Permanent Redirect</td>
+          <td class="desc">Redirecionamento permanente preservando o método HTTP.</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- espaço vazio para balancear o layout na segunda coluna -->
+    <div></div>
+
+    <!-- 4xx — ocupa as duas colunas -->
+    <div class="group g4 full">
+      <div class="group-title">4xx — Erro do Cliente</div>
+      <div class="half-grid">
+        <table>
+          <tr>
+            <th style="width:52px">Código</th>
+            <th style="width:185px">Nome</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td class="code">400</td>
+            <td class="name">Bad Request <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Requisição malformada, JSON inválido ou dados incorretos.</td>
+          </tr>
+          <tr>
+            <td class="code">401</td>
+            <td class="name">Unauthorized <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Autenticação necessária ou credenciais inválidas.</td>
+          </tr>
+          <tr>
+            <td class="code">402</td>
+            <td class="name">Payment Required</td>
+            <td class="desc">Reservado para uso futuro. Algumas APIs usam para paywall.</td>
+          </tr>
+          <tr>
+            <td class="code">403</td>
+            <td class="name">Forbidden <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Autenticado mas sem permissão para o recurso.</td>
+          </tr>
+          <tr>
+            <td class="code">404</td>
+            <td class="name">Not Found <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Recurso não encontrado no servidor.</td>
+          </tr>
+          <tr>
+            <td class="code">405</td>
+            <td class="name">Method Not Allowed <span class="tag tag-rest">REST</span></td>
+            <td class="desc">Método HTTP não suportado para esta rota.</td>
+          </tr>
+          <tr>
+            <td class="code">406</td>
+            <td class="name">Not Acceptable</td>
+            <td class="desc">Servidor não suporta o formato solicitado no Accept.</td>
+          </tr>
+          <tr>
+            <td class="code">407</td>
+            <td class="name">Proxy Auth Required</td>
+            <td class="desc">Autenticação necessária no proxy intermediário.</td>
+          </tr>
+          <tr>
+            <td class="code">408</td>
+            <td class="name">Request Timeout</td>
+            <td class="desc">Cliente demorou demais para enviar a requisição completa.</td>
+          </tr>
+          <tr>
+            <td class="code">409</td>
+            <td class="name">Conflict <span class="tag tag-rest">REST</span></td>
+            <td class="desc">Conflito de estado: duplicata, versão desatualizada.</td>
+          </tr>
+          <tr>
+            <td class="code">410</td>
+            <td class="name">Gone</td>
+            <td class="desc">Recurso removido permanentemente (diferente do 404).</td>
+          </tr>
+          <tr>
+            <td class="code">411</td>
+            <td class="name">Length Required</td>
+            <td class="desc">Header Content-Length obrigatório mas ausente.</td>
+          </tr>
+          <tr>
+            <td class="code">412</td>
+            <td class="name">Precondition Failed</td>
+            <td class="desc">Condição nos headers (If-Match, If-None-Match) falhou.</td>
+          </tr>
+          <tr>
+            <td class="code">413</td>
+            <td class="name">Content Too Large</td>
+            <td class="desc">Body da requisição excede o limite configurado.</td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <th style="width:52px">Código</th>
+            <th style="width:185px">Nome</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td class="code">414</td>
+            <td class="name">URI Too Long</td>
+            <td class="desc">URL excede o tamanho máximo aceito pelo servidor.</td>
+          </tr>
+          <tr>
+            <td class="code">415</td>
+            <td class="name">Unsupported Media Type</td>
+            <td class="desc">Content-Type não suportado (ex: esperava JSON, recebeu XML).</td>
+          </tr>
+          <tr>
+            <td class="code">416</td>
+            <td class="name">Range Not Satisfiable</td>
+            <td class="desc">Intervalo solicitado no header Range é inválido.</td>
+          </tr>
+          <tr>
+            <td class="code">417</td>
+            <td class="name">Expectation Failed</td>
+            <td class="desc">Header Expect não pôde ser atendido pelo servidor.</td>
+          </tr>
+          <tr>
+            <td class="code">418</td>
+            <td class="name">I'm a Teapot</td>
+            <td class="desc">Easter egg do RFC 2324. Servidor recusa fazer café.</td>
+          </tr>
+          <tr>
+            <td class="code">421</td>
+            <td class="name">Misdirected Request</td>
+            <td class="desc">Requisição enviada para servidor que não pode respondê-la.</td>
+          </tr>
+          <tr>
+            <td class="code">422</td>
+            <td class="name">Unprocessable Entity <span class="tag tag-rest">REST</span></td>
+            <td class="desc">Body bem-formado mas falha na validação de negócio.</td>
+          </tr>
+          <tr>
+            <td class="code">423</td>
+            <td class="name">Locked</td>
+            <td class="desc">Recurso bloqueado por outro processo (WebDAV).</td>
+          </tr>
+          <tr>
+            <td class="code">424</td>
+            <td class="name">Failed Dependency</td>
+            <td class="desc">Ação falhou por dependência de outra ação que falhou.</td>
+          </tr>
+          <tr>
+            <td class="code">425</td>
+            <td class="name">Too Early</td>
+            <td class="desc">Servidor recusa processar early data (risco de replay).</td>
+          </tr>
+          <tr>
+            <td class="code">426</td>
+            <td class="name">Upgrade Required</td>
+            <td class="desc">Cliente deve trocar de protocolo (ex: HTTP/1.1 → HTTP/2).</td>
+          </tr>
+          <tr>
+            <td class="code">428</td>
+            <td class="name">Precondition Required</td>
+            <td class="desc">Requer header condicional (If-Match) para evitar conflito.</td>
+          </tr>
+          <tr>
+            <td class="code">429</td>
+            <td class="name">Too Many Requests <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Rate limit excedido. Retry-After indica quando tentar novamente.</td>
+          </tr>
+          <tr>
+            <td class="code">431</td>
+            <td class="name">Headers Too Large</td>
+            <td class="desc">Headers excedem o tamanho máximo aceito pelo servidor.</td>
+          </tr>
+          <tr>
+            <td class="code">451</td>
+            <td class="name">Unavailable Legal</td>
+            <td class="desc">Recurso bloqueado por ordem legal (referência a Fahrenheit 451).</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5xx — ocupa as duas colunas -->
+    <div class="group g5 full">
+      <div class="group-title">5xx — Erro do Servidor</div>
+      <div class="half-grid">
+        <table>
+          <tr>
+            <th style="width:52px">Código</th>
+            <th style="width:185px">Nome</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td class="code">500</td>
+            <td class="name">Internal Server Error <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Erro genérico no servidor. Indica bug ou exceção não tratada.</td>
+          </tr>
+          <tr>
+            <td class="code">501</td>
+            <td class="name">Not Implemented</td>
+            <td class="desc">Servidor não suporta o método HTTP utilizado.</td>
+          </tr>
+          <tr>
+            <td class="code">502</td>
+            <td class="name">Bad Gateway <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Gateway recebeu resposta inválida do servidor de origem.</td>
+          </tr>
+          <tr>
+            <td class="code">503</td>
+            <td class="name">Service Unavailable <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Servidor indisponível: sobrecarga ou manutenção.</td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <th style="width:52px">Código</th>
+            <th style="width:185px">Nome</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td class="code">504</td>
+            <td class="name">Gateway Timeout <span class="tag tag-comum">comum</span></td>
+            <td class="desc">Gateway não recebeu resposta do upstream a tempo.</td>
+          </tr>
+          <tr>
+            <td class="code">505</td>
+            <td class="name">HTTP Version Not Supported</td>
+            <td class="desc">Versão do protocolo HTTP não suportada pelo servidor.</td>
+          </tr>
+          <tr>
+            <td class="code">507</td>
+            <td class="name">Insufficient Storage</td>
+            <td class="desc">Servidor sem espaço para completar a requisição (WebDAV).</td>
+          </tr>
+          <tr>
+            <td class="code">508</td>
+            <td class="name">Loop Detected</td>
+            <td class="desc">Loop infinito detectado ao processar a requisição.</td>
+          </tr>
+          <tr>
+            <td class="code">511</td>
+            <td class="name">Network Auth Required</td>
+            <td class="desc">Cliente precisa autenticar na rede (ex: portal Wi-Fi captive).</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <strong>comum</strong> = mais frequentes em APIs REST &nbsp;|&nbsp;
+    <strong>REST</strong> = uso semântico específico em APIs REST &nbsp;|&nbsp;
+    Referência: RFC 9110 &amp; IANA HTTP Status Code Registry
+    <div style="margin-top:9px;padding-top:9px;border-top:1px solid #f0f0f0;font-size:10px;color:#bbb;letter-spacing:.02em;">
+      © 2026 — <strong style="color:#888;font-weight:600;">Franklin José de Oliveira Neto</strong>. Todos os direitos reservados.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
