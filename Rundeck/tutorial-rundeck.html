@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rundeck no Ubuntu — Guia de Instalação e Boas Práticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-alt: #ece7dc;
+    --ink: #17130d;
+    --ink-soft: #403527;
+    --muted: #6b5d47;
+    --accent: #c84e1a;
+    --accent-2: #1e5f3b;
+    --code-bg: #14110b;
+    --code-ink: #e8dfc7;
+    --code-comment: #8a7e63;
+    --code-keyword: #e8a04c;
+    --code-string: #a3c587;
+    --code-var: #d88c6c;
+    --rule: #2b2418;
+    --warn-bg: #f9e8d4;
+    --warn-border: #c84e1a;
+    --tip-bg: #dfe8dc;
+    --tip-border: #1e5f3b;
+    --info-bg: #dce4ed;
+    --info-border: #2c5282;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200, 78, 26, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(30, 95, 59, 0.04) 0%, transparent 40%);
+  }
+
+  /* ===== Header ===== */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding: 1.2rem 2rem;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    background: rgba(244, 241, 234, 0.92);
+  }
+  .masthead-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 2rem;
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    font-style: italic;
+  }
+  .logo::before {
+    content: "◆";
+    color: var(--accent);
+    margin-right: 0.4rem;
+    font-style: normal;
+  }
+  .meta-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem 3rem;
+    position: relative;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .eyebrow::after {
+    content: "";
+    flex: 0 0 60px;
+    height: 1px;
+    background: var(--accent);
+  }
+  h1.hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    margin-bottom: 1.8rem;
+  }
+  h1.hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .hero-lede {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    line-height: 1.45;
+    max-width: 720px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .byline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .byline::before {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .byline span {
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .print-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .print-btn:hover {
+    background: var(--accent);
+  }
+  .print-btn::before {
+    content: "⎙";
+    font-size: 1rem;
+  }
+  .hero-divider {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ink);
+  }
+  .hero-stat {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hero-stat .k {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .hero-stat .v {
+    font-size: 1rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ===== Container ===== */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 4rem;
+    position: relative;
+  }
+
+  /* ===== Sidebar / TOC ===== */
+  .toc {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    padding-top: 2rem;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+  }
+  .toc-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--ink);
+  }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc li {
+    counter-increment: toc;
+    margin-bottom: 0.6rem;
+  }
+  .toc li a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    display: flex;
+    gap: 0.6rem;
+    line-height: 1.4;
+    padding: 0.25rem 0;
+    transition: color 0.15s;
+  }
+  .toc li a::before {
+    content: counter(toc, decimal-leading-zero);
+    color: var(--accent);
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+  .toc li a:hover {
+    color: var(--accent);
+  }
+
+  /* ===== Main content ===== */
+  main {
+    padding-top: 2rem;
+    padding-bottom: 5rem;
+    max-width: 760px;
+  }
+
+  section {
+    margin-bottom: 5rem;
+    scroll-margin-top: 6rem;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+  h2 em {
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 2.5rem 0 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    opacity: 0.95;
+  }
+
+  h4 {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.8rem 0 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+  }
+  p + p {
+    text-indent: 0;
+  }
+
+  main p, main li {
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  ul, ol {
+    margin: 1rem 0 1.5rem 1.5rem;
+  }
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  /* ===== Code blocks ===== */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 1.4rem 1.6rem;
+    border-radius: 2px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    border-left: 3px solid var(--accent);
+    position: relative;
+  }
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 0.5rem;
+    right: 0.8rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--code-comment);
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+  }
+  p code, li code, td code {
+    background: var(--bg-alt);
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+    font-size: 0.85em;
+    border: 1px solid rgba(0,0,0,0.08);
+    color: var(--ink);
+  }
+  .c-comment { color: var(--code-comment); font-style: italic; }
+  .c-keyword { color: var(--code-keyword); font-weight: 500; }
+  .c-string  { color: var(--code-string); }
+  .c-var     { color: var(--code-var); }
+  .c-prompt  { color: #7a9ec4; user-select: none; }
+
+  /* ===== Callouts ===== */
+  .callout {
+    padding: 1.3rem 1.5rem;
+    margin: 1.8rem 0;
+    border-left: 4px solid;
+    position: relative;
+    font-size: 0.98rem;
+  }
+  .callout-tip {
+    background: var(--tip-bg);
+    border-color: var(--tip-border);
+  }
+  .callout-warn {
+    background: var(--warn-bg);
+    border-color: var(--warn-border);
+  }
+  .callout-info {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+  }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .callout-tip .callout-label { color: var(--tip-border); }
+  .callout-warn .callout-label { color: var(--warn-border); }
+  .callout-info .callout-label { color: var(--info-border); }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ===== Tables ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  th {
+    text-align: left;
+    padding: 0.8rem 0.6rem;
+    border-bottom: 2px solid var(--ink);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  td {
+    padding: 0.8rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  tr:hover td {
+    background: var(--bg-alt);
+  }
+
+  /* ===== Step numbers ===== */
+  .step {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .step-num {
+    flex: 0 0 auto;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 1.1rem;
+    background: var(--bg);
+  }
+  .step-body {
+    flex: 1;
+    padding-top: 0.2rem;
+  }
+  .step-body h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ===== Intro lead ===== */
+  .lead-paragraph::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 4.5rem;
+    font-weight: 900;
+    float: left;
+    line-height: 0.85;
+    margin: 0.2rem 0.6rem 0 0;
+    color: var(--accent);
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    border-top: 2px solid var(--ink);
+    padding: 3rem 2rem;
+    background: var(--bg-alt);
+    margin-top: 4rem;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+    font-size: 0.9rem;
+  }
+  .footer-inner h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 1rem;
+    color: var(--muted);
+  }
+  footer ul { list-style: none; margin: 0; }
+  footer li { margin-bottom: 0.5rem; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 960px) {
+    .container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .toc {
+      position: static;
+      max-height: none;
+      border: 1px solid var(--ink);
+      padding: 1.5rem;
+      background: var(--bg-alt);
+    }
+    .hero-divider {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .footer-inner {
+      grid-template-columns: 1fr;
+    }
+    h1.hero-title { font-size: 3rem; }
+    h2 { font-size: 1.8rem; }
+  }
+
+  @media (max-width: 560px) {
+    .masthead-inner { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+    .hero { padding: 2rem 1.2rem; }
+    .container { padding: 0 1.2rem; }
+    main p, main li { font-size: 1rem; }
+    pre { font-size: 0.78rem; padding: 1rem; }
+  }
+
+  .copyright-bar {
+    max-width: 1200px;
+    margin: 2.5rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ===== Print footer (visível apenas na impressão) ===== */
+  .print-footer {
+    display: none;
+  }
+
+  /* ===== Print ===== */
+  @page {
+    size: A4;
+    margin: 2cm 1.8cm 2.5cm 1.8cm;
+  }
+
+  @media print {
+    /* Reset geral para impressão */
+    body {
+      background: white !important;
+      color: black !important;
+      font-size: 11pt;
+      line-height: 1.5;
+      background-image: none !important;
+    }
+
+    /* Esconder elementos de navegação/interação */
+    .masthead,
+    .toc,
+    .print-btn,
+    footer {
+      display: none !important;
+    }
+
+    /* Layout em coluna única, sem sidebar */
+    .container {
+      grid-template-columns: 1fr !important;
+      gap: 0 !important;
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+
+    main {
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+
+    .hero {
+      padding: 0 0 1.5rem 0 !important;
+      page-break-after: avoid;
+    }
+
+    h1.hero-title {
+      font-size: 2.4rem !important;
+      color: black !important;
+    }
+    h1.hero-title em { color: #c84e1a !important; }
+
+    .hero-lede {
+      font-size: 1.1rem !important;
+      color: #333 !important;
+    }
+
+    .hero-divider {
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      gap: 0.5rem;
+    }
+
+    /* Controle de quebras de página */
+    section {
+      page-break-inside: auto;
+      margin-bottom: 2rem !important;
+    }
+    h2, h3, h4 {
+      page-break-after: avoid;
+      page-break-inside: avoid;
+      color: black !important;
+    }
+    h2 { font-size: 1.8rem !important; }
+    h3 { font-size: 1.3rem !important; }
+    p, li { page-break-inside: avoid; }
+
+    pre {
+      background: #f5f2ec !important;
+      color: #14110b !important;
+      border: 1px solid #ccc !important;
+      border-left: 3px solid #c84e1a !important;
+      font-size: 9pt !important;
+      page-break-inside: avoid;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    pre::before { color: #888 !important; }
+    .c-comment { color: #6b7280 !important; }
+    .c-keyword { color: #b45309 !important; }
+    .c-string  { color: #15803d !important; }
+    .c-var     { color: #b91c1c !important; }
+    .c-prompt  { color: #1e40af !important; }
+
+    code { background: #eee !important; color: black !important; }
+
+    .callout {
+      page-break-inside: avoid;
+      border: 1px solid #999 !important;
+      border-left: 4px solid !important;
+    }
+    .callout-tip  { background: #f0f4ed !important; border-left-color: #1e5f3b !important; }
+    .callout-warn { background: #f9eddd !important; border-left-color: #c84e1a !important; }
+    .callout-info { background: #e7edf4 !important; border-left-color: #2c5282 !important; }
+
+    table { page-break-inside: avoid; }
+
+    a {
+      color: #c84e1a !important;
+      text-decoration: none;
+    }
+    /* Mostrar URL ao lado do link em links externos (opcional, desativado por padrão) */
+
+    /* ===== Copyright em cada página impressa ===== */
+    .print-footer {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      color: #666;
+      padding: 0.5cm 0 0.2cm;
+      border-top: 1px solid #ccc;
+      background: white;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="logo">Runbook<em>s</em></div>
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+      <div class="meta-line">Guia Técnico · Ubuntu 24.04 LTS · Rundeck 5.x</div>
+      <button class="print-btn" onclick="window.print()" title="Imprimir ou salvar como PDF">Imprimir</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">Automação de Operações</div>
+  <h1 class="hero-title">Configurando o <em>Rundeck</em> no Ubuntu, do zero à produção.</h1>
+  <div class="byline">by <span>Franklin</span></div>
+  <p class="hero-lede">
+    Um passo a passo completo — desde a instalação do pacote oficial até o endurecimento de segurança,
+    banco de dados externo, reverse proxy com TLS e integração LDAP — escrito com foco em ambientes reais.
+  </p>
+  <div class="hero-divider">
+    <div class="hero-stat">
+      <span class="k">Distribuição</span>
+      <span class="v">Ubuntu 22.04 / 24.04 LTS</span>
+    </div>
+    <div class="hero-stat">
+      <span class="k">Versão Rundeck</span>
+      <span class="v">5.x (Community)</span>
+    </div>
+    <div class="hero-stat">
+      <span class="k">Tempo estimado</span>
+      <span class="v">45–90 minutos</span>
+    </div>
+    <div class="hero-stat">
+      <span class="k">Nível</span>
+      <span class="v">Intermediário</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <aside class="toc">
+    <div class="toc-title">Sumário</div>
+    <ol>
+      <li><a href="#intro">Contexto e arquitetura</a></li>
+      <li><a href="#prereq">Pré-requisitos do servidor</a></li>
+      <li><a href="#java">Instalação do Java (JDK 17)</a></li>
+      <li><a href="#repo">Repositório oficial Rundeck</a></li>
+      <li><a href="#install">Instalação do pacote</a></li>
+      <li><a href="#config-base">Configuração base</a></li>
+      <li><a href="#db">Banco de dados externo</a></li>
+      <li><a href="#hardening">Endurecimento de segurança</a></li>
+      <li><a href="#nginx">Reverse proxy com Nginx + TLS</a></li>
+      <li><a href="#auth">Autenticação LDAP</a></li>
+      <li><a href="#firewall">Firewall e UFW</a></li>
+      <li><a href="#backup">Backup e monitoramento</a></li>
+      <li><a href="#checklist">Checklist de produção</a></li>
+    </ol>
+  </aside>
+
+  <main>
+
+    <section id="intro">
+      <div class="section-number">§ 01 — Introdução</div>
+      <h2>Contexto e <em>arquitetura</em></h2>
+      <p class="lead-paragraph">
+        O Rundeck é uma plataforma de <strong>automação de runbooks</strong> mantida pela PagerDuty. Em uma frase:
+        ele permite que equipes de operações transformem procedimentos ad-hoc (rodar scripts em dezenas de servidores,
+        reiniciar serviços, aplicar correções) em <strong>jobs auditáveis, versionados e delegáveis</strong> — com controle
+        fino de permissões e log completo de execuções.
+      </p>
+
+      <p>
+        Este guia cobre uma instalação <strong>pensada para produção</strong>, não apenas um "hello world". A diferença
+        prática: em vez do banco H2 embutido e da senha padrão <code>admin/admin</code>, você terminará com
+        PostgreSQL externo, TLS válido, LDAP e backup configurado.
+      </p>
+
+      <h4>Topologia alvo</h4>
+      <p>
+        Ao final deste tutorial, sua instalação terá os seguintes componentes:
+      </p>
+      <ul>
+        <li><strong>Servidor Rundeck</strong> rodando como serviço systemd, escutando apenas em <code>127.0.0.1:4440</code>.</li>
+        <li><strong>Nginx</strong> como reverse proxy, encerrando TLS na porta 443 com certificado Let's Encrypt.</li>
+        <li><strong>PostgreSQL</strong> (local ou remoto) armazenando jobs, execuções e metadados.</li>
+        <li><strong>UFW</strong> restringindo o acesso externo apenas às portas 22, 80 e 443.</li>
+        <li><strong>LDAP/AD</strong> (opcional) para autenticação corporativa.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <span class="callout-label">Nota sobre edições</span>
+        <p>O Rundeck existe em duas edições: <strong>Community</strong> (gratuita, código aberto) e <strong>Enterprise</strong>
+        (paga, com cluster, SSO avançado, alta disponibilidade). Este guia cobre a edição Community, que é suficiente
+        para a maioria dos cenários de equipes pequenas e médias.</p>
+      </div>
+    </section>
+
+    <section id="prereq">
+      <div class="section-number">§ 02 — Pré-requisitos</div>
+      <h2>Pré-requisitos do <em>servidor</em></h2>
+
+      <p>Antes de qualquer instalação, valide o dimensionamento mínimo. O Rundeck é uma aplicação Java/Grails — ela
+      reserva memória de forma relativamente agressiva.</p>
+
+      <table>
+        <thead>
+          <tr><th>Recurso</th><th>Mínimo</th><th>Recomendado (produção)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CPU</td><td>2 vCPUs</td><td>4 vCPUs</td></tr>
+          <tr><td>Memória</td><td>4 GB RAM</td><td>8 GB RAM ou mais</td></tr>
+          <tr><td>Disco</td><td>20 GB</td><td>50 GB+ (logs crescem)</td></tr>
+          <tr><td>SO</td><td>Ubuntu 22.04 LTS</td><td>Ubuntu 24.04 LTS</td></tr>
+          <tr><td>Java</td><td>OpenJDK 11</td><td>OpenJDK 17</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Atualize o sistema antes de começar</h4>
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo apt update &amp;&amp; sudo apt upgrade -y
+<span class="c-prompt">$</span> sudo apt install -y curl wget gnupg lsb-release ca-certificates</pre>
+
+      <h4>Defina o hostname corretamente</h4>
+      <p>O Rundeck usa o nome do host em várias configurações internas (geração de URLs em e-mails, webhooks, API).
+      Configure-o antes de iniciar:</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo hostnamectl set-hostname rundeck.exemplo.com.br
+<span class="c-prompt">$</span> echo <span class="c-string">"127.0.0.1 rundeck.exemplo.com.br rundeck"</span> | sudo tee -a /etc/hosts</pre>
+    </section>
+
+    <section id="java">
+      <div class="section-number">§ 03 — Runtime Java</div>
+      <h2>Instalação do <em>Java</em> (JDK 17)</h2>
+
+      <p>O Rundeck 5.x requer Java 11 ou 17. Use o <strong>OpenJDK 17</strong> — é a versão LTS com melhor suporte
+      nos repositórios padrão do Ubuntu e a recomendada pelo projeto.</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo apt install -y openjdk-17-jre-headless
+<span class="c-prompt">$</span> java -version</pre>
+
+      <p>A saída esperada é algo como:</p>
+
+      <pre data-lang="output">openjdk version "17.0.14" 2025-01-21
+OpenJDK Runtime Environment (build 17.0.14+7-Ubuntu-124.04)
+OpenJDK 64-Bit Server VM (build 17.0.14+7-Ubuntu-124.04, mixed mode, sharing)</pre>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Boa prática</span>
+        <p>Use a versão <code>-headless</code>. O Rundeck roda sem interface gráfica e a variante headless economiza
+        espaço em disco e superfície de ataque (não instala bibliotecas X11 desnecessárias).</p>
+      </div>
+    </section>
+
+    <section id="repo">
+      <div class="section-number">§ 04 — Repositório</div>
+      <h2>Adicionar o <em>repositório oficial</em></h2>
+
+      <p>Evite baixar o <code>.deb</code> solto do site — usar o repositório APT oficial garante atualizações
+      automáticas e verificação de assinatura GPG. O projeto mantém um script de bootstrap no GitHub:</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> curl -L https://raw.githubusercontent.com/rundeck/packaging/main/scripts/deb-setup.sh <span class="c-keyword">2&gt;</span>/dev/null | sudo bash -s rundeck</pre>
+
+      <div class="callout callout-warn">
+        <span class="callout-label">Atenção — curl | bash</span>
+        <p>Fazer <code>curl | bash</code> em scripts de terceiros é uma prática que merece inspeção. Antes de rodar,
+        abra a URL no navegador e leia o conteúdo. Uma alternativa é fazer a configuração manual do repositório:</p>
+      </div>
+
+      <h4>Configuração manual do repositório (alternativa)</h4>
+
+      <pre data-lang="bash"><span class="c-comment"># Importa a chave GPG</span>
+<span class="c-prompt">$</span> curl -fsSL https://packages.rundeck.com/pagerduty/rundeck/gpgkey \
+    | sudo gpg --dearmor -o /usr/share/keyrings/rundeck-archive-keyring.gpg
+
+<span class="c-comment"># Adiciona o repositório</span>
+<span class="c-prompt">$</span> echo <span class="c-string">"deb [signed-by=/usr/share/keyrings/rundeck-archive-keyring.gpg] \
+    https://packages.rundeck.com/pagerduty/rundeck/any/ any main"</span> \
+    | sudo tee /etc/apt/sources.list.d/rundeck.list
+
+<span class="c-prompt">$</span> sudo apt update</pre>
+    </section>
+
+    <section id="install">
+      <div class="section-number">§ 05 — Instalação</div>
+      <h2>Instalar o <em>pacote</em> Rundeck</h2>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo apt install -y rundeck</pre>
+
+      <p>O instalador cria:</p>
+      <ul>
+        <li>Usuário de sistema <code>rundeck</code> (sem shell login).</li>
+        <li>Diretório de configuração em <code>/etc/rundeck/</code>.</li>
+        <li>Diretório de dados em <code>/var/lib/rundeck/</code>.</li>
+        <li>Diretório de logs em <code>/var/log/rundeck/</code>.</li>
+        <li>Serviço systemd <code>rundeckd</code>.</li>
+      </ul>
+
+      <h4>Estrutura de diretórios relevantes</h4>
+
+      <pre data-lang="tree">/etc/rundeck/
+├── rundeck-config.properties   <span class="c-comment"># config geral (server URL, sessão, DB)</span>
+├── framework.properties        <span class="c-comment"># identidade do servidor, SSH defaults</span>
+├── realm.properties            <span class="c-comment"># usuários locais e senhas</span>
+├── jaas-loginmodule.conf       <span class="c-comment"># módulos de autenticação (JAAS)</span>
+├── profile                     <span class="c-comment"># variáveis de ambiente e opções JVM</span>
+└── ssl/                        <span class="c-comment"># certificados (se TLS interno for usado)</span></pre>
+    </section>
+
+    <section id="config-base">
+      <div class="section-number">§ 06 — Configuração base</div>
+      <h2>Configuração <em>base</em></h2>
+
+      <p>Duas propriedades precisam ser ajustadas antes do primeiro start: <strong>o hostname/URL do servidor</strong> e o
+      <strong>bind address</strong>. Isso evita que o Rundeck tente gerar links com <code>localhost</code> e fique
+      exposto em todas as interfaces de rede.</p>
+
+      <h4>Editar <code>/etc/rundeck/rundeck-config.properties</code></h4>
+
+      <pre data-lang="properties"><span class="c-comment"># URL pública — será usada em e-mails, webhooks, API.</span>
+<span class="c-comment"># Se houver Nginx na frente, aponte para a URL pública HTTPS.</span>
+grails.serverURL=https://rundeck.exemplo.com.br
+
+<span class="c-comment"># Tempo de sessão (segundos). 1800 = 30 min, recomendado.</span>
+server.servlet.session.timeout=1800
+
+<span class="c-comment"># Forçar leitura dos headers X-Forwarded-* (essencial atrás de proxy)</span>
+server.use-forward-headers=true
+
+<span class="c-comment"># Usar H2 apenas para testes. Em produção, configure PostgreSQL/MySQL (seção 07).</span></pre>
+
+      <h4>Editar <code>/etc/rundeck/framework.properties</code></h4>
+
+      <pre data-lang="properties">framework.server.name     = rundeck.exemplo.com.br
+framework.server.hostname = rundeck.exemplo.com.br
+framework.server.port     = 4440
+framework.server.url      = https://rundeck.exemplo.com.br
+
+<span class="c-comment"># Caminho padrão da chave SSH usada para executar em nós remotos</span>
+framework.ssh.keypath   = /var/lib/rundeck/.ssh/id_rsa
+framework.ssh.user      = rundeck
+framework.ssh.timeout   = 0</pre>
+
+      <h4>Fazer o Jetty escutar apenas em localhost</h4>
+
+      <p>Por padrão o Rundeck escuta em <code>0.0.0.0:4440</code>. Com reverse proxy, o correto é restringir ao loopback.
+      Edite <code>/etc/rundeck/profile</code>:</p>
+
+      <pre data-lang="bash"><span class="c-comment"># Localize a linha com RDECK_JVM_SETTINGS e adicione:</span>
+export RDECK_JVM_OPTS=<span class="c-string">"$RDECK_JVM_OPTS -Dserver.address=127.0.0.1"</span></pre>
+
+      <h4>Iniciar o serviço</h4>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo systemctl daemon-reload
+<span class="c-prompt">$</span> sudo systemctl enable --now rundeckd
+<span class="c-prompt">$</span> sudo systemctl status rundeckd</pre>
+
+      <div class="callout callout-info">
+        <span class="callout-label">Paciência no primeiro boot</span>
+        <p>O Rundeck leva entre 30 e 90 segundos para inicializar no primeiro start. Acompanhe o log até ver
+        a mensagem <code>Started Application</code>:</p>
+      </div>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo tail -f /var/log/rundeck/service.log</pre>
+
+      <p>Após esse ponto, teste o acesso local:</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> curl -I http://127.0.0.1:4440/</pre>
+    </section>
+
+    <section id="db">
+      <div class="section-number">§ 07 — Banco de dados</div>
+      <h2>Migrar para um <em>banco externo</em></h2>
+
+      <p>O banco H2 embutido é <strong>inadequado para produção</strong>: não é atômico em caso de crash, corrompe com
+      facilidade e impossibilita cluster. Para uma instalação séria, use PostgreSQL (recomendado) ou MySQL/MariaDB.</p>
+
+      <h4>Instalar PostgreSQL</h4>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo apt install -y postgresql postgresql-contrib
+<span class="c-prompt">$</span> sudo systemctl enable --now postgresql</pre>
+
+      <h4>Criar banco e usuário</h4>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo -u postgres psql</pre>
+
+      <pre data-lang="sql"><span class="c-keyword">CREATE USER</span> rundeck <span class="c-keyword">WITH PASSWORD</span> <span class="c-string">'TROQUE_POR_SENHA_FORTE'</span>;
+<span class="c-keyword">CREATE DATABASE</span> rundeck <span class="c-keyword">OWNER</span> rundeck <span class="c-keyword">ENCODING</span> <span class="c-string">'UTF8'</span>;
+<span class="c-keyword">GRANT ALL PRIVILEGES ON DATABASE</span> rundeck <span class="c-keyword">TO</span> rundeck;
+\q</pre>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Gerar senha forte</span>
+        <p>Nunca invente senhas de cabeça. Use: <code>openssl rand -base64 32</code> ou
+        <code>pwgen -s 32 1</code>. Armazene a senha gerada no seu cofre de segredos (Vault, 1Password, Bitwarden).</p>
+      </div>
+
+      <h4>Apontar o Rundeck para o PostgreSQL</h4>
+
+      <p>Edite <code>/etc/rundeck/rundeck-config.properties</code> e <strong>substitua</strong> as linhas do datasource
+      pelas abaixo:</p>
+
+      <pre data-lang="properties"><span class="c-comment"># Remova ou comente qualquer configuração H2 anterior.</span>
+
+dataSource.driverClassName = org.postgresql.Driver
+dataSource.url             = jdbc:postgresql://localhost:5432/rundeck
+dataSource.username        = rundeck
+dataSource.password        = TROQUE_POR_SENHA_FORTE
+dataSource.dialect         = org.hibernate.dialect.PostgreSQLDialect</pre>
+
+      <h4>Reiniciar e verificar a criação de schema</h4>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo systemctl restart rundeckd
+<span class="c-prompt">$</span> sudo -u postgres psql -d rundeck -c <span class="c-string">"\dt"</span></pre>
+
+      <p>Você deve ver dezenas de tabelas (<code>execution</code>, <code>scheduled_execution</code>, <code>auth_token</code>,
+      etc.). Se aparecerem, o Rundeck conectou com sucesso e criou o schema automaticamente.</p>
+
+      <div class="callout callout-warn">
+        <span class="callout-label">Migração de dados existentes</span>
+        <p>Se você já tinha o Rundeck rodando com H2 e está migrando, <strong>os jobs não serão migrados
+        automaticamente</strong>. Exporte os projetos antes (<code>rd projects archives export</code>), troque o banco,
+        e reimporte (<code>rd projects archives import</code>).</p>
+      </div>
+    </section>
+
+    <section id="hardening">
+      <div class="section-number">§ 08 — Endurecimento</div>
+      <h2>Endurecimento de <em>segurança</em></h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Trocar a senha padrão admin</h4>
+          <p>A instalação vem com <code>admin:admin</code>. Isso é a primeira coisa a trocar — literalmente antes de
+          expor a porta a qualquer rede. Edite <code>/etc/rundeck/realm.properties</code>:</p>
+          <pre data-lang="properties"><span class="c-comment"># Formato: usuario: senha_hash,role1,role2</span>
+<span class="c-comment"># Gere hash com: echo -n "minha_senha_forte" | md5sum</span>
+admin: MD5:5f4dcc3b5aa765d61d8327deb882cf99,user,admin,architect,deploy,build</pre>
+          <p>Melhor ainda: use <code>OBF:</code> (Jetty obfuscation) ou <code>CRYPT:</code> em vez de MD5. Para hashes
+          modernos, migre para LDAP (seção 10).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Desabilitar o usuário admin padrão se usar LDAP</h4>
+          <p>Se você configurou LDAP, comente a linha <code>admin:</code> em <code>realm.properties</code>. Manter
+          usuários locais junto com LDAP abre uma porta de fuga perigosa se alguém descobrir a senha local.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Ajustar permissões dos arquivos de configuração</h4>
+          <pre data-lang="bash"><span class="c-prompt">$</span> sudo chown -R rundeck:rundeck /etc/rundeck/
+<span class="c-prompt">$</span> sudo chmod 640 /etc/rundeck/*.properties
+<span class="c-prompt">$</span> sudo chmod 640 /etc/rundeck/realm.properties
+<span class="c-prompt">$</span> sudo chmod 700 /var/lib/rundeck/.ssh/
+<span class="c-prompt">$</span> sudo chmod 600 /var/lib/rundeck/.ssh/id_rsa</pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Criar o par SSH para execução remota</h4>
+          <p>O Rundeck executa comandos em nós remotos via SSH. Gere um par <strong>dedicado</strong> ao Rundeck —
+          nunca reutilize chaves humanas:</p>
+          <pre data-lang="bash"><span class="c-prompt">$</span> sudo -u rundeck mkdir -p /var/lib/rundeck/.ssh
+<span class="c-prompt">$</span> sudo -u rundeck ssh-keygen -t ed25519 -N <span class="c-string">""</span> \
+    -f /var/lib/rundeck/.ssh/id_ed25519 \
+    -C <span class="c-string">"rundeck@rundeck.exemplo.com.br"</span></pre>
+          <p>Distribua a chave pública (<code>.ssh/id_ed25519.pub</code>) para a <code>authorized_keys</code> de um
+          usuário dedicado (ex.: <code>rundeck-agent</code>) nos nós alvo — nunca use <code>root</code> direto, nunca
+          reuse com deploys CI/CD.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h4>Política de ACL fechada por padrão</h4>
+          <p>O Rundeck aplica políticas em arquivos <code>.aclpolicy</code> em <code>/etc/rundeck/</code>. O padrão
+          deixa <code>admin</code> com tudo liberado — para qualquer outro perfil, crie políticas explícitas que
+          <strong>concedam</strong> permissão. Nunca use <code>allow: '*'</code> fora do role admin.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h4>Desabilitar execução inline de scripts não assinados</h4>
+          <p>Em <code>/etc/rundeck/framework.properties</code>:</p>
+          <pre data-lang="properties"><span class="c-comment"># Bloqueia jobs que tentam executar scripts não aprovados</span>
+rundeck.feature.reauthorizeScheduledJobs.enabled = true
+rundeck.feature.enhancedNodes.enabled = true</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="nginx">
+      <div class="section-number">§ 09 — Reverse proxy</div>
+      <h2>Nginx com <em>TLS</em> na frente</h2>
+
+      <p>Expor o Jetty (servidor embutido do Rundeck) diretamente à internet é desaconselhado. Use Nginx para
+      terminar TLS, aplicar rate limiting e separar responsabilidades.</p>
+
+      <h4>Instalar Nginx e Certbot</h4>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo apt install -y nginx certbot python3-certbot-nginx</pre>
+
+      <h4>Configuração do site</h4>
+
+      <p>Crie <code>/etc/nginx/sites-available/rundeck.conf</code>:</p>
+
+      <pre data-lang="nginx"><span class="c-comment"># Redireciona HTTP -&gt; HTTPS</span>
+server {
+    listen 80;
+    server_name rundeck.exemplo.com.br;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name rundeck.exemplo.com.br;
+
+    <span class="c-comment"># Certificados gerenciados pelo Certbot (preenchidos no próximo passo)</span>
+    ssl_certificate     /etc/letsencrypt/live/rundeck.exemplo.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/rundeck.exemplo.com.br/privkey.pem;
+
+    <span class="c-comment"># Políticas TLS modernas</span>
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    <span class="c-comment"># Headers de segurança</span>
+    add_header Strict-Transport-Security <span class="c-string">"max-age=31536000; includeSubDomains"</span> always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options SAMEORIGIN always;
+    add_header Referrer-Policy <span class="c-string">"strict-origin-when-cross-origin"</span> always;
+
+    <span class="c-comment"># Tamanho de uploads (jobs com arquivos anexos)</span>
+    client_max_body_size 50M;
+
+    access_log /var/log/nginx/rundeck.access.log;
+    error_log  /var/log/nginx/rundeck.error.log;
+
+    location / {
+        proxy_pass http://127.0.0.1:4440;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host  $host;
+
+        <span class="c-comment"># Jobs longos precisam de timeout alto</span>
+        proxy_read_timeout 900s;
+        proxy_send_timeout 900s;
+        proxy_buffering off;
+    }
+}</pre>
+
+      <h4>Ativar o site e emitir o certificado</h4>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo ln -s /etc/nginx/sites-available/rundeck.conf /etc/nginx/sites-enabled/
+<span class="c-prompt">$</span> sudo nginx -t
+
+<span class="c-comment"># Emite certificado Let's Encrypt válido por 90 dias (renovação automática)</span>
+<span class="c-prompt">$</span> sudo certbot --nginx -d rundeck.exemplo.com.br \
+    --redirect --agree-tos -m admin@exemplo.com.br
+
+<span class="c-prompt">$</span> sudo systemctl reload nginx</pre>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Teste de renovação automática</span>
+        <p>O Certbot configura um timer systemd que renova automaticamente. Valide com:</p>
+        <p><code>sudo certbot renew --dry-run</code></p>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-label">Atenção ao header X-Forwarded-Proto</span>
+        <p>Sem <code>server.use-forward-headers=true</code> no Rundeck (configurado na seção 6), o Jetty ignora o
+        header e tenta redirecionar HTTPS de volta para HTTP — quebrando login e causando loops 302.
+        Se o login falhar após subir o proxy, a causa quase sempre é essa.</p>
+      </div>
+    </section>
+
+    <section id="auth">
+      <div class="section-number">§ 10 — Autenticação</div>
+      <h2>Autenticação <em>LDAP/AD</em></h2>
+
+      <p>Senhas em arquivo flat (<code>realm.properties</code>) funcionam para 2-3 pessoas. Para uma equipe real,
+      integre com LDAP ou Active Directory. Assim, o offboarding de pessoas acontece automaticamente quando a
+      conta corporativa é desativada.</p>
+
+      <h4>Editar <code>/etc/rundeck/jaas-loginmodule.conf</code></h4>
+
+      <pre data-lang="conf">RDpropertyfilelogin {
+    org.eclipse.jetty.jaas.spi.LdapLoginModule required
+    debug=<span class="c-string">"false"</span>
+    contextFactory=<span class="c-string">"com.sun.jndi.ldap.LdapCtxFactory"</span>
+    hostname=<span class="c-string">"ldap.exemplo.com.br"</span>
+    port=<span class="c-string">"636"</span>
+    bindDn=<span class="c-string">"cn=rundeck-bind,ou=serviceaccounts,dc=exemplo,dc=com,dc=br"</span>
+    bindPassword=<span class="c-string">"SENHA_DA_CONTA_DE_BIND"</span>
+    authenticationMethod=<span class="c-string">"simple"</span>
+    forceBindingLogin=<span class="c-string">"true"</span>
+    userBaseDn=<span class="c-string">"ou=people,dc=exemplo,dc=com,dc=br"</span>
+    userRdnAttribute=<span class="c-string">"uid"</span>
+    userIdAttribute=<span class="c-string">"uid"</span>
+    userPasswordAttribute=<span class="c-string">"userPassword"</span>
+    userObjectClass=<span class="c-string">"inetOrgPerson"</span>
+    roleBaseDn=<span class="c-string">"ou=groups,dc=exemplo,dc=com,dc=br"</span>
+    roleNameAttribute=<span class="c-string">"cn"</span>
+    roleMemberAttribute=<span class="c-string">"member"</span>
+    roleObjectClass=<span class="c-string">"groupOfNames"</span>
+    cacheDurationMillis=<span class="c-string">"300000"</span>
+    reportStatistics=<span class="c-string">"true"</span>;
+};</pre>
+
+      <div class="callout callout-warn">
+        <span class="callout-label">Use sempre LDAPS (porta 636)</span>
+        <p>LDAP em porta 389 transmite a senha do usuário em claro. Em qualquer ambiente que não seja um laboratório
+        isolado, use <strong>LDAPS</strong> ou <strong>StartTLS</strong>. Importe o CA corporativo no truststore do Java se
+        for certificado auto-assinado.</p>
+      </div>
+
+      <h4>Ativar o módulo no <code>/etc/rundeck/profile</code></h4>
+
+      <pre data-lang="bash">export RDECK_JVM_SETTINGS=<span class="c-string">"-Djava.security.auth.login.config=/etc/rundeck/jaas-loginmodule.conf \
+    -Dloginmodule.name=RDpropertyfilelogin \
+    -Drundeck.jaaslogin=true"</span></pre>
+
+      <p>Reinicie o serviço e teste com uma conta do AD. Usuários que pertencem aos grupos LDAP mapeados nos
+      <code>.aclpolicy</code> terão as permissões correspondentes.</p>
+    </section>
+
+    <section id="firewall">
+      <div class="section-number">§ 11 — Firewall</div>
+      <h2>Firewall com <em>UFW</em></h2>
+
+      <p>Após o Nginx estar encerrando TLS, a porta 4440 nunca deve ser acessível de fora. Configure o UFW para
+      aceitar apenas SSH, HTTP e HTTPS:</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo ufw default deny incoming
+<span class="c-prompt">$</span> sudo ufw default allow outgoing
+<span class="c-prompt">$</span> sudo ufw allow OpenSSH
+<span class="c-prompt">$</span> sudo ufw allow <span class="c-string">'Nginx Full'</span>
+<span class="c-prompt">$</span> sudo ufw enable
+<span class="c-prompt">$</span> sudo ufw status verbose</pre>
+
+      <p>A porta 4440 continua aberta internamente (Nginx acessa via <code>127.0.0.1</code>), mas fica invisível
+      de fora. Confirme com um scanner externo:</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> nmap -p 22,80,443,4440 rundeck.exemplo.com.br</pre>
+
+      <p>Resultado esperado: 22, 80 e 443 <code>open</code>, e 4440 <code>filtered</code> ou <code>closed</code>.</p>
+    </section>
+
+    <section id="backup">
+      <div class="section-number">§ 12 — Operação</div>
+      <h2>Backup e <em>monitoramento</em></h2>
+
+      <h4>O que precisa de backup</h4>
+      <ol>
+        <li><strong>Banco de dados PostgreSQL</strong> — jobs, execuções, tokens, webhooks.</li>
+        <li><strong>/etc/rundeck/</strong> — toda a configuração.</li>
+        <li><strong>/var/lib/rundeck/projects/</strong> — definições de projetos e SCM local.</li>
+        <li><strong>/var/lib/rundeck/logs/rundeck/</strong> — logs de execução (se auditoria longa for exigida).</li>
+      </ol>
+
+      <h4>Script simples de backup</h4>
+
+      <pre data-lang="bash"><span class="c-comment">#!/bin/bash</span>
+<span class="c-comment"># /usr/local/bin/rundeck-backup.sh</span>
+<span class="c-keyword">set</span> -euo pipefail
+
+BACKUP_DIR=<span class="c-string">"/var/backups/rundeck"</span>
+DATE=$(date +%Y%m%d-%H%M)
+mkdir -p <span class="c-string">"$BACKUP_DIR"</span>
+
+<span class="c-comment"># Dump do banco</span>
+sudo -u postgres pg_dump rundeck | gzip &gt; <span class="c-string">"$BACKUP_DIR/db-$DATE.sql.gz"</span>
+
+<span class="c-comment"># Tarball da configuração e projetos</span>
+tar czf <span class="c-string">"$BACKUP_DIR/config-$DATE.tar.gz"</span> \
+    /etc/rundeck \
+    /var/lib/rundeck/projects
+
+<span class="c-comment"># Retenção: mantém 14 dias</span>
+find <span class="c-string">"$BACKUP_DIR"</span> -type f -name <span class="c-string">"*.gz"</span> -mtime +14 -delete</pre>
+
+      <p>Agende via cron (ou, melhor ainda, um timer systemd):</p>
+
+      <pre data-lang="bash"><span class="c-prompt">$</span> sudo chmod +x /usr/local/bin/rundeck-backup.sh
+<span class="c-prompt">$</span> echo <span class="c-string">"0 3 * * * root /usr/local/bin/rundeck-backup.sh"</span> | sudo tee /etc/cron.d/rundeck-backup</pre>
+
+      <h4>Monitoramento essencial</h4>
+
+      <p>Os sinais mais importantes para alertar:</p>
+
+      <table>
+        <thead>
+          <tr><th>Sinal</th><th>Ferramenta / Endpoint</th><th>Alerta se…</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Serviço vivo</td>
+            <td><code>systemctl is-active rundeckd</code></td>
+            <td>retorno ≠ <code>active</code></td>
+          </tr>
+          <tr>
+            <td>Healthcheck HTTP</td>
+            <td><code>GET /health</code> via proxy</td>
+            <td>status ≠ 200 por &gt; 2 min</td>
+          </tr>
+          <tr>
+            <td>Heap JVM</td>
+            <td>JMX ou endpoint <code>/metrics/metrics</code></td>
+            <td>uso &gt; 85% sustentado</td>
+          </tr>
+          <tr>
+            <td>Jobs em falha</td>
+            <td>Webhook → Slack/Teams</td>
+            <td>falha consecutiva ≥ 2</td>
+          </tr>
+          <tr>
+            <td>Certificado TLS</td>
+            <td><code>certbot certificates</code></td>
+            <td>expira em &lt; 20 dias</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="checklist">
+      <div class="section-number">§ 13 — Fechamento</div>
+      <h2>Checklist de <em>produção</em></h2>
+
+      <p>Antes de declarar a instalação "pronta", confirme cada item abaixo:</p>
+
+      <ul>
+        <li><strong>Senha padrão</strong> <code>admin:admin</code> removida ou trocada.</li>
+        <li><strong>Banco de dados</strong> PostgreSQL configurado (não H2).</li>
+        <li><strong>TLS</strong> válido (Let's Encrypt) com redirect HTTP→HTTPS.</li>
+        <li><strong>Porta 4440</strong> inacessível externamente (UFW).</li>
+        <li><strong>server.use-forward-headers=true</strong> configurado (evita loop de login).</li>
+        <li><strong>SSH key</strong> dedicada, em ed25519, com permissões 600.</li>
+        <li><strong>LDAP/AD</strong> integrado (se aplicável) com LDAPS.</li>
+        <li><strong>Backup</strong> diário do banco + <code>/etc/rundeck</code> + projetos, com retenção definida.</li>
+        <li><strong>ACLs</strong> revisadas — ninguém tem <code>*</code> fora do papel admin.</li>
+        <li><strong>Monitoramento</strong> com alerta de serviço e certificado.</li>
+        <li><strong>Log rotation</strong> ativa em <code>/var/log/rundeck/</code> (verifique <code>logrotate.d</code>).</li>
+        <li><strong>Plano de atualização</strong> documentado (Rundeck lança updates mensais).</li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <span class="callout-label">Próximos passos</span>
+        <p>Com a base sólida, as próximas frentes que costumam trazer retorno rápido são: (a) habilitar
+        <strong>Key Storage</strong> do Rundeck para secrets em vez de variáveis em texto; (b) integrar SCM (Git) para
+        versionar os jobs em YAML; (c) configurar <strong>webhooks</strong> para notificar Slack/Teams em
+        execuções críticas; e (d) estudar o modo <strong>Cluster</strong> se a equipe crescer.</p>
+      </div>
+
+      <p style="margin-top: 2.5rem; font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--muted); border-top: 1px solid var(--ink); padding-top: 2rem;">
+        Uma boa instalação de Rundeck não se mede no primeiro login, mas em seis meses — quando ninguém na equipe
+        lembra mais de onde tiveram que consultar uma senha, e todos os jobs rodam, auditados, sem sobressaltos.
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <h5>Referências oficiais</h5>
+      <ul>
+        <li><a href="https://docs.rundeck.com/docs/">Rundeck Documentation</a> — guia autoritativo do projeto.</li>
+        <li><a href="https://docs.rundeck.com/docs/administration/install/linux-deb.html">Install on Ubuntu/Debian</a> — seção específica do pacote .deb.</li>
+        <li><a href="https://docs.rundeck.com/docs/administration/cluster/loadbalancer/reverse_proxies.html">Reverse Proxies</a> — Nginx e Apache como proxy.</li>
+        <li><a href="https://github.com/rundeck/rundeck">rundeck/rundeck</a> no GitHub — issues, releases, código.</li>
+      </ul>
+    </div>
+    <div>
+      <h5>Arquivos-chave</h5>
+      <ul>
+        <li><code>/etc/rundeck/</code></li>
+        <li><code>/var/lib/rundeck/</code></li>
+        <li><code>/var/log/rundeck/</code></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Meta</h5>
+      <ul>
+        <li>Documento técnico</li>
+        <li>Rundeck 5.x · Ubuntu 24.04</li>
+        <li>Última revisão: 2026</li>
+      </ul>
+    </div>
+  </div>
+  <div class="copyright-bar">
+    © 2026 — Franklin José de Oliveira Neto. Todos os direitos reservados.
+  </div>
+</footer>
+
+<!-- Rodapé que aparece em TODAS as páginas na impressão -->
+<div class="print-footer">
+  © 2026 — Franklin José de Oliveira Neto. Todos os direitos reservados.
+</div>
+
+</body>
+</html>
