@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitetura 3 — Alta Disponibilidade Residencial com Replicação Bidirecional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1117;
+    --ink-soft: #1f2937;
+    --paper: #fbf9f4;
+    --paper-tint: #f3efe6;
+    --line: #1f2937;
+    --accent: #b8410e;
+    --accent-soft: #f2e2d4;
+    --teal: #0d5c5c;
+    --teal-soft: #daeaea;
+    --gold: #b68e3b;
+    --muted: #5a5a52;
+    --ok: #2d6a3e;
+    --warn: #8a5a00;
+    --danger: #a02525;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(13,17,23,0.04) 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 56px 40px 120px; }
+
+  /* ============ HEADER ============ */
+  .masthead {
+    border-top: 6px double var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 24px 0 20px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .masthead::before {
+    content: "TUTORIAL TÉCNICO · Nº 01 · ABR 2026";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 16px;
+  }
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1.title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .byline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .byline::before { content: "— "; }
+
+  .lede {
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 36px 0 48px;
+    padding-left: 24px;
+    border-left: 3px solid var(--accent);
+    font-weight: 400;
+  }
+
+  /* ============ TOC ============ */
+  .toc {
+    background: var(--paper-tint);
+    border: 1px solid var(--line);
+    padding: 28px 32px;
+    margin: 0 0 56px;
+    position: relative;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .toc ol {
+    margin: 0; padding: 0; list-style: none;
+    columns: 2; column-gap: 40px;
+  }
+  .toc li {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    padding: 4px 0;
+    break-inside: avoid;
+  }
+  .toc li a {
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .toc li a:hover { color: var(--accent); }
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 28px;
+  }
+
+  /* ============ SECTIONS ============ */
+  section { margin: 72px 0; }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0 0 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  h2 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.25;
+    margin: 40px 0 12px;
+    color: var(--ink);
+  }
+
+  h4 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 28px 0 10px;
+  }
+
+  p { margin: 0 0 16px; }
+
+  /* ============ CODE ============ */
+  pre {
+    background: var(--ink);
+    color: #e6e1d8;
+    padding: 20px 24px;
+    margin: 20px 0;
+    border-radius: 2px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    border-left: 4px solid var(--accent);
+    position: relative;
+  }
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #7a7368;
+    text-transform: uppercase;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    background: var(--paper-tint);
+    padding: 2px 6px;
+    border: 1px solid rgba(13,17,23,0.08);
+    border-radius: 2px;
+  }
+  pre code { background: none; padding: 0; border: none; font-size: inherit; }
+
+  .comment { color: #8a8275; }
+  .keyword { color: #ffa657; }
+  .string { color: #a5d6ff; }
+
+  /* ============ CALLOUTS ============ */
+  .callout {
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 4px solid;
+    background: var(--paper-tint);
+    font-size: 15px;
+    break-inside: avoid;
+  }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.tip { border-color: var(--teal); background: var(--teal-soft); }
+  .callout.tip .callout-label { color: var(--teal); }
+  .callout.warn { border-color: var(--warn); background: #faf0d8; }
+  .callout.warn .callout-label { color: var(--warn); }
+  .callout.danger { border-color: var(--danger); background: #f9e6e6; }
+  .callout.danger .callout-label { color: var(--danger); }
+
+  /* ============ PROS/CONS ============ */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 24px 0;
+    break-inside: avoid;
+  }
+  .pros-cons > div {
+    padding: 20px 24px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .pros-cons h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .pros h5 { color: var(--ok); }
+  .cons h5 { color: var(--danger); }
+  .pros-cons ul {
+    margin: 0; padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .pros-cons li { margin-bottom: 8px; }
+  .pros-cons li::marker { color: var(--muted); }
+
+  /* ============ OPTION CARDS ============ */
+  .option {
+    border: 1px solid var(--line);
+    margin: 40px 0;
+    padding: 0;
+    background: var(--paper);
+    break-inside: avoid-page;
+  }
+  .option-header {
+    padding: 20px 28px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .option-header .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+  }
+  .option-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    margin: 0;
+    color: var(--paper);
+    font-weight: 500;
+  }
+  .option-body { padding: 24px 28px 28px; }
+
+  .verdict {
+    margin: 20px 0 0;
+    padding: 16px 20px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .verdict strong {
+    font-family: 'Inter Tight', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ============ STEPS ============ */
+  .step {
+    position: relative;
+    padding: 24px 28px 24px 80px;
+    margin: 20px 0;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    break-inside: avoid;
+  }
+  .step::before {
+    content: counter(step);
+    counter-increment: step;
+    position: absolute;
+    top: 22px; left: 24px;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 50%;
+  }
+  .steps { counter-reset: step; }
+  .step h4 { margin-top: 0; font-size: 13px; }
+  .step h5 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin: 0 0 12px;
+  }
+
+  /* ============ TABLE ============ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+    break-inside: avoid;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  tbody tr:nth-child(even) { background: var(--paper-tint); }
+
+  /* ============ LINKS ============ */
+  a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { background: var(--accent-soft); }
+
+  ul.prose, ol.prose { padding-left: 22px; margin: 16px 0; }
+  ul.prose li, ol.prose li { margin-bottom: 8px; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 64px 0;
+    position: relative;
+  }
+  .divider::after {
+    content: "❋";
+    position: absolute;
+    top: -14px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    padding: 0 16px;
+    color: var(--accent);
+    font-size: 18px;
+  }
+
+  /* ============ PRINT BAR ============ */
+  .print-bar {
+    position: fixed;
+    top: 24px; right: 24px;
+    z-index: 100;
+    display: flex; gap: 8px;
+  }
+  .print-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 12px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 var(--accent);
+    transition: all 0.15s;
+  }
+  .print-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--accent);
+  }
+  .print-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--accent);
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 6px double var(--line);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+
+  /* ============ PRINT STYLES ============ */
+  @media print {
+    @page {
+      size: A4;
+      margin: 18mm 16mm 22mm 16mm;
+      @bottom-center {
+        content: "© 2026 — Franklin José de Oliveira Neto. Todos os direitos reservados.";
+        font-family: 'Inter Tight', sans-serif;
+        font-size: 9pt;
+        color: #5a5a52;
+      }
+      @bottom-right {
+        content: "Pág. " counter(page) " / " counter(pages);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8pt;
+        color: #5a5a52;
+      }
+      @top-left {
+        content: "Arquitetura 3 — HA Residencial";
+        font-family: 'Fraunces', serif;
+        font-style: italic;
+        font-size: 9pt;
+        color: #5a5a52;
+      }
+    }
+
+    body {
+      background: white;
+      color: black;
+      font-size: 11pt;
+      line-height: 1.55;
+    }
+    .wrap { max-width: none; margin: 0; padding: 0; }
+    .print-bar { display: none; }
+
+    h1.title { font-size: 32pt; }
+    h2 { font-size: 20pt; page-break-after: avoid; }
+    h3 { font-size: 15pt; page-break-after: avoid; }
+    h4, h5 { page-break-after: avoid; }
+
+    pre {
+      background: #f4f2ed !important;
+      color: #1a1a1a !important;
+      border-left-color: #b8410e !important;
+      font-size: 9pt;
+      page-break-inside: avoid;
+    }
+    pre::before { color: #8a8275 !important; }
+
+    .option, .step, .callout, .pros-cons, table { page-break-inside: avoid; }
+    .option-header { background: #0d1117 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .option-header .tag { color: #d4a84c !important; }
+    .option-header h3 { color: white !important; }
+
+    .toc { page-break-after: always; }
+    section { page-break-before: auto; }
+    .lede { page-break-after: avoid; }
+
+    a { color: #b8410e; text-decoration: underline; }
+    .footer { display: none; }
+
+    /* Preserve colored elements */
+    .callout, .verdict, th, .step::before {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 32px 20px 80px; }
+    h1.title { font-size: 36px; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 20px; }
+    .toc ol { columns: 1; }
+    .pros-cons { grid-template-columns: 1fr; }
+    .step { padding-left: 28px; padding-top: 64px; }
+    .step::before { top: 18px; left: 24px; }
+    .print-bar { top: 12px; right: 12px; }
+    .print-btn { padding: 10px 14px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn" onclick="window.print()">⎙ Imprimir / PDF</button>
+</div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <h1 class="title">Arquitetura 3:<br>HA residencial com <em>replicação bidirecional</em></h1>
+    <p class="byline">by Franklin</p>
+  </header>
+
+  <p class="lede">
+    Como construir uma infraestrutura de alta disponibilidade entre duas residências
+    usando Cloudflare Tunnel para roteamento com failover automático, bancos locais
+    em cada site, e um hub de replicação na nuvem para manter tudo sincronizado.
+    Quatro estratégias de replicação são avaliadas em detalhe — escolha a que melhor
+    se encaixa no seu stack.
+  </p>
+
+  <nav class="toc">
+    <p class="toc-label">Índice</p>
+    <ol>
+      <li><a href="#visao"><span class="toc-num">01</span><span>Visão geral da arquitetura</span></a></li>
+      <li><a href="#requisitos"><span class="toc-num">02</span><span>Requisitos e premissas</span></a></li>
+      <li><a href="#roteamento"><span class="toc-num">03</span><span>Camada de roteamento — Cloudflare Load Balancer</span></a></li>
+      <li><a href="#aplicacao"><span class="toc-num">04</span><span>Camada de aplicação — Docker + Git</span></a></li>
+      <li><a href="#arquivos"><span class="toc-num">05</span><span>Camada de arquivos — Syncthing</span></a></li>
+      <li><a href="#replicacao"><span class="toc-num">06</span><span>Camada de banco — 4 opções de replicação</span></a></li>
+      <li><a href="#op-3a"><span class="toc-num">6.a</span><span>PostgreSQL Logical Replication</span></a></li>
+      <li><a href="#op-3b"><span class="toc-num">6.b</span><span>CouchDB multi-master</span></a></li>
+      <li><a href="#op-3c"><span class="toc-num">6.c</span><span>Litestream + SQLite</span></a></li>
+      <li><a href="#op-3d"><span class="toc-num">6.d</span><span>rqlite ou Turso</span></a></li>
+      <li><a href="#comparativo"><span class="toc-num">07</span><span>Comparativo final</span></a></li>
+      <li><a href="#validacao"><span class="toc-num">08</span><span>Validação e testes de failover</span></a></li>
+      <li><a href="#monitoramento"><span class="toc-num">09</span><span>Monitoramento e alertas</span></a></li>
+      <li><a href="#checklist"><span class="toc-num">10</span><span>Checklist operacional</span></a></li>
+    </ol>
+  </nav>
+
+  <!-- =========================================== -->
+  <section id="visao">
+    <h2><span class="num">01 — Fundação</span>Visão geral da arquitetura</h2>
+
+    <p>
+      A Arquitetura 3 divide o sistema em <strong>quatro camadas independentes</strong>,
+      cada uma resolvendo um problema específico de alta disponibilidade. O princípio
+      central é que nenhuma camada sabe sobre falhas das outras — cada uma tem seu
+      próprio mecanismo de recuperação, o que aumenta a resiliência total.
+    </p>
+
+    <h3>As quatro camadas</h3>
+    <ol class="prose">
+      <li>
+        <strong>Roteamento.</strong> O Cloudflare Load Balancer detecta qual site está
+        online e direciona o tráfego automaticamente.
+      </li>
+      <li>
+        <strong>Aplicação.</strong> Containers Docker idênticos rodam em ambas as
+        residências, implantados a partir do mesmo repositório Git.
+      </li>
+      <li>
+        <strong>Arquivos.</strong> Uploads de usuários e assets mutáveis são
+        sincronizados peer-to-peer via Syncthing.
+      </li>
+      <li>
+        <strong>Banco de dados.</strong> Cada site tem seu banco local; as mudanças
+        são propagadas via um mecanismo de replicação (aqui estão as 4 sub-opções).
+      </li>
+    </ol>
+
+    <h3>Topologia física</h3>
+    <p>
+      Duas residências, cada uma com um servidor local (um mini-PC, Raspberry Pi 5,
+      NUC ou similar). Cada servidor roda a stack completa: aplicação + banco +
+      Syncthing + cloudflared. A Cloudflare funciona como ponto único de entrada
+      público — nenhuma das residências precisa de IP público.
+    </p>
+
+    <div class="callout tip">
+      <span class="callout-label">Princípio de design</span>
+      Trate cada site como se fosse o único — ambos devem ser capazes de operar
+      independentemente por horas ou dias. A replicação é um mecanismo de
+      convergência eventual, não um requisito para operar.
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="requisitos">
+    <h2><span class="num">02 — Preparação</span>Requisitos e premissas</h2>
+
+    <h3>Hardware mínimo (por residência)</h3>
+    <ul class="prose">
+      <li>CPU: 4 cores (ARM ou x86) — Raspberry Pi 5, mini-PC ou NUC resolvem.</li>
+      <li>RAM: 8 GB (16 GB recomendado se usar Postgres com carga real).</li>
+      <li>Storage: SSD NVMe de pelo menos 256 GB — evite HDD para o banco.</li>
+      <li>Rede: 100 Mbps symmetric idealmente; 20 Mbps de upload é o mínimo funcional.</li>
+      <li>UPS (nobreak): 600 VA mínimo para dar tempo de desligamento limpo.</li>
+    </ul>
+
+    <h3>Software</h3>
+    <ul class="prose">
+      <li>Ubuntu Server 24.04 LTS ou Debian 12 (os comandos do tutorial assumem Debian/Ubuntu).</li>
+      <li>Docker Engine + Docker Compose v2.</li>
+      <li>Git (para deploy da aplicação).</li>
+      <li><code>cloudflared</code> instalado e autenticado.</li>
+    </ul>
+
+    <h3>Conta e domínio</h3>
+    <ul class="prose">
+      <li>Domínio registrado e já gerenciado pelo Cloudflare (nameservers apontando para eles).</li>
+      <li>Plano Cloudflare: o Load Balancer é um add-on pago (~US$ 5/mês no plano básico). O Tunnel em si é gratuito.</li>
+      <li>Opcional: uma conta em provedor de banco em nuvem (Neon, Supabase, CouchDB Cloud, Turso) dependendo da opção escolhida.</li>
+    </ul>
+
+    <div class="callout warn">
+      <span class="callout-label">Atenção</span>
+      As duas residências devem estar em redes elétricas e provedores de internet
+      <strong>diferentes</strong>. Se ambas compartilham o mesmo fornecedor de energia
+      ou o mesmo ISP regional, a redundância é ilusória — uma única falha derruba tudo.
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="roteamento">
+    <h2><span class="num">03 — Camada de Roteamento</span>Cloudflare Load Balancer com dois tunnels</h2>
+
+    <p>
+      Aqui configuramos a peça que decide para qual residência mandar cada request.
+      Vamos criar dois tunnels Cloudflare (um por residência) e um Load Balancer
+      com health checks que faz o failover automaticamente.
+    </p>
+
+    <div class="steps">
+
+      <div class="step">
+        <h4>Residência 1 — tunnel primário</h4>
+        <h5>Instalar e criar o tunnel da Residência 1</h5>
+        <p>Em cada residência, instale o <code>cloudflared</code> e crie um tunnel único:</p>
+<pre data-lang="bash"># Instalar cloudflared (Debian/Ubuntu)
+curl -L --output cloudflared.deb \
+  https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared.deb
+
+# Autenticar com sua conta Cloudflare
+cloudflared tunnel login
+
+# Criar o tunnel desta residência
+cloudflared tunnel create casa-01
+# Anote o UUID retornado</pre>
+      </div>
+
+      <div class="step">
+        <h4>Residência 1</h4>
+        <h5>Configurar o tunnel para apontar para a app local</h5>
+<pre data-lang="yaml"># /etc/cloudflared/config.yml
+tunnel: &lt;UUID-do-tunnel-casa-01&gt;
+credentials-file: /etc/cloudflared/&lt;UUID&gt;.json
+
+ingress:
+  - hostname: casa-01.seudominio.com.br
+    service: http://localhost:8080
+  - service: http_status:404</pre>
+        <p>O hostname <code>casa-01.seudominio.com.br</code> é interno — não é para os usuários acessarem. É apenas o endpoint que o Load Balancer vai usar como "origin".</p>
+      </div>
+
+      <div class="step">
+        <h4>Residência 1</h4>
+        <h5>Subir o tunnel como serviço</h5>
+<pre data-lang="bash">sudo cloudflared service install
+sudo systemctl enable --now cloudflared
+sudo systemctl status cloudflared
+
+# Criar a rota DNS para o hostname interno
+cloudflared tunnel route dns casa-01 casa-01.seudominio.com.br</pre>
+      </div>
+
+      <div class="step">
+        <h4>Residência 2</h4>
+        <h5>Repetir para a segunda residência</h5>
+        <p>
+          Mesmo procedimento, mas com os nomes trocados:
+          <code>cloudflared tunnel create casa-02</code> e hostname
+          <code>casa-02.seudominio.com.br</code>. A app local escuta na mesma
+          porta (8080), mas cada tunnel aponta para o servidor local da sua casa.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>Dashboard Cloudflare</h4>
+        <h5>Criar os Origin Pools</h5>
+        <p>No dashboard da Cloudflare, vá em <strong>Traffic → Load Balancing → Pools</strong> e crie dois:</p>
+        <ul class="prose">
+          <li><strong>pool-casa-01</strong> — endpoint: <code>casa-01.seudominio.com.br</code></li>
+          <li><strong>pool-casa-02</strong> — endpoint: <code>casa-02.seudominio.com.br</code></li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h4>Dashboard Cloudflare</h4>
+        <h5>Criar o Health Check</h5>
+        <p>
+          Em <strong>Load Balancing → Monitors</strong>, crie um monitor HTTP
+          apontando para o endpoint <code>/health</code> da sua app (você precisa
+          implementar esse endpoint — um simples 200 OK se o banco responder, 503
+          caso contrário).
+        </p>
+        <ul class="prose">
+          <li>Intervalo: 30 segundos</li>
+          <li>Retries: 2</li>
+          <li>Timeout: 5 segundos</li>
+          <li>Resposta esperada: HTTP 200</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h4>Dashboard Cloudflare</h4>
+        <h5>Criar o Load Balancer em modo Failover</h5>
+        <p>Em <strong>Load Balancing → Load Balancers</strong>, crie um novo apontando para o hostname público real (ex: <code>app.seudominio.com.br</code>):</p>
+        <ul class="prose">
+          <li><strong>Traffic Steering</strong>: <code>Off (Failover)</code></li>
+          <li><strong>Pool ordering</strong>: <code>pool-casa-01</code> primeiro, <code>pool-casa-02</code> como fallback</li>
+          <li><strong>Proxy</strong>: habilitado (laranja)</li>
+          <li>Anexe o monitor criado no passo anterior aos dois pools</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h4>Validação</h4>
+        <h5>Testar o failover</h5>
+<pre data-lang="bash"># Acessar pelo domínio público e verificar qual tunnel respondeu
+curl -s https://app.seudominio.com.br/debug/hostname
+# Deve retornar "casa-01"
+
+# Desligar a app na casa-01 (ou parar o tunnel)
+sudo systemctl stop cloudflared
+
+# Aguardar ~60s (2 retries × 30s) e testar novamente
+curl -s https://app.seudominio.com.br/debug/hostname
+# Deve retornar "casa-02"</pre>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-label">Endpoint /health bem feito</span>
+      O endpoint <code>/health</code> deve verificar não só se a app está viva,
+      mas se o banco local responde e se a replicação não está atrasada além de
+      um threshold. Isso evita servir tráfego de um site "zumbi" (app online,
+      dados velhos).
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="aplicacao">
+    <h2><span class="num">04 — Camada de Aplicação</span>Docker + Git em ambos os sites</h2>
+
+    <p>
+      A aplicação precisa ser idêntica nas duas residências. A abordagem padrão
+      é empacotar tudo como imagem Docker e usar Git como fonte da verdade para
+      o código.
+    </p>
+
+    <h3>Estrutura do repositório</h3>
+<pre data-lang="text">meu-app/
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+├── src/
+└── scripts/
+    ├── deploy.sh
+    └── healthcheck.sh</pre>
+
+    <h3>Docker Compose de cada site</h3>
+<pre data-lang="yaml"># docker-compose.yml
+services:
+  app:
+    image: meu-app:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SITE_ID=${SITE_ID}  # "casa-01" ou "casa-02"
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on: [db]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: appdb
+    secrets: [db_password]
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt</pre>
+
+    <h3>Deploy automatizado</h3>
+    <p>
+      Um script simples que roda num webhook do GitHub (ou cron a cada 5 minutos)
+      puxa mudanças e recria os containers se houver atualização:
+    </p>
+<pre data-lang="bash">#!/usr/bin/env bash
+# scripts/deploy.sh
+set -euo pipefail
+
+cd /opt/meu-app
+git fetch origin main
+
+LOCAL=$(git rev-parse HEAD)
+REMOTE=$(git rev-parse origin/main)
+
+if [ "$LOCAL" != "$REMOTE" ]; then
+  echo "Atualizacao detectada, fazendo deploy..."
+  git reset --hard origin/main
+  docker compose build
+  docker compose up -d
+  docker image prune -f
+fi</pre>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="arquivos">
+    <h2><span class="num">05 — Camada de Arquivos</span>Syncthing para arquivos mutáveis</h2>
+
+    <p>
+      Uploads de usuários (imagens, PDFs, anexos) e qualquer arquivo que a
+      aplicação escreva em disco precisam ser replicados. O
+      <a href="https://syncthing.net">Syncthing</a> é ideal: peer-to-peer,
+      gratuito, sem dependência de nuvem, resolve conflitos por timestamp e
+      suporta versionamento.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>Ambos os sites</h4>
+        <h5>Instalar o Syncthing</h5>
+<pre data-lang="bash">sudo apt install syncthing
+sudo systemctl enable --now syncthing@&lt;seu-usuario&gt;</pre>
+      </div>
+
+      <div class="step">
+        <h4>Ambos os sites</h4>
+        <h5>Acessar a interface web e trocar os Device IDs</h5>
+        <p>
+          A UI roda em <code>http://localhost:8384</code>. Em cada site, copie o
+          Device ID da interface e adicione o ID do outro site como device
+          remoto. Aceite a conexão nos dois lados.
+        </p>
+      </div>
+
+      <div class="step">
+        <h4>Ambos os sites</h4>
+        <h5>Compartilhar a pasta de uploads</h5>
+        <p>
+          Adicione a pasta <code>/opt/meu-app/uploads</code> como pasta
+          compartilhada, habilite "Send &amp; Receive" nos dois lados e
+          configure versionamento tipo "Staggered" (mantém versões antigas por
+          30 dias).
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-label">Conflitos de arquivo</span>
+      Se os dois sites receberem uploads diferentes com o mesmo nome de arquivo
+      durante uma partição de rede, o Syncthing cria arquivos com sufixo
+      <code>.sync-conflict-&lt;data&gt;</code>. Implemente nomes de arquivo
+      únicos na aplicação (use UUIDs) para evitar isso.
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="replicacao">
+    <h2><span class="num">06 — Camada de Banco</span>Quatro opções de replicação</h2>
+
+    <p>
+      Esta é a decisão arquitetural mais importante — cada opção tem um perfil
+      de trade-offs diferente. Abaixo, cada sub-opção tem instruções de
+      configuração, prós, contras e um veredito sobre quando escolher cada uma.
+    </p>
+
+    <!-- OPÇÃO 3a -->
+    <div class="option" id="op-3a">
+      <div class="option-header">
+        <h3>Opção 3a — PostgreSQL Logical Replication</h3>
+        <span class="tag">RELACIONAL · SQL</span>
+      </div>
+      <div class="option-body">
+        <p>
+          O PostgreSQL tem replicação lógica nativa desde a versão 10. A ideia:
+          o site ativo publica as mudanças, o site standby e um banco em nuvem
+          (ex: Neon, Supabase) se inscrevem nessas mudanças. Em caso de failover,
+          você promove o standby e reconfigura a direção da replicação.
+        </p>
+
+        <h4>Passo a passo</h4>
+
+<pre data-lang="ini"># postgresql.conf (em ambos os sites)
+wal_level = logical
+max_wal_senders = 10
+max_replication_slots = 10
+wal_keep_size = 1GB</pre>
+
+<pre data-lang="sql">-- No site primário (casa-01)
+CREATE PUBLICATION pub_appdb FOR ALL TABLES;
+
+-- No site standby (casa-02) e no banco em nuvem
+CREATE SUBSCRIPTION sub_from_casa01
+  CONNECTION 'host=casa-01.internal port=5432 dbname=appdb user=replicator password=xxx'
+  PUBLICATION pub_appdb
+  WITH (copy_data = true, create_slot = true);</pre>
+
+        <h4>Rede entre os sites</h4>
+        <p>
+          O standby precisa alcançar a porta 5432 do primário. Como as duas
+          residências não têm IP público, use
+          <strong>Cloudflare Tunnel com acesso TCP privado</strong> (WARP
+          client no standby) ou uma <strong>VPN mesh</strong> como Tailscale —
+          essa é de longe a solução mais simples.
+        </p>
+
+<pre data-lang="bash"># Tailscale em ambos os sites
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+# Agora cada site tem um IP 100.x.x.x estável acessível pelo outro</pre>
+
+        <h4>Failover manual</h4>
+<pre data-lang="sql">-- Quando casa-01 cair, promover casa-02 a primario:
+ALTER SUBSCRIPTION sub_from_casa01 DISABLE;
+ALTER SUBSCRIPTION sub_from_casa01 SET (slot_name = NONE);
+DROP SUBSCRIPTION sub_from_casa01;
+CREATE PUBLICATION pub_appdb FOR ALL TABLES;
+-- Quando casa-01 voltar, ela se inscreve em casa-02</pre>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>Vantagens</h5>
+            <ul>
+              <li>Nativo do PostgreSQL — zero dependências extras.</li>
+              <li>Replicação granular por tabela/schema.</li>
+              <li>Funciona entre versões diferentes do PG.</li>
+              <li>Latência baixíssima nas operações locais.</li>
+              <li>Ferramentas maduras para automação (Patroni, repmgr).</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>Desvantagens</h5>
+            <ul>
+              <li>Failover automático exige Patroni ou similar — não trivial.</li>
+              <li>Não replica DDL (ALTER TABLE precisa rodar manualmente nos dois).</li>
+              <li>Conflitos de escrita simultânea exigem lógica manual.</li>
+              <li>Slots de replicação podem encher o disco se o standby ficar offline muito tempo.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <strong>Escolha se…</strong>
+          você já usa Postgres, sua aplicação depende de features relacionais
+          (JOINs complexos, transações, constraints) e você está disposto a
+          investir tempo configurando Patroni para failover automático. É a
+          opção mais "profissional" e a que se parece mais com o que empresas
+          grandes fazem.
+        </div>
+      </div>
+    </div>
+
+    <!-- OPÇÃO 3b -->
+    <div class="option" id="op-3b">
+      <div class="option-header">
+        <h3>Opção 3b — CouchDB multi-master</h3>
+        <span class="tag">NOSQL · DOCUMENTOS</span>
+      </div>
+      <div class="option-body">
+        <p>
+          O Apache CouchDB foi projetado para replicação multi-master desde o
+          primeiro dia. Cada nó aceita escritas; conflitos são detectados e
+          resolvidos automaticamente via MVCC. É a opção mais elegante
+          conceitualmente — a replicação não é um add-on, é a feature principal.
+        </p>
+
+        <h4>Passo a passo</h4>
+
+<pre data-lang="yaml"># docker-compose.yml em ambos os sites
+services:
+  couchdb:
+    image: couchdb:3.3
+    restart: unless-stopped
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD_FILE: /run/secrets/couch_password
+      NODENAME: casa-01.local   # muda em cada site
+    volumes:
+      - ./couchdata:/opt/couchdb/data
+    secrets: [couch_password]</pre>
+
+<pre data-lang="bash"># Configurar replicacao continua bidirecional
+# De casa-01 -> casa-02
+curl -X POST http://admin:xxx@localhost:5984/_replicator \
+  -H "Content-Type: application/json" \
+  -d '{
+    "_id": "casa01-to-casa02",
+    "source": "http://admin:xxx@localhost:5984/appdb",
+    "target": "http://admin:xxx@casa-02.tailnet:5984/appdb",
+    "continuous": true
+  }'
+
+# E o caminho inverso, configurado em casa-02</pre>
+
+        <h4>Nuvem opcional como hub</h4>
+        <p>
+          Em vez de replicação direta site-a-site, você pode usar
+          <a href="https://www.ibm.com/cloud/cloudant">IBM Cloudant</a> ou um
+          CouchDB hospedado como hub central — cada site replica contra o hub,
+          o que simplifica firewall e garante um backup sempre atualizado.
+        </p>
+
+        <h4>Resolução de conflitos</h4>
+        <p>
+          Quando dois sites escrevem no mesmo documento durante uma partição,
+          o CouchDB escolhe uma "winning revision" deterministicamente mas
+          preserva as outras — sua aplicação pode detectar e resolver:
+        </p>
+<pre data-lang="javascript">// Detectar conflitos ao ler
+const doc = await db.get('doc-id', { conflicts: true });
+if (doc._conflicts) {
+  // Aplicar logica de merge da sua aplicacao
+  // ex: ultimo timestamp vence, ou concatenar, etc
+}</pre>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>Vantagens</h5>
+            <ul>
+              <li>Multi-master de verdade — ambos os sites podem escrever simultaneamente.</li>
+              <li>Replicação é feature de primeira classe, não um add-on frágil.</li>
+              <li>Funciona offline por dias e converge quando reconecta.</li>
+              <li>HTTP API nativa — fácil de inspecionar e debugar.</li>
+              <li>PouchDB permite até mesmo replicação para o browser do cliente.</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>Desvantagens</h5>
+            <ul>
+              <li>Migrar de SQL para documentos é uma mudança grande de paradigma.</li>
+              <li>Queries ad-hoc são mais limitadas (Mango queries, Views pré-definidas).</li>
+              <li>Sem JOINs — você precisa denormalizar dados.</li>
+              <li>Resolução de conflitos é responsabilidade da aplicação.</li>
+              <li>Comunidade menor que Postgres/MySQL.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <strong>Escolha se…</strong>
+          você está projetando uma aplicação do zero ou ela já é orientada a
+          documentos, e valoriza muito a simplicidade operacional da replicação
+          (ela "just works"). É especialmente brilhante se houver um app
+          mobile/web offline-first usando PouchDB.
+        </div>
+      </div>
+    </div>
+
+    <!-- OPÇÃO 3c -->
+    <div class="option" id="op-3c">
+      <div class="option-header">
+        <h3>Opção 3c — Litestream + SQLite</h3>
+        <span class="tag">SQLITE · BACKUP CONTÍNUO</span>
+      </div>
+      <div class="option-body">
+        <p>
+          O <a href="https://litestream.io">Litestream</a> transforma um banco
+          SQLite local em um banco com replicação contínua para S3 (ou
+          Cloudflare R2, Backblaze B2). Importante: <strong>não é
+          multi-master</strong> — é uma estratégia de backup-em-tempo-real
+          com restore rápido. Funciona bem para apps onde só um site escreve
+          por vez.
+        </p>
+
+        <h4>Passo a passo</h4>
+
+<pre data-lang="bash"># Instalar litestream
+curl -LO https://github.com/benbjohnson/litestream/releases/latest/download/litestream-linux-amd64.deb
+sudo dpkg -i litestream-linux-amd64.deb</pre>
+
+<pre data-lang="yaml"># /etc/litestream.yml
+dbs:
+  - path: /opt/meu-app/data/appdb.sqlite
+    replicas:
+      - type: s3
+        bucket: meu-app-db-backup
+        path: appdb
+        endpoint: https://&lt;account&gt;.r2.cloudflarestorage.com
+        access-key-id: ${R2_ACCESS_KEY}
+        secret-access-key: ${R2_SECRET_KEY}
+        sync-interval: 1s
+        retention: 72h</pre>
+
+<pre data-lang="bash">sudo systemctl enable --now litestream
+
+# No outro site, antes de subir a app, restaurar o backup:
+litestream restore -o /opt/meu-app/data/appdb.sqlite \
+  s3://meu-app-db-backup/appdb</pre>
+
+        <h4>Fluxo de failover</h4>
+        <ol class="prose">
+          <li>App em casa-01 escreve no SQLite local. Litestream replica WAL para R2 a cada 1s.</li>
+          <li>Casa-01 cai. Cloudflare LB direciona tráfego para casa-02.</li>
+          <li>Casa-02 detecta (via script) que agora é primária, faz <code>litestream restore</code> e sobe a app.</li>
+          <li>Casa-01 volta — apaga seu banco local, restaura do R2 e volta como standby.</li>
+        </ol>
+
+        <div class="callout danger">
+          <span class="callout-label">Atenção crítica</span>
+          Nunca deixe as duas apps escrevendo no mesmo banco SQLite ao mesmo tempo
+          via Litestream — você perderá dados. Essa opção assume que o Cloudflare LB
+          garante que apenas um site está ativo a qualquer momento. Implemente um
+          lock distribuído se precisar de garantia forte.
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>Vantagens</h5>
+            <ul>
+              <li>Simplicidade extrema — é só um binário que observa o WAL.</li>
+              <li>SQLite é rápido, confiável e sem processo de servidor.</li>
+              <li>Custo baixíssimo (R2 cobra ~$0.015/GB/mês sem egress).</li>
+              <li>Restore em segundos, não minutos.</li>
+              <li>Excelente para apps pequenas/médias com poucos writes.</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>Desvantagens</h5>
+            <ul>
+              <li><strong>Não é multi-master</strong> — só um site escreve por vez.</li>
+              <li>Durante failover há uma janela de ~segundos com dados stale.</li>
+              <li>SQLite tem limites para writes concorrentes (problema para apps heavy-write).</li>
+              <li>Depende de um bucket S3/R2 acessível.</li>
+              <li>Restore é "all-or-nothing" — não há replicação contínua no standby.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <strong>Escolha se…</strong>
+          sua aplicação é relativamente pequena, usa SQLite (ou pode usar) e
+          você prioriza simplicidade operacional máxima acima de tudo. É a opção
+          com menos partes móveis — perfeita para um lab pessoal, aplicações
+          internas ou projetos indie.
+        </div>
+      </div>
+    </div>
+
+    <!-- OPÇÃO 3d -->
+    <div class="option" id="op-3d">
+      <div class="option-header">
+        <h3>Opção 3d — rqlite ou Turso</h3>
+        <span class="tag">SQLITE DISTRIBUÍDO · RAFT</span>
+      </div>
+      <div class="option-body">
+        <p>
+          O <a href="https://rqlite.io">rqlite</a> é um banco distribuído
+          construído sobre SQLite, usando o algoritmo Raft para consenso. Você
+          roda 3 ou mais nós (um em cada residência + um na nuvem), e ele
+          automaticamente elege um líder, replica escritas e faz failover em
+          segundos. O <a href="https://turso.tech">Turso</a> é a versão
+          comercial/SaaS baseada em libSQL (fork do SQLite) com replicação
+          geográfica.
+        </p>
+
+        <h4>rqlite: cluster de 3 nós</h4>
+<pre data-lang="bash"># No no 1 (casa-01) - inicia o cluster
+rqlited -node-id 1 \
+  -http-addr 0.0.0.0:4001 \
+  -raft-addr 0.0.0.0:4002 \
+  /var/lib/rqlite
+
+# No 2 (casa-02) - junta ao cluster
+rqlited -node-id 2 \
+  -http-addr 0.0.0.0:4001 \
+  -raft-addr 0.0.0.0:4002 \
+  -join http://casa-01.tailnet:4001 \
+  /var/lib/rqlite
+
+# No 3 (VPS em nuvem, desempata votacao) - tambem junta
+rqlited -node-id 3 \
+  -http-addr 0.0.0.0:4001 \
+  -raft-addr 0.0.0.0:4002 \
+  -join http://casa-01.tailnet:4001 \
+  /var/lib/rqlite</pre>
+
+<pre data-lang="bash"># A app sempre fala com qualquer no - ele redireciona ao leader automaticamente
+curl -XPOST "localhost:4001/db/execute?pretty" -H "Content-Type: application/json" -d '[
+  ["INSERT INTO users(name) VALUES(?)", "Franklin"]
+]'</pre>
+
+        <h4>Turso (alternativa gerenciada)</h4>
+        <p>
+          Se você não quer operar o cluster, o Turso oferece o mesmo modelo
+          como serviço, com réplicas próximas geograficamente:
+        </p>
+<pre data-lang="bash">turso db create meu-app
+turso db replicate meu-app gru  # replica em Sao Paulo
+turso db replicate meu-app scl  # replica em Santiago
+turso db shell meu-app</pre>
+
+        <h4>Por que 3 nós, não 2</h4>
+        <p>
+          O Raft exige <strong>quorum</strong> (maioria) para aceitar escritas.
+          Com apenas 2 nós, se qualquer um cair, o outro fica sem quorum e para
+          de aceitar writes. Por isso o terceiro nó na nuvem é essencial — ele
+          serve como "juiz de desempate" sem precisar de muitos recursos (um
+          droplet de US$ 4/mês basta).
+        </p>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>Vantagens</h5>
+            <ul>
+              <li>Failover automático em segundos, sem intervenção humana.</li>
+              <li>Consistência forte — garantia de linearizabilidade.</li>
+              <li>Não há "split-brain" graças ao Raft.</li>
+              <li>SQL completo (é SQLite por baixo).</li>
+              <li>Turso remove toda a dor operacional com US$ 0-20/mês.</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>Desvantagens</h5>
+            <ul>
+              <li>Exige pelo menos 3 nós para ser útil (custa um VPS extra).</li>
+              <li>Latência de writes = round-trip até o leader + quorum.</li>
+              <li>Se a internet da sua casa cair, você perde quorum do lado local.</li>
+              <li>Ecossistema ainda menor que Postgres/MySQL.</li>
+              <li>Turso tem vendor lock-in (embora libSQL seja open-source).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <strong>Escolha se…</strong>
+          você quer failover genuinamente automático e consistência forte sem
+          construir isso manualmente. Turso é a opção mais "moderna" — em 10
+          minutos você tem um banco replicado geograficamente. rqlite é a
+          versão self-hosted para quem quer controle total.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="comparativo">
+    <h2><span class="num">07 — Decisão</span>Comparativo final das 4 opções</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th>3a — Postgres LR</th>
+          <th>3b — CouchDB</th>
+          <th>3c — Litestream</th>
+          <th>3d — rqlite/Turso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Complexidade setup</strong></td>
+          <td>Alta</td>
+          <td>Média</td>
+          <td>Muito baixa</td>
+          <td>Média (rqlite) / Baixa (Turso)</td>
+        </tr>
+        <tr>
+          <td><strong>Multi-master</strong></td>
+          <td>Não (sem Patroni)</td>
+          <td>Sim</td>
+          <td>Não</td>
+          <td>Sim (via leader)</td>
+        </tr>
+        <tr>
+          <td><strong>Failover automático</strong></td>
+          <td>Só com Patroni</td>
+          <td>N/A (multi-master)</td>
+          <td>Não nativamente</td>
+          <td>Sim (segundos)</td>
+        </tr>
+        <tr>
+          <td><strong>Suporte a SQL completo</strong></td>
+          <td>Total</td>
+          <td>Não (Mango/Views)</td>
+          <td>Total (SQLite)</td>
+          <td>Quase total (SQLite)</td>
+        </tr>
+        <tr>
+          <td><strong>Latência local (read)</strong></td>
+          <td>&lt; 1ms</td>
+          <td>&lt; 5ms</td>
+          <td>&lt; 1ms</td>
+          <td>&lt; 2ms</td>
+        </tr>
+        <tr>
+          <td><strong>Conflitos de escrita</strong></td>
+          <td>Manual</td>
+          <td>Automático + app</td>
+          <td>Impossível (single-writer)</td>
+          <td>Impossível (Raft)</td>
+        </tr>
+        <tr>
+          <td><strong>Custo mensal extra</strong></td>
+          <td>~US$ 0-5</td>
+          <td>~US$ 0-10</td>
+          <td>~US$ 1-3</td>
+          <td>~US$ 4 (rqlite) / US$ 0-20 (Turso)</td>
+        </tr>
+        <tr>
+          <td><strong>Maturidade</strong></td>
+          <td>Altíssima</td>
+          <td>Alta</td>
+          <td>Média</td>
+          <td>Crescente</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout tip">
+      <span class="callout-label">Recomendação do autor</span>
+      Se você está começando do zero e quer o melhor custo-benefício em 2026,
+      comece com <strong>Turso</strong> (Opção 3d gerenciada). Se já tem
+      investimento em Postgres, vá de <strong>3a com Tailscale + Patroni</strong>.
+      Só escolha Litestream se sua aplicação for simples o bastante para caber
+      em SQLite single-writer.
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="validacao">
+    <h2><span class="num">08 — Validação</span>Testes de failover</h2>
+
+    <p>
+      Uma arquitetura de alta disponibilidade que nunca foi testada não é
+      confiável — é teatro. Faça pelo menos esses três cenários de teste antes
+      de confiar em produção:
+    </p>
+
+    <h3>Teste 1 — Queda abrupta de energia no site primário</h3>
+<pre data-lang="bash"># Simular: desligar fisicamente o servidor da casa-01 (puxar tomada)
+# Ou, menos destrutivo, desligar o docker e o cloudflared:
+sudo systemctl stop docker cloudflared
+
+# Em outra rede, monitorar o tempo ate recuperacao:
+while true; do
+  curl -s -o /dev/null -w "%{http_code} %{time_total}s\n" \
+    https://app.seudominio.com.br/health
+  sleep 5
+done</pre>
+    <p>
+      <strong>Métrica esperada</strong>: recuperação em menos de 90 segundos
+      (health check com intervalo de 30s × 2 retries + margem).
+    </p>
+
+    <h3>Teste 2 — Partição de rede</h3>
+    <p>
+      Bloqueie o tráfego entre as duas residências (mas mantenha internet pública
+      em ambas) e veja como o sistema se comporta. Este é o teste mais revelador:
+    </p>
+<pre data-lang="bash"># No firewall da casa-01, bloquear o IP Tailscale da casa-02
+sudo iptables -A OUTPUT -d 100.x.y.z -j DROP
+
+# Fazer escritas nos dois sites durante a particao
+# Remover o bloqueio
+sudo iptables -D OUTPUT -d 100.x.y.z -j DROP
+
+# Verificar se a replicacao converge e se ha conflitos</pre>
+
+    <h3>Teste 3 — Falha do banco mas app saudável</h3>
+    <p>
+      Derrube apenas o container do banco no site primário e veja se o
+      <code>/health</code> endpoint detecta e força o failover — esse é o
+      cenário mais sutil e o que revela endpoints de health check mal feitos.
+    </p>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="monitoramento">
+    <h2><span class="num">09 — Observabilidade</span>Monitoramento e alertas</h2>
+
+    <p>
+      Para saber que um failover aconteceu, você precisa de monitoramento
+      externo (fora das duas residências). Setup mínimo recomendado:
+    </p>
+
+    <ul class="prose">
+      <li>
+        <strong><a href="https://healthchecks.io">Healthchecks.io</a></strong>
+        ou <strong>UptimeRobot</strong> pingando o domínio público a cada minuto —
+        alerta por e-mail/Telegram se o serviço cair.
+      </li>
+      <li>
+        <strong>Cloudflare Analytics</strong> — notificações quando um pool do
+        Load Balancer fica unhealthy.
+      </li>
+      <li>
+        <strong>Prometheus + Grafana</strong> rodando numa VPS separada,
+        coletando métricas dos dois sites via Tailscale (CPU, disco, lag de
+        replicação, tamanho dos WAL files no Postgres).
+      </li>
+      <li>
+        <strong>Bot do Telegram</strong> customizado que avisa
+        "🔴 casa-01 caiu, tráfego agora em casa-02" e
+        "🟢 casa-01 voltou e está sincronizando".
+      </li>
+    </ul>
+
+    <h3>Métricas críticas</h3>
+    <table>
+      <thead>
+        <tr><th>Métrica</th><th>Alerta se…</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Replication lag</td><td>&gt; 30 segundos</td></tr>
+        <tr><td>Disco livre</td><td>&lt; 20%</td></tr>
+        <tr><td>Uso de CPU sustained</td><td>&gt; 80% por 5 min</td></tr>
+        <tr><td>Tunnel Cloudflare status</td><td>disconnected &gt; 60s</td></tr>
+        <tr><td>Último backup Litestream</td><td>&gt; 5 min atrás</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- =========================================== -->
+  <section id="checklist">
+    <h2><span class="num">10 — Entrega</span>Checklist operacional</h2>
+
+    <p>
+      Antes de considerar a arquitetura "em produção", confirme cada item:
+    </p>
+
+    <h4>Infraestrutura</h4>
+    <ul class="prose">
+      <li>☐ Duas residências com ISPs diferentes confirmadas</li>
+      <li>☐ UPS dimensionado em ambos os sites (teste real de autonomia)</li>
+      <li>☐ SSD NVMe com SMART OK em ambos os servidores</li>
+      <li>☐ Backup off-site semanal (além da replicação) em R2/B2</li>
+    </ul>
+
+    <h4>Roteamento</h4>
+    <ul class="prose">
+      <li>☐ Dois tunnels Cloudflare funcionando independentemente</li>
+      <li>☐ Load Balancer em modo Failover configurado</li>
+      <li>☐ Health check apontando para /health real (valida banco também)</li>
+      <li>☐ Teste de failover documentado com tempo de recuperação medido</li>
+    </ul>
+
+    <h4>Banco de dados</h4>
+    <ul class="prose">
+      <li>☐ Opção escolhida (3a/3b/3c/3d) implementada</li>
+      <li>☐ Replicação bidirecional testada (ou direção de failover, se single-writer)</li>
+      <li>☐ Procedimento de promoção de standby documentado passo-a-passo</li>
+      <li>☐ Teste de partição de rede executado pelo menos uma vez</li>
+      <li>☐ Restore de backup testado (não apenas criado)</li>
+    </ul>
+
+    <h4>Aplicação</h4>
+    <ul class="prose">
+      <li>☐ Deploy via Git webhook ou cron nos dois sites</li>
+      <li>☐ Variáveis de ambiente separadas por site (SITE_ID)</li>
+      <li>☐ Secrets gerenciados fora do Git (docker secrets ou vault)</li>
+      <li>☐ Uploads usando nomes UUID para evitar conflitos no Syncthing</li>
+    </ul>
+
+    <h4>Monitoramento</h4>
+    <ul class="prose">
+      <li>☐ Alerta externo (Healthchecks/UptimeRobot) configurado</li>
+      <li>☐ Notificações Cloudflare ativas</li>
+      <li>☐ Dashboard Grafana com lag de replicação</li>
+      <li>☐ Runbook escrito para "o que fazer quando X acontecer"</li>
+    </ul>
+
+    <hr class="divider">
+
+    <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; color: var(--muted); text-align: center;">
+      A confiabilidade não é um estado — é um hábito de testar as hipóteses regularmente.
+    </p>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 — Franklin José de Oliveira Neto. Todos os direitos reservados.</p>
+  </footer>
+
+</div>
+
+<script>
+  // Smooth scroll para TOC
+  document.querySelectorAll('.toc a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
