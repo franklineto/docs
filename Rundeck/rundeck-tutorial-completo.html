@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rundeck — Guia Completo de Administração e Desenvolvimento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1117;
+    --ink-soft: #1f2937;
+    --paper: #fbf9f4;
+    --paper-tint: #f3efe6;
+    --line: #1f2937;
+    --accent: #b8410e;
+    --accent-soft: #f2e2d4;
+    --teal: #0d5c5c;
+    --teal-soft: #daeaea;
+    --gold: #b68e3b;
+    --muted: #5a5a52;
+    --ok: #2d6a3e;
+    --warn: #8a5a00;
+    --danger: #a02525;
+    --admin: #3c3489;
+    --admin-soft: #eeedfe;
+    --dev: #0d5c5c;
+    --dev-soft: #daeaea;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: radial-gradient(circle at 1px 1px, rgba(13,17,23,0.04) 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 56px 40px 120px; }
+
+  .masthead {
+    border-top: 6px double var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 24px 0 20px;
+    margin-bottom: 48px;
+  }
+  .masthead::before {
+    content: "TUTORIAL TÉCNICO · Nº 03 · ABR 2026";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 16px;
+  }
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1.title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .byline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .byline::before { content: "— "; }
+
+  .lede {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 36px 0 40px;
+    padding-left: 24px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .part-banner {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .part-banner.admin { background: var(--admin-soft); color: var(--admin); border: 1px solid var(--admin); }
+  .part-banner.dev   { background: var(--dev-soft);   color: var(--dev);   border: 1px solid var(--dev); }
+
+  .toc {
+    background: var(--paper-tint);
+    border: 1px solid var(--line);
+    padding: 28px 32px;
+    margin: 0 0 56px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin: 0 0 14px;
+    text-transform: uppercase;
+  }
+  .toc-group {
+    margin-bottom: 18px;
+  }
+  .toc-group-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .toc-group.admin .toc-group-title { color: var(--admin); }
+  .toc-group.dev   .toc-group-title { color: var(--dev); }
+
+  .toc ol {
+    margin: 0; padding: 0; list-style: none;
+    columns: 2; column-gap: 40px;
+  }
+  .toc li {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    padding: 3px 0;
+    break-inside: avoid;
+  }
+  .toc li a {
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .toc li a:hover { color: var(--accent); }
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 28px;
+  }
+
+  section { margin: 64px 0; }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0 0 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  h2 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.25;
+    margin: 36px 0 10px;
+  }
+
+  h4 {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 24px 0 8px;
+  }
+
+  p { margin: 0 0 14px; }
+
+  pre {
+    background: var(--ink);
+    color: #e6e1d8;
+    padding: 18px 22px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    border-left: 4px solid var(--accent);
+    position: relative;
+  }
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 6px; right: 12px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: #7a7368;
+    text-transform: uppercase;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    background: var(--paper-tint);
+    padding: 2px 6px;
+    border: 1px solid rgba(13,17,23,0.08);
+    border-radius: 2px;
+  }
+  pre code { background: none; padding: 0; border: none; font-size: inherit; }
+
+  .callout {
+    padding: 18px 22px;
+    margin: 22px 0;
+    border-left: 4px solid;
+    background: var(--paper-tint);
+    font-size: 14.5px;
+    break-inside: avoid;
+  }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.tip { border-color: var(--teal); background: var(--teal-soft); }
+  .callout.tip .callout-label { color: var(--teal); }
+  .callout.warn { border-color: var(--warn); background: #faf0d8; }
+  .callout.warn .callout-label { color: var(--warn); }
+  .callout.danger { border-color: var(--danger); background: #f9e6e6; }
+  .callout.danger .callout-label { color: var(--danger); }
+  .callout.admin { border-color: var(--admin); background: var(--admin-soft); }
+  .callout.admin .callout-label { color: var(--admin); }
+
+  .use-case {
+    border: 1px solid var(--line);
+    margin: 32px 0;
+    background: var(--paper);
+    break-inside: avoid-page;
+  }
+  .use-case-header {
+    padding: 16px 24px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .use-case-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    margin: 0;
+    color: var(--paper);
+    font-weight: 500;
+  }
+  .use-case-header .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+  }
+  .use-case-body { padding: 20px 24px 24px; }
+
+  .scenario {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+  }
+  .scenario strong {
+    font-family: 'Inter Tight', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .step {
+    position: relative;
+    padding: 20px 24px 20px 72px;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    break-inside: avoid;
+  }
+  .step::before {
+    content: counter(step);
+    counter-increment: step;
+    position: absolute;
+    top: 18px; left: 20px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 50%;
+  }
+  .steps { counter-reset: step; }
+  .step h4 { margin-top: 0; font-size: 12px; }
+  .step h5 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0 0 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 13.5px;
+    break-inside: avoid;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  tbody tr:nth-child(even) { background: var(--paper-tint); }
+
+  a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { background: var(--accent-soft); }
+
+  ul.prose, ol.prose { padding-left: 22px; margin: 14px 0; }
+  ul.prose li, ol.prose li { margin-bottom: 6px; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 56px 0;
+    position: relative;
+  }
+  .divider::after {
+    content: "\273B";
+    position: absolute;
+    top: -14px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    padding: 0 16px;
+    color: var(--accent);
+    font-size: 18px;
+  }
+
+  .part-divider {
+    margin: 80px 0 48px;
+    padding: 32px 40px;
+    border: 2px solid var(--line);
+    background: var(--paper);
+    text-align: center;
+  }
+  .part-divider .part-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .part-divider h2 {
+    border: none;
+    padding: 0;
+    margin: 0 0 8px;
+    font-size: 40px;
+  }
+  .part-divider p {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .print-bar {
+    position: fixed;
+    top: 24px; right: 24px;
+    z-index: 100;
+  }
+  .print-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 12px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 var(--accent);
+    transition: all 0.15s;
+  }
+  .print-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--accent); }
+  .print-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--accent); }
+
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 6px double var(--line);
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 18mm 16mm 22mm 16mm;
+      @bottom-center {
+        content: "\00A9 2026 \2014 Franklin Jos\00E9 de Oliveira Neto. Todos os direitos reservados.";
+        font-family: 'Inter Tight', sans-serif;
+        font-size: 9pt;
+        color: #5a5a52;
+      }
+      @bottom-right {
+        content: "P\00E1g. " counter(page) " / " counter(pages);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8pt;
+        color: #5a5a52;
+      }
+      @top-left {
+        content: "Rundeck \2014 Guia Completo";
+        font-family: 'Fraunces', serif;
+        font-style: italic;
+        font-size: 9pt;
+        color: #5a5a52;
+      }
+    }
+    body { background: white; color: black; font-size: 10.5pt; line-height: 1.5; }
+    .wrap { max-width: none; margin: 0; padding: 0; }
+    .print-bar { display: none; }
+    h1.title { font-size: 30pt; }
+    h2 { font-size: 18pt; page-break-after: avoid; }
+    h3 { font-size: 14pt; page-break-after: avoid; }
+    h4, h5 { page-break-after: avoid; }
+    pre {
+      background: #f4f2ed !important; color: #1a1a1a !important;
+      border-left-color: #b8410e !important; font-size: 8.5pt;
+      page-break-inside: avoid;
+    }
+    pre::before { color: #8a8275 !important; }
+    .use-case, .step, .callout, table { page-break-inside: avoid; }
+    .use-case-header { background: #0d1117 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .use-case-header .tag { color: #d4a84c !important; }
+    .use-case-header h3 { color: white !important; }
+    .part-divider { page-break-before: always; }
+    .toc { page-break-after: always; }
+    .footer { display: none; }
+    .callout, .scenario, th, .step::before, .part-banner {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 32px 20px 80px; }
+    h1.title { font-size: 36px; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; }
+    .toc ol { columns: 1; }
+    .step { padding-left: 24px; padding-top: 56px; }
+    .step::before { top: 16px; left: 20px; }
+    .print-bar { top: 12px; right: 12px; }
+    .print-btn { padding: 10px 14px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn" onclick="window.print()">Imprimir / PDF</button>
+</div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <h1 class="title">Rundeck:<br>Administração e <em>Desenvolvimento</em></h1>
+    <p class="byline">by Franklin</p>
+  </header>
+
+  <p class="lede">
+    Guia completo de referência para o Rundeck — a plataforma open-source de
+    runbook automation. A primeira parte cobre a instalação, configuração,
+    segurança e operação do servidor. A segunda parte é voltada para quem cria
+    jobs: sintaxe YAML, node filters, opções, workflows, API e os casos de uso
+    mais comuns no dia-a-dia de DevOps e SRE.
+  </p>
+
+  <nav class="toc">
+    <p class="toc-label">Índice</p>
+
+    <div class="toc-group admin">
+      <p class="toc-group-title">Parte I — Administração</p>
+      <ol>
+        <li><a href="#o-que-e"><span class="toc-num">01</span><span>O que é o Rundeck e quando usar</span></a></li>
+        <li><a href="#instalacao"><span class="toc-num">02</span><span>Instalação e configuração inicial</span></a></li>
+        <li><a href="#arquitetura"><span class="toc-num">03</span><span>Arquitetura e componentes internos</span></a></li>
+        <li><a href="#seguranca"><span class="toc-num">04</span><span>Autenticação e autorização (ACLs)</span></a></li>
+        <li><a href="#projetos"><span class="toc-num">05</span><span>Projetos e nodes</span></a></li>
+        <li><a href="#operacao"><span class="toc-num">06</span><span>Operação, logs e backup</span></a></li>
+      </ol>
+    </div>
+
+    <div class="toc-group dev">
+      <p class="toc-group-title">Parte II — Desenvolvimento</p>
+      <ol>
+        <li><a href="#primeiro-job"><span class="toc-num">07</span><span>Anatomia de um job YAML</span></a></li>
+        <li><a href="#options"><span class="toc-num">08</span><span>Options, variáveis e Key Storage</span></a></li>
+        <li><a href="#workflows"><span class="toc-num">09</span><span>Workflows e estratégias de execução</span></a></li>
+        <li><a href="#casos-uso"><span class="toc-num">10</span><span>Casos de uso mais comuns</span></a></li>
+        <li><a href="#api"><span class="toc-num">11</span><span>API REST e integração externa</span></a></li>
+        <li><a href="#boas-praticas"><span class="toc-num">12</span><span>Boas práticas e armadilhas comuns</span></a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- =============================================
+       PARTE I — ADMINISTRAÇÃO
+       ============================================= -->
+  <div class="part-divider">
+    <div class="part-num">PARTE I</div>
+    <h2>Administração</h2>
+    <p>Instalar, configurar, proteger e operar o Rundeck</p>
+  </div>
+
+  <section id="o-que-e">
+    <span class="part-banner admin">Parte I · Administração</span>
+    <h2><span class="num">01 — Fundamentos</span>O que é o Rundeck e quando usar</h2>
+
+    <p>
+      O <strong>Rundeck</strong> é uma plataforma open-source de
+      <em>runbook automation</em> — ela transforma scripts, comandos ad-hoc e
+      procedimentos manuais em <strong>jobs</strong> com interface web, controle
+      de acesso, histórico de execução e API. É mantido pela PagerDuty e
+      disponível em duas versões: a Community (gratuita, open-source Apache 2.0)
+      e a Enterprise / PagerDuty Runbook Automation (comercial).
+    </p>
+
+    <h3>O problema que o Rundeck resolve</h3>
+    <p>
+      Todo time de infraestrutura acumula "scripts que só o Zé sabe rodar".
+      Reiniciar um serviço, aplicar um patch, restaurar um backup, limpar cache
+      — tarefas que vivem em shell history, wikis desatualizadas e bookmarks
+      de terminal. O Rundeck centraliza essas operações, permitindo:
+    </p>
+    <ul class="prose">
+      <li><strong>Self-service controlado</strong>: desenvolvedores rodam tarefas operacionais sem precisar de acesso SSH direto aos servidores.</li>
+      <li><strong>Auditoria</strong>: cada execução fica registrada com quem, quando, em quais hosts e qual foi a saída.</li>
+      <li><strong>Padronização</strong>: mesmo playbook de deploy, mesmo playbook de rollback — sem variação por pessoa.</li>
+      <li><strong>Integração</strong>: orquestra ferramentas que já existem (Ansible, Puppet, Chef, Jenkins, Kubernetes) em vez de substituí-las.</li>
+    </ul>
+
+    <h3>Quando Rundeck é a escolha certa</h3>
+    <table>
+      <thead>
+        <tr><th>Cenário</th><th>Rundeck resolve?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Delegar operações a devs sem dar SSH</td><td>Sim — caso de uso principal</td></tr>
+        <tr><td>Runbooks de incident response com um clique</td><td>Sim — histórico e RBAC prontos</td></tr>
+        <tr><td>Automação scheduled (cron centralizado)</td><td>Sim — com interface e logs</td></tr>
+        <tr><td>Pipeline CI/CD completo</td><td>Não — use Jenkins, GitLab CI, GitHub Actions</td></tr>
+        <tr><td>Gerenciamento de configuração declarativo</td><td>Não — use Ansible/Puppet/Chef (e chame do Rundeck)</td></tr>
+        <tr><td>Infrastructure as Code</td><td>Não — use Terraform (e chame do Rundeck)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout tip">
+      <span class="callout-label">Mantra do Rundeck</span>
+      "Rundeck não substitui suas ferramentas de automação — ele as expõe de
+      forma segura e auditável para os times que precisam usá-las." Se você
+      está escrevendo lógica de automação DENTRO do Rundeck, provavelmente
+      deveria escrever em Ansible e chamar do Rundeck.
+    </div>
+  </section>
+
+  <section id="instalacao">
+    <span class="part-banner admin">Parte I · Administração</span>
+    <h2><span class="num">02 — Setup</span>Instalação e configuração inicial</h2>
+
+    <p>
+      Vamos instalar o Rundeck Community em um servidor Ubuntu 24.04. O
+      processo é similar em Debian/RHEL/CentOS, com adaptações menores no
+      gerenciador de pacotes.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>Pré-requisitos</h4>
+        <h5>Instalar o Java (OpenJDK 17)</h5>
+        <p>O Rundeck 5.x requer Java 17. Em servidores antigos rodando Rundeck 4.x, o Java 11 ainda é aceito.</p>
+<pre data-lang="bash">sudo apt update
+sudo apt install -y openjdk-17-jre-headless
+java -version
+# openjdk version "17.0.x"</pre>
+      </div>
+
+      <div class="step">
+        <h4>Instalação</h4>
+        <h5>Adicionar o repositório oficial e instalar</h5>
+<pre data-lang="bash"># Adicionar a chave GPG e o repositorio
+curl -L https://packages.rundeck.com/pagerduty/rundeck/cfg/gpg/gpg.E881C6C0FCF2DE93.key | \
+  sudo apt-key add -
+echo "deb https://packages.rundeck.com/pagerduty/rundeck/any/ any main" | \
+  sudo tee /etc/apt/sources.list.d/rundeck.list
+
+sudo apt update
+sudo apt install -y rundeck</pre>
+      </div>
+
+      <div class="step">
+        <h4>Configuração básica</h4>
+        <h5>Definir a URL pública do servidor</h5>
+        <p>
+          Edite <code>/etc/rundeck/rundeck-config.properties</code> e ajuste o
+          <code>grails.serverURL</code> para o endereço pelo qual os usuários
+          acessarão o Rundeck. É crítico: links em e-mails, webhooks e API
+          respondem com base nessa URL.
+        </p>
+<pre data-lang="properties"># /etc/rundeck/rundeck-config.properties
+grails.serverURL=https://rundeck.suaempresa.com.br
+dataSource.dbCreate=update
+dataSource.url=jdbc:h2:file:/var/lib/rundeck/data/rundeckdb;MVCC=true
+# Em producao, troque H2 por MySQL ou PostgreSQL (ver callout abaixo)</pre>
+      </div>
+
+      <div class="step">
+        <h4>Banco de dados em produção</h4>
+        <h5>Migrar para PostgreSQL</h5>
+        <p>O H2 é apenas para dev/teste. Em produção, use Postgres ou MySQL.</p>
+<pre data-lang="properties"># /etc/rundeck/rundeck-config.properties
+dataSource.url=jdbc:postgresql://localhost:5432/rundeck
+dataSource.driverClassName=org.postgresql.Driver
+dataSource.username=rundeck
+dataSource.password=senha_forte_aqui
+dataSource.properties.validationQuery=SELECT 1</pre>
+      </div>
+
+      <div class="step">
+        <h4>Iniciar o serviço</h4>
+        <h5>Habilitar e verificar</h5>
+<pre data-lang="bash">sudo systemctl enable --now rundeckd
+sudo systemctl status rundeckd
+
+# Acompanhar logs em tempo real durante o primeiro boot
+sudo tail -f /var/log/rundeck/service.log
+
+# Acessar em http://&lt;seu-servidor&gt;:4440
+# Login padrao: admin / admin  &larr; TROQUE IMEDIATAMENTE</pre>
+      </div>
+
+      <div class="step">
+        <h4>Proxy reverso HTTPS</h4>
+        <h5>Colocar atrás do nginx</h5>
+        <p>Nunca exponha o Rundeck direto na porta 4440 em produção. Use nginx ou Caddy com TLS:</p>
+<pre data-lang="nginx"># /etc/nginx/sites-available/rundeck
+server {
+    listen 443 ssl http2;
+    server_name rundeck.suaempresa.com.br;
+
+    ssl_certificate     /etc/letsencrypt/live/rundeck.suaempresa.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/rundeck.suaempresa.com.br/privkey.pem;
+
+    client_max_body_size 50M;
+
+    location / {
+        proxy_pass http://127.0.0.1:4440;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 600s;  # jobs longos
+    }
+}</pre>
+        <p>
+          No <code>framework.properties</code>, avise o Rundeck que está atrás
+          de proxy: <code>framework.server.url=https://rundeck.suaempresa.com.br</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-label">Troque a senha padrão</span>
+      O usuário <code>admin/admin</code> é o primeiro vetor de ataque. Edite
+      <code>/etc/rundeck/realm.properties</code> imediatamente após o boot,
+      use hashes bcrypt (nunca senha em texto plano em produção) ou, melhor
+      ainda, integre com LDAP/AD/SSO.
+    </div>
+  </section>
+
+  <section id="arquitetura">
+    <span class="part-banner admin">Parte I · Administração</span>
+    <h2><span class="num">03 — Arquitetura</span>Componentes internos do Rundeck</h2>
+
+    <p>
+      Entender como o Rundeck é organizado por dentro ajuda a diagnosticar
+      problemas e planejar operações de backup e upgrade.
+    </p>
+
+    <h3>Camadas</h3>
+    <ul class="prose">
+      <li>
+        <strong>Servidor web (Grails/Spring Boot):</strong> aplicação Java que
+        serve a UI, a API REST e processa as execuções. Escuta na 4440 (HTTP)
+        ou 4443 (HTTPS) por padrão.
+      </li>
+      <li>
+        <strong>Banco de dados:</strong> armazena projetos, jobs, execuções,
+        logs de auditoria e metadados. H2 embarcado no dev, Postgres/MySQL em
+        produção.
+      </li>
+      <li>
+        <strong>Key Storage:</strong> repositório criptografado de segredos
+        (chaves SSH, senhas, tokens de API) armazenado em disco em
+        <code>/var/lib/rundeck/var/storage/</code>.
+      </li>
+      <li>
+        <strong>Log Storage:</strong> saída de cada execução, armazenada em
+        arquivos em <code>/var/lib/rundeck/logs/rundeck/</code> por padrão
+        (pode ser movido para S3, Azure Blob etc. via plugin).
+      </li>
+      <li>
+        <strong>Executores (SSH/WinRM):</strong> como o Rundeck efetivamente
+        roda comandos nos nodes. SSH é o padrão para Linux; WinRM para Windows.
+      </li>
+    </ul>
+
+    <h3>Estrutura de diretórios</h3>
+<pre data-lang="text">/etc/rundeck/              # Configuracao
+  ├── framework.properties    # Config do framework (paths, URL)
+  ├── rundeck-config.properties  # Config da aplicacao (DB, email)
+  ├── realm.properties        # Usuarios locais e senhas
+  ├── profile                 # JAVA_OPTS, variaveis do servico
+  └── *.aclpolicy             # Politicas de autorizacao
+
+/var/lib/rundeck/
+  ├── data/                   # H2 database (se em uso)
+  ├── logs/                   # Logs de execucao dos jobs
+  ├── projects/               # Definicoes YAML dos projetos
+  │   └── &lt;nome-projeto&gt;/
+  │       ├── etc/            # project.properties, node sources
+  │       └── var/            # cache e state do projeto
+  └── var/storage/            # Key Storage (segredos criptografados)
+
+/var/log/rundeck/
+  ├── service.log             # Log principal do servidor
+  ├── rundeck.audit.log       # Auditoria de autorizacao
+  └── rundeck.access.log      # Access log tipo Apache</pre>
+
+    <h3>Fluxo de uma execução</h3>
+    <ol class="prose">
+      <li>Usuário clica "Run Job" na UI (ou faz POST via API).</li>
+      <li>Rundeck verifica permissões no ACL correspondente ao grupo do usuário.</li>
+      <li>Se autorizado, resolve o <em>node filter</em> — descobre em quais hosts rodar.</li>
+      <li>Para cada node, abre conexão SSH/WinRM e executa os passos do workflow.</li>
+      <li>Saída é streamada para o Log Storage; execução é registrada no banco.</li>
+      <li>Notificações (e-mail, webhook, Slack) são disparadas se configuradas.</li>
+    </ol>
+  </section>
+
+  <section id="seguranca">
+    <span class="part-banner admin">Parte I · Administração</span>
+    <h2><span class="num">04 — Segurança</span>Autenticação e autorização (ACLs)</h2>
+
+    <p>
+      O modelo de segurança do Rundeck tem duas camadas distintas:
+      <strong>autenticação</strong> (quem é você) e <strong>autorização</strong>
+      (o que você pode fazer). Cada uma é configurada separadamente.
+    </p>
+
+    <h3>Autenticação — quem é o usuário</h3>
+    <p>
+      O Rundeck suporta várias fontes de identidade, configuráveis via JAAS
+      (arquivo <code>jaas-loginmodule.conf</code>):
+    </p>
+    <ul class="prose">
+      <li><strong>Realm properties file</strong>: usuários em arquivo texto — bom para dev/teste, ruim para produção.</li>
+      <li><strong>LDAP / Active Directory</strong>: integração com diretório corporativo.</li>
+      <li><strong>PAM</strong>: delegação para usuários do sistema operacional.</li>
+      <li><strong>SSO via SAML/OIDC</strong>: disponível na versão Enterprise (Okta, Azure AD, Google Workspace).</li>
+    </ul>
+
+    <h4>Arquivo realm.properties para dev</h4>
+<pre data-lang="properties"># /etc/rundeck/realm.properties
+# Formato: usuario: senha[,hash], grupo1, grupo2...
+admin:   MD5:21232f297a57a5a743894a0e4a801fc3, admin, user
+jose:    $2a$10$Lr5K...bcrypt_hash..., dev, user
+maria:   $2a$10$Mn7P...bcrypt_hash..., devops, user
+api_bot: $2a$10$Qr9X...bcrypt_hash..., api</pre>
+
+    <h4>Integração com LDAP (produção)</h4>
+<pre data-lang="properties"># /etc/rundeck/jaas-loginmodule.conf
+RDpropertyfileloginmodule {
+  org.rundeck.jaas.jetty.JettyCachingLdapLoginModule required
+  debug="true"
+  contextFactory="com.sun.jndi.ldap.LdapCtxFactory"
+  providerUrl="ldaps://ad.empresa.com.br:636"
+  bindDn="CN=rundeck-svc,OU=Service,DC=empresa,DC=com,DC=br"
+  bindPassword="senha_servico"
+  authenticationMethod="simple"
+  forceBindingLogin="true"
+  userBaseDn="OU=Users,DC=empresa,DC=com,DC=br"
+  userRdnAttribute="sAMAccountName"
+  userIdAttribute="sAMAccountName"
+  userPasswordAttribute="unicodePwd"
+  userObjectClass="user"
+  roleBaseDn="OU=Groups,DC=empresa,DC=com,DC=br"
+  roleNameAttribute="cn"
+  roleMemberAttribute="member"
+  roleObjectClass="group"
+  cacheDurationMillis="300000"
+  nestedGroups="true"
+  reportStatistics="true";
+};</pre>
+
+    <h3>Autorização — o que o usuário pode fazer</h3>
+    <p>
+      Toda autorização é definida em arquivos <code>.aclpolicy</code> no
+      diretório <code>/etc/rundeck/</code>. São YAMLs que descrevem regras do
+      tipo "grupo X pode fazer ação Y no recurso Z dentro do contexto W".
+    </p>
+
+    <h4>Estrutura de uma ACL</h4>
+<pre data-lang="yaml"># /etc/rundeck/devs.aclpolicy
+description: Desenvolvedores - acesso ao projeto MeuApp
+context:
+  project: MeuApp        # contexto: projeto especifico
+for:
+  job:
+    - allow: [read, run]  # ver e executar qualquer job
+  node:
+    - allow: [read, run]
+  adhoc:
+    - deny: [run, run_as_user]  # proibir comandos ad-hoc
+by:
+  group: [devs]
+---
+# Segundo documento YAML no mesmo arquivo (--- separa)
+description: Devs - acesso a listar o projeto
+context:
+  application: rundeck   # contexto: aplicacao (fora de projeto)
+for:
+  project:
+    - equals:
+        name: MeuApp
+      allow: [read]
+by:
+  group: [devs]</pre>
+
+    <h4>Conceitos-chave da ACL</h4>
+    <ul class="prose">
+      <li><strong>Contexto</strong>: <code>application: rundeck</code> (nível de sistema) ou <code>project: nome</code> (dentro de um projeto). Ambos são necessários para dar acesso completo — sem o contexto de aplicação, o usuário nem vê o projeto na lista.</li>
+      <li><strong>Default deny</strong>: se nada autoriza explicitamente uma ação, ela é negada. Um <code>deny</code> explícito tem precedência sobre qualquer <code>allow</code>.</li>
+      <li><strong>Matching</strong>: <code>equals</code> (match exato), <code>match</code> (regex), ou <code>contains</code> (para listas).</li>
+      <li><strong>Hot reload</strong>: mudanças em <code>.aclpolicy</code> são detectadas em até 2 minutos sem restart.</li>
+    </ul>
+
+    <h4>Exemplo completo: política por ambiente</h4>
+<pre data-lang="yaml"># Devs podem rodar qualquer coisa em dev, so leitura em prod
+description: Dev team - full access dev, read-only prod
+context:
+  application: rundeck
+for:
+  project:
+    - match:
+        name: '.*-dev|.*-staging'
+      allow: [read, configure]
+    - match:
+        name: '.*-prod'
+      allow: [read]
+by:
+  group: [dev-team]
+---
+description: Dev team - job permissions per env
+context:
+  project: '.*-dev|.*-staging'
+for:
+  job:
+    - allow: [read, run, create, update, delete, kill, view]
+  node:
+    - allow: [read, run]
+  adhoc:
+    - allow: [read, run]
+  resource:
+    - allow: [read, create, update, delete]
+  storage:
+    - allow: [read]
+by:
+  group: [dev-team]
+---
+description: Dev team - prod read-only
+context:
+  project: '.*-prod'
+for:
+  job:
+    - allow: [read, view]
+  node:
+    - allow: [read]
+by:
+  group: [dev-team]</pre>
+
+    <div class="callout admin">
+      <span class="callout-label">Ferramenta essencial: rd acl</span>
+      O CLI <code>rd acl test</code> permite simular uma decisão de
+      autorização sem precisar logar na UI. Exemplo:
+      <code>rd acl test --context project:MeuApp --groups devs --job name:deploy --allow run</code>.
+      Se retornar <code>REJECTED</code>, ele mostra a regra que faltaria para
+      autorizar. Insubstituível para debugar ACLs complexas.
+    </div>
+  </section>
+
+  <section id="projetos">
+    <span class="part-banner admin">Parte I · Administração</span>
+    <h2><span class="num">05 — Projetos</span>Projetos, nodes e fontes de inventário</h2>
+
+    <p>
+      Um <strong>projeto</strong> é a unidade de isolamento no Rundeck: tem
+      seus próprios jobs, nodes, ACLs e configurações. Times diferentes
+      geralmente têm projetos separados, ou projetos por ambiente
+      (<code>app-dev</code>, <code>app-prod</code>).
+    </p>
+
+    <h3>Criar um projeto</h3>
+<pre data-lang="bash"># Via CLI (rd)
+rd projects create -p MeuApp \
+  --property "project.description=Deploy e operacao do MeuApp" \
+  --property "service.NodeExecutor.default.provider=sshj-ssh" \
+  --property "service.FileCopier.default.provider=sshj-scp"
+
+# Ou via API
+curl -X POST "$RD_URL/api/48/projects" \
+  -H "X-Rundeck-Auth-Token: $RD_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"MeuApp","description":"Deploy e operacao do MeuApp"}'</pre>
+
+    <h3>Node sources — de onde vem a lista de servidores</h3>
+    <p>
+      Nodes no Rundeck podem vir de várias fontes, misturadas no mesmo projeto:
+    </p>
+
+    <h4>1. Arquivo YAML estático (local)</h4>
+<pre data-lang="yaml"># /var/lib/rundeck/projects/MeuApp/etc/nodes.yaml
+web01:
+  hostname: 10.0.1.10
+  username: rundeck
+  tags: web,prod,app-frontend
+  osFamily: unix
+  osName: Linux
+  ssh-authentication: privateKey
+  ssh-key-storage-path: keys/prod/deploy.key
+
+web02:
+  hostname: 10.0.1.11
+  username: rundeck
+  tags: web,prod,app-frontend
+  osFamily: unix
+
+db01:
+  hostname: 10.0.2.10
+  username: rundeck
+  tags: database,prod,postgres
+  osFamily: unix</pre>
+
+    <h4>2. AWS EC2 (descoberta dinâmica)</h4>
+    <p>
+      Com o plugin de EC2, o Rundeck consulta a API da AWS a cada N segundos
+      e popula nodes automaticamente. Útil em ambientes auto-escaláveis:
+    </p>
+<pre data-lang="properties"># project.properties
+resources.source.1.type=aws-ec2
+resources.source.1.config.region=us-east-1
+resources.source.1.config.filter=tag:Environment=production
+resources.source.1.config.mappingParams=tags.selector=tags/Role
+resources.source.1.config.refreshInterval=60</pre>
+
+    <h4>3. URL externa (CMDB, Consul, Prometheus)</h4>
+<pre data-lang="properties">resources.source.2.type=url
+resources.source.2.config.url=https://cmdb.empresa.com.br/api/nodes.yaml
+resources.source.2.config.headers.Authorization=Bearer ${token}
+resources.source.2.config.cache=true
+resources.source.2.config.refreshInterval=300</pre>
+
+    <h3>Node filters — selecionar subconjuntos</h3>
+    <p>
+      Um <em>node filter</em> é uma expressão que seleciona nodes para rodar
+      um job. Sintaxe baseada em <code>atributo: valor</code>:
+    </p>
+<pre data-lang="text"># Todos os nodes com a tag "web" em producao
+tags: web+prod
+
+# Web em producao, exceto Windows
+tags: web+prod !os-family: windows
+
+# Hostname comeca com "db-" e tem tag "replica"
+name: db-.* tags: replica
+
+# OR entre tags (vírgula)
+tags: web,api</pre>
+
+    <div class="callout tip">
+      <span class="callout-label">Operadores</span>
+      <code>+</code> significa AND, <code>,</code> significa OR, e o prefixo
+      <code>!</code> nega. <code>tags: web+prod</code> é "web E prod";
+      <code>tags: web,api</code> é "web OU api". Atributos suportam regex:
+      <code>name: prod-web-\d+</code>.
+    </div>
+  </section>
+
+  <section id="operacao">
+    <span class="part-banner admin">Parte I · Administração</span>
+    <h2><span class="num">06 — Operação</span>Logs, backup e troubleshooting</h2>
+
+    <h3>Logs — o que procurar onde</h3>
+    <table>
+      <thead>
+        <tr><th>Arquivo</th><th>Serve para</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/var/log/rundeck/service.log</code></td><td>Erros da aplicação, stack traces, problemas de inicialização</td></tr>
+        <tr><td><code>/var/log/rundeck/rundeck.audit.log</code></td><td>Decisões de autorização (ACL) — essencial para debugar permissões</td></tr>
+        <tr><td><code>/var/log/rundeck/rundeck.access.log</code></td><td>Requisições HTTP (UI e API) — formato Apache</td></tr>
+        <tr><td><code>/var/lib/rundeck/logs/rundeck/&lt;projeto&gt;/job/...</code></td><td>Output de cada execução de job, por UUID</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Backup mínimo recomendado</h3>
+<pre data-lang="bash">#!/usr/bin/env bash
+# Backup completo do Rundeck
+set -euo pipefail
+
+BACKUP_DIR="/backups/rundeck/$(date +%Y%m%d-%H%M)"
+mkdir -p "$BACKUP_DIR"
+
+# 1. Configuracao
+tar czf "$BACKUP_DIR/etc.tar.gz" /etc/rundeck/
+
+# 2. Projetos, key storage, logs
+tar czf "$BACKUP_DIR/var-lib.tar.gz" \
+  /var/lib/rundeck/projects \
+  /var/lib/rundeck/var/storage \
+  /var/lib/rundeck/logs
+
+# 3. Banco de dados (Postgres)
+sudo -u postgres pg_dump rundeck | gzip > "$BACKUP_DIR/rundeck-db.sql.gz"
+
+# 4. Exportar todos os projetos via API (arquivo .rdproject)
+for project in $(rd projects list --outformat '%name'); do
+  rd projects archives export -p "$project" \
+    -f "$BACKUP_DIR/project-${project}.rdproject"
+done
+
+# Subir para S3/B2
+aws s3 sync "$BACKUP_DIR" "s3://backups/rundeck/$(date +%Y%m%d-%H%M)/"</pre>
+
+    <h3>Troubleshooting — problemas comuns</h3>
+
+    <h4>Job falha com "permission denied" no SSH</h4>
+    <p>
+      O usuário <code>rundeck</code> do processo precisa ter sua chave pública
+      autorizada no <code>~/.ssh/authorized_keys</code> do usuário remoto. A
+      chave privada fica no Key Storage (<code>keys/...</code>) referenciada no
+      projeto. Verifique com <code>sudo -u rundeck ssh usuario@host</code>
+      diretamente.
+    </p>
+
+    <h4>ACL parece correta mas o usuário não consegue acessar</h4>
+    <p>
+      Em 90% dos casos, falta a regra de contexto <code>application: rundeck</code>
+      dando <code>read</code> ao projeto. ACLs só de projeto não funcionam sem
+      isso. Confirme com <code>tail -f /var/log/rundeck/rundeck.audit.log</code>
+      durante a tentativa de acesso — ele mostra exatamente qual recurso e
+      ação foi rejeitada.
+    </p>
+
+    <h4>Rundeck lento após meses de uso</h4>
+    <p>
+      A tabela de execuções cresce sem limite. Configure
+      <code>rundeck.execution.logs.fileStorage.cleanerPolicyJob</code> e
+      <code>rundeck.execution.logs.fileStorage.retentionPeriod</code> para
+      arquivar execuções antigas. Típico: manter 90 dias de logs online.
+    </p>
+  </section>
+
+  <!-- =============================================
+       PARTE II — DESENVOLVIMENTO
+       ============================================= -->
+  <div class="part-divider">
+    <div class="part-num">PARTE II</div>
+    <h2>Desenvolvimento</h2>
+    <p>Criar jobs, workflows e integrar com sistemas externos</p>
+  </div>
+
+  <section id="primeiro-job">
+    <span class="part-banner dev">Parte II · Desenvolvimento</span>
+    <h2><span class="num">07 — Jobs</span>Anatomia de um job YAML</h2>
+
+    <p>
+      Todo job no Rundeck pode ser criado pela UI, mas o formato canônico
+      é YAML — o que permite versionar em Git, revisar com pull requests e
+      mover entre ambientes via <code>rd jobs load</code>.
+    </p>
+
+    <h3>O job mais simples possível</h3>
+<pre data-lang="yaml">- name: hello-world
+  description: Um Ola Mundo para testar Rundeck
+  loglevel: INFO
+  sequence:
+    keepgoing: false
+    strategy: node-first
+    commands:
+      - exec: echo "Ola do servidor $(hostname)"
+  nodefilters:
+    filter: 'tags: web+prod'</pre>
+
+    <p>
+      Importe via CLI: <code>rd jobs load -p MeuProjeto -f hello.yaml --format yaml</code>.
+    </p>
+
+    <h3>Estrutura completa explicada</h3>
+<pre data-lang="yaml">- name: deploy-app                     # Nome visivel na UI
+  uuid: 7f3a9b12-1234-5678-9abc-def012345678   # Unico, gerado automaticamente
+  group: operacao/deploy                # Agrupamento hierarquico com "/"
+  description: |
+    Deploy da aplicacao MeuApp.
+
+    Este job para o servico, puxa a versao nova do artifact repo,
+    aplica migrations e religa o servico. Rollback automatico se
+    o health check falhar.
+  loglevel: INFO                        # DEBUG | VERBOSE | INFO | WARN | ERROR
+  executionEnabled: true                # Permite execucao (pode desabilitar sem deletar)
+  scheduleEnabled: true                 # Permite schedule (cron)
+  nodeFilterEditable: false             # Impede override do filter na execucao
+  nodesSelectedByDefault: true          # Pre-seleciona nodes ao abrir a tela
+
+  # Options (parametros de entrada)
+  options:
+    - name: versao
+      required: true
+      description: "Versao a ser deployada (ex: 1.2.3)"
+      regex: '^\d+\.\d+\.\d+$'
+
+    - name: rollback-on-failure
+      description: "Fazer rollback automatico se falhar?"
+      type: boolean
+      value: "true"
+
+  # Seletor de nodes
+  nodefilters:
+    dispatch:
+      threadcount: 3                    # Paralelismo entre nodes
+      keepgoing: false                  # Para ao primeiro erro
+      rankAttribute: rank
+      rankOrder: ascending
+      successOnEmptyNodeFilter: false
+    filter: 'tags: app-frontend+prod'
+
+  # Agendamento (cron opcional)
+  schedule:
+    time:
+      hour: '02'
+      minute: '00'
+    weekday:
+      day: '*'
+    month: '*'
+    year: '*'
+
+  # Workflow (os passos)
+  sequence:
+    keepgoing: false                    # Para na primeira falha
+    strategy: node-first                # node-first | step-first | parallel
+    commands:
+      - description: "1. Parar servico"
+        exec: sudo systemctl stop meuapp
+
+      - description: "2. Puxar nova versao"
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          cd /opt/meuapp
+          curl -sSL -o app.tar.gz \
+            "https://artifacts.empresa.com/meuapp-@option.versao@.tar.gz"
+          tar xzf app.tar.gz
+        scriptargs: ""
+
+      - description: "3. Rodar migrations"
+        exec: /opt/meuapp/bin/migrate.sh
+        errorhandler:
+          description: "Rollback da migration"
+          exec: /opt/meuapp/bin/migrate.sh --rollback
+          keepgoingOnSuccess: false
+
+      - description: "4. Subir servico"
+        exec: sudo systemctl start meuapp
+
+      - description: "5. Health check"
+        exec: curl -f http://localhost:8080/health
+
+  # Notificacoes
+  notification:
+    onsuccess:
+      email:
+        recipients: devops@empresa.com.br
+        subject: "[OK] Deploy MeuApp ${option.versao}"
+    onfailure:
+      webhook:
+        urls: https://hooks.slack.com/services/AAA/BBB/CCC
+
+  notifyAvgDurationThreshold: "+30"     # Alerta se demorar 30s acima da media</pre>
+
+    <h3>Tipos de passo (steps)</h3>
+    <table>
+      <thead>
+        <tr><th>Tipo</th><th>Para quê</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>exec</code></td><td>Comando shell de uma linha no node remoto</td></tr>
+        <tr><td><code>script</code></td><td>Script inline (bash, python, etc.) enviado e executado no node</td></tr>
+        <tr><td><code>scriptfile</code></td><td>Arquivo de script já presente no node</td></tr>
+        <tr><td><code>scripturl</code></td><td>Script baixado de uma URL (útil com S3 presigned URLs)</td></tr>
+        <tr><td><code>jobref</code></td><td>Chama outro job do Rundeck (encadeamento)</td></tr>
+        <tr><td><code>nodeStep: false</code> + plugin</td><td>Step que roda no servidor Rundeck, não nos nodes (ex: Ansible, Docker)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="options">
+    <span class="part-banner dev">Parte II · Desenvolvimento</span>
+    <h2><span class="num">08 — Inputs</span>Options, variáveis e Key Storage</h2>
+
+    <h3>Options — inputs do usuário</h3>
+    <p>
+      Options são os parâmetros que o usuário preenche ao rodar o job.
+      Podem ser texto livre, listas com valores fixos ou valores carregados
+      dinamicamente de um endpoint HTTP.
+    </p>
+
+    <h4>Option de texto com validação</h4>
+<pre data-lang="yaml">options:
+  - name: hostname
+    description: Hostname do servidor a reiniciar
+    required: true
+    regex: '^[a-z0-9-]+\.empresa\.com\.br$'</pre>
+
+    <h4>Lista fixa (dropdown)</h4>
+<pre data-lang="yaml">options:
+  - name: ambiente
+    description: Ambiente alvo
+    required: true
+    enforced: true                 # usuario nao pode digitar valor livre
+    values:
+      - dev
+      - staging
+      - prod
+    value: dev                     # default</pre>
+
+    <h4>Lista dinâmica via HTTP (remote options)</h4>
+<pre data-lang="yaml">options:
+  - name: branch
+    description: Branch do Git a deployar
+    required: true
+    enforced: true
+    valuesUrl: 'https://gitlab.empresa.com/api/v4/projects/42/repository/branches'
+    # O endpoint deve retornar JSON no formato:
+    # [{"name":"main","value":"main"},{"name":"release-1.2","value":"release-1.2"}]</pre>
+
+    <h4>Option secreta (senha, mascarada na UI e nos logs)</h4>
+<pre data-lang="yaml">options:
+  - name: admin-password
+    description: Senha de admin do banco
+    required: true
+    secure: true                   # nao aparece no log
+    valueExposed: false            # nao fica disponivel como @option.xxx@</pre>
+
+    <h3>Referenciando options nos passos</h3>
+<pre data-lang="yaml">sequence:
+  commands:
+    # Em scripts: usar @option.nome@ (contexto data)
+    - script: |
+        #!/bin/bash
+        echo "Deployando versao @option.versao@ em @option.ambiente@"
+        export DB_HOST=@option.db-host@
+
+    # Em exec: usar ${option.nome} estilo shell
+    - exec: /usr/bin/deploy --version ${option.versao} --env ${option.ambiente}
+
+    # Em argumentos para jobrefs:
+    - jobref:
+        name: enviar-notificacao
+        group: infra/notif
+        args: -message "Deploy ${option.versao} concluido"</pre>
+
+    <h3>Variáveis de contexto — além dos options</h3>
+    <table>
+      <thead>
+        <tr><th>Variável</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>${node.name}</code></td><td>Nome do node atual na iteração</td></tr>
+        <tr><td><code>${node.hostname}</code></td><td>Hostname do node</td></tr>
+        <tr><td><code>${node.tags}</code></td><td>Tags do node (string separada por vírgula)</td></tr>
+        <tr><td><code>${job.name}</code></td><td>Nome do job</td></tr>
+        <tr><td><code>${job.execid}</code></td><td>ID único da execução atual</td></tr>
+        <tr><td><code>${job.username}</code></td><td>Usuário que disparou o job</td></tr>
+        <tr><td><code>${job.project}</code></td><td>Nome do projeto</td></tr>
+        <tr><td><code>${rundeck.nodename}</code></td><td>Hostname do servidor Rundeck</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Key Storage — segredos criptografados</h3>
+    <p>
+      Nunca coloque senhas ou chaves SSH em texto plano nos jobs YAML.
+      Use o Key Storage: um KV hierárquico criptografado que guarda chaves
+      privadas, passwords e tokens.
+    </p>
+
+<pre data-lang="bash"># Armazenar uma chave SSH privada
+rd keys create \
+  --path "keys/prod/deploy.key" \
+  --type privateKey \
+  --file ~/.ssh/id_rsa_prod
+
+# Armazenar uma senha
+echo -n "senha_super_secreta" | rd keys create \
+  --path "keys/prod/db-password" \
+  --type password
+
+# Listar chaves (so metadados, nao o conteudo)
+rd keys list --path keys/prod/</pre>
+
+    <h4>Usando chaves em um job</h4>
+<pre data-lang="yaml"># Opcao 1: chave SSH para o node (definida em nodes.yaml)
+web01:
+  hostname: 10.0.1.10
+  ssh-authentication: privateKey
+  ssh-key-storage-path: keys/prod/deploy.key
+
+# Opcao 2: exposicao como variavel secreta no job
+options:
+  - name: db-password
+    label: "Senha do banco"
+    required: true
+    secure: true
+    storagePath: keys/prod/db-password      # le do Key Storage
+    valueExposed: true                      # disponivel como @option.db-password@
+
+sequence:
+  commands:
+    - script: |
+        PGPASSWORD='@option.db-password@' psql -h db.empresa.com -U app -c "SELECT 1"</pre>
+
+    <div class="callout danger">
+      <span class="callout-label">Nunca imprima secrets</span>
+      <code>echo $PASSWORD</code> no script vai aparecer no log de execução —
+      e qualquer um com permissão <code>view_log</code> pode ler. Use
+      <code>secure: true</code> e tome cuidado com redirecionamento de stderr.
+    </div>
+  </section>
+
+  <section id="workflows">
+    <span class="part-banner dev">Parte II · Desenvolvimento</span>
+    <h2><span class="num">09 — Workflows</span>Estratégias de execução e tratamento de erros</h2>
+
+    <h3>Três estratégias de execução</h3>
+    <ul class="prose">
+      <li>
+        <strong>Node-first</strong> (padrão): para cada node, roda todos os
+        passos em ordem. Vai para o próximo node só quando o primeiro
+        terminou. Bom para deploys: você para, atualiza e religa um servidor
+        antes de mexer no próximo.
+      </li>
+      <li>
+        <strong>Step-first</strong>: para cada passo, roda em todos os nodes
+        antes de passar ao próximo passo. Bom para operações paralelas em
+        batch (ex: "parar em todos, depois atualizar em todos, depois ligar
+        em todos").
+      </li>
+      <li>
+        <strong>Parallel</strong> (plugin): roda passos independentes em
+        paralelo — útil para verificações de saúde simultâneas.
+      </li>
+    </ul>
+
+    <h3>keepgoing — continuar após erro?</h3>
+<pre data-lang="yaml">sequence:
+  keepgoing: true         # Mesmo se um passo falhar, continua os proximos
+  strategy: node-first
+  commands:
+    - exec: systemctl status nginx
+    - exec: systemctl status postgres
+    - exec: df -h
+    - exec: free -m
+# Util para jobs de "health check geral" onde cada verificacao e independente</pre>
+
+    <h3>Error handlers — ação se um passo falhar</h3>
+<pre data-lang="yaml">sequence:
+  commands:
+    - description: "Aplicar migration"
+      exec: /opt/app/bin/migrate.sh up
+      errorhandler:
+        description: "Reverter migration em caso de falha"
+        exec: /opt/app/bin/migrate.sh down
+        keepgoingOnSuccess: false    # se o handler sucedeu, ainda assim para o job</pre>
+
+    <h3>Referência entre jobs (jobref)</h3>
+    <p>
+      Chamar um job de dentro de outro é a forma de compor fluxos complexos
+      a partir de peças reutilizáveis. O job pai espera o job filho terminar
+      antes de prosseguir.
+    </p>
+<pre data-lang="yaml">sequence:
+  commands:
+    - jobref:
+        name: validar-pre-deploy
+        group: infra/checks
+        args: "-env prod -app meuapp"
+
+    - jobref:
+        name: deploy-app
+        group: operacao/deploy
+        args: "-versao ${option.versao}"
+        # Opcional: override do filtro de nodes do job filho
+        nodefilters:
+          filter: 'tags: canary+prod'
+          dispatch:
+            threadcount: 1
+            keepgoing: false
+
+    - jobref:
+        name: smoke-tests
+        group: qa
+        failOnDisable: true       # falha se o job filho estiver desabilitado</pre>
+
+    <h3>Paralelismo controlado com threadcount</h3>
+    <p>
+      <code>threadcount: 5</code> significa que o Rundeck vai rodar em até 5
+      nodes simultaneamente. Se você tem 100 web servers, isso evita deploy
+      "em bloco" que tira o site do ar por completo se algo der errado.
+      Combine com <code>keepgoing: false</code> para parar na primeira falha
+      e ter uma "janela de segurança".
+    </p>
+  </section>
+
+  <section id="casos-uso">
+    <span class="part-banner dev">Parte II · Desenvolvimento</span>
+    <h2><span class="num">10 — Casos de uso</span>Os jobs mais comuns no dia-a-dia</h2>
+
+    <div class="use-case">
+      <div class="use-case-header">
+        <h3>Caso 1 — Reiniciar um serviço com confirmação</h3>
+        <span class="tag">BÁSICO · SELF-SERVICE</span>
+      </div>
+      <div class="use-case-body">
+        <p class="scenario">
+          <strong>Cenário</strong>
+          Dev precisa reiniciar o serviço da app em staging às vezes — mas sem
+          ter acesso SSH direto, e sem ligar pro time de ops.
+        </p>
+
+<pre data-lang="yaml">- name: restart-service
+  group: self-service
+  description: Reinicia um servico systemd em staging
+  nodesSelectedByDefault: false
+  nodeFilterEditable: true
+  options:
+    - name: service
+      required: true
+      enforced: true
+      values: [meuapp, worker, scheduler, redis]
+    - name: confirmacao
+      required: true
+      description: 'Digite REINICIAR para confirmar'
+      regex: '^REINICIAR$'
+
+  nodefilters:
+    dispatch:
+      threadcount: 1
+      keepgoing: false
+    filter: 'tags: app+staging'
+
+  sequence:
+    keepgoing: false
+    strategy: node-first
+    commands:
+      - description: 'Parar servico'
+        exec: sudo systemctl stop ${option.service}
+
+      - description: 'Aguardar 2s'
+        exec: sleep 2
+
+      - description: 'Iniciar servico'
+        exec: sudo systemctl start ${option.service}
+
+      - description: 'Verificar status'
+        exec: sudo systemctl is-active ${option.service}</pre>
+      </div>
+    </div>
+
+    <div class="use-case">
+      <div class="use-case-header">
+        <h3>Caso 2 — Deploy blue/green com rollback</h3>
+        <span class="tag">INTERMEDIÁRIO · DEPLOY</span>
+      </div>
+      <div class="use-case-body">
+        <p class="scenario">
+          <strong>Cenário</strong>
+          Deploy da app em produção com paralelismo controlado, health check,
+          e rollback automático se 2 de 10 nodes falharem.
+        </p>
+
+<pre data-lang="yaml">- name: deploy-rolling
+  group: operacao/deploy
+  description: Deploy rolling com rollback automatico
+  options:
+    - name: versao
+      required: true
+      regex: '^\d+\.\d+\.\d+$'
+    - name: paralelismo
+      value: '2'
+      description: 'Quantos nodes deployar simultaneamente'
+
+  nodefilters:
+    dispatch:
+      threadcount: ${option.paralelismo}
+      keepgoing: false        # Para na primeira falha
+    filter: 'tags: app-frontend+prod'
+
+  sequence:
+    keepgoing: false
+    strategy: node-first      # Importante: node-first para deploy rolling
+    commands:
+      - description: 'Remover do load balancer'
+        exec: |
+          curl -X POST "http://lb.empresa.com/drain?node=${node.name}"
+
+      - description: 'Aguardar draining (30s)'
+        exec: sleep 30
+
+      - description: 'Baixar artefato'
+        script: |
+          cd /opt/meuapp
+          curl -sSL -o new.tar.gz \
+            "https://artifacts.empresa.com/meuapp-@option.versao@.tar.gz"
+          tar xzf new.tar.gz -C /opt/meuapp/releases/@option.versao@/
+
+      - description: 'Atualizar symlink e reiniciar'
+        exec: |
+          sudo ln -sfn /opt/meuapp/releases/@option.versao@ /opt/meuapp/current &&
+          sudo systemctl restart meuapp
+        errorhandler:
+          description: 'Rollback do symlink'
+          exec: |
+            sudo ln -sfn /opt/meuapp/releases/previous /opt/meuapp/current &&
+            sudo systemctl restart meuapp
+
+      - description: 'Health check'
+        exec: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/health && exit 0
+            sleep 2
+          done
+          exit 1
+
+      - description: 'Voltar ao load balancer'
+        exec: |
+          curl -X POST "http://lb.empresa.com/enable?node=${node.name}"
+
+  notification:
+    onfailure:
+      webhook:
+        urls: https://hooks.slack.com/services/AAA/BBB/CCC
+    onsuccess:
+      email:
+        recipients: devops@empresa.com.br
+        subject: '[OK] Deploy ${option.versao} concluido'</pre>
+
+        <p>
+          <strong>Por que funciona</strong>: <code>threadcount: 2</code> com
+          <code>keepgoing: false</code> garante que se o node 1 ou 2 falharem,
+          os próximos 8 não são deployados. O error handler na etapa crítica
+          reverte o symlink. O health check ao final valida que o serviço
+          subiu antes de reabilitar no LB.
+        </p>
+      </div>
+    </div>
+
+    <div class="use-case">
+      <div class="use-case-header">
+        <h3>Caso 3 — Backup diário de banco com cron</h3>
+        <span class="tag">INTERMEDIÁRIO · AGENDADO</span>
+      </div>
+      <div class="use-case-body">
+        <p class="scenario">
+          <strong>Cenário</strong>
+          Backup noturno de Postgres, com upload para S3 e rotação de backups
+          mais antigos que 30 dias.
+        </p>
+
+<pre data-lang="yaml">- name: backup-postgres-diario
+  group: infra/backups
+  description: Backup noturno dos bancos Postgres
+  scheduleEnabled: true
+  schedule:
+    time: { hour: '02', minute: '00', seconds: '0' }
+    weekday: { day: '*' }
+    month: '*'
+    year: '*'
+
+  options:
+    - name: retention-days
+      value: '30'
+      description: 'Dias de retencao'
+
+  nodefilters:
+    dispatch:
+      threadcount: 1
+      keepgoing: true
+    filter: 'tags: postgres+primary'
+
+  sequence:
+    keepgoing: true
+    strategy: node-first
+    commands:
+      - description: 'Dump do banco'
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          DATE=$(date +%Y%m%d-%H%M)
+          FILE="/tmp/pgbackup-${node.name}-$DATE.sql.gz"
+
+          sudo -u postgres pg_dumpall | gzip > "$FILE"
+          echo "Backup criado: $FILE ($(du -h $FILE | cut -f1))"
+
+      - description: 'Upload para S3'
+        script: |
+          DATE=$(date +%Y%m%d-%H%M)
+          aws s3 cp "/tmp/pgbackup-${node.name}-$DATE.sql.gz" \
+            "s3://backups-empresa/postgres/${node.name}/$DATE.sql.gz" \
+            --storage-class STANDARD_IA
+
+          rm "/tmp/pgbackup-${node.name}-$DATE.sql.gz"
+
+      - description: 'Rotacao - remover backups antigos'
+        script: |
+          aws s3 ls "s3://backups-empresa/postgres/${node.name}/" | \
+            awk '{print $4}' | \
+            while read obj; do
+              # Parse data do nome do arquivo
+              obj_date=$(echo "$obj" | grep -oP '\d{8}')
+              if [ -n "$obj_date" ]; then
+                cutoff=$(date -d "@option.retention-days@ days ago" +%Y%m%d)
+                if [ "$obj_date" -lt "$cutoff" ]; then
+                  aws s3 rm "s3://backups-empresa/postgres/${node.name}/$obj"
+                fi
+              fi
+            done
+
+  notification:
+    onfailure:
+      email:
+        recipients: dba@empresa.com.br
+        subject: '[FALHA] Backup Postgres - ${node.name}'</pre>
+      </div>
+    </div>
+
+    <div class="use-case">
+      <div class="use-case-header">
+        <h3>Caso 4 — Runbook de incidente (high CPU)</h3>
+        <span class="tag">AVANÇADO · INCIDENT RESPONSE</span>
+      </div>
+      <div class="use-case-body">
+        <p class="scenario">
+          <strong>Cenário</strong>
+          PagerDuty acorda o on-call às 3h da manhã: "High CPU em web-07".
+          Em vez de SSH manual, o on-call roda um runbook que coleta
+          diagnóstico e tenta remediação automática.
+        </p>
+
+<pre data-lang="yaml">- name: incident-high-cpu
+  group: incidents/runbooks
+  description: |
+    Diagnostica e tenta remediar high CPU em um node.
+    Coleta top processes, stack traces do Java e, opcionalmente,
+    reinicia o servico se a flag --remediate for true.
+
+  options:
+    - name: hostname
+      required: true
+      description: 'Hostname do node com high CPU'
+    - name: remediate
+      type: boolean
+      value: 'false'
+      description: 'Tentar reiniciar o servico apos diagnostico?'
+
+  nodefilters:
+    filter: 'name: ${option.hostname}'
+    dispatch:
+      threadcount: 1
+      keepgoing: true
+
+  sequence:
+    keepgoing: true           # Continua coletando mesmo que um passo falhe
+    strategy: node-first
+    commands:
+      - description: '1. Top processes'
+        exec: ps aux --sort=-%cpu | head -20
+
+      - description: '2. Load average historico'
+        exec: uptime; cat /proc/loadavg
+
+      - description: '3. Thread dump (se for Java)'
+        script: |
+          if pgrep -f java >/dev/null; then
+            JAVA_PID=$(pgrep -f "meuapp.jar" | head -1)
+            if [ -n "$JAVA_PID" ]; then
+              sudo -u app jstack $JAVA_PID > /tmp/threaddump-$(date +%s).txt
+              echo "Thread dump salvo em /tmp/"
+              tail -200 /tmp/threaddump-*.txt
+            fi
+          fi
+
+      - description: '4. Ultimos logs do servico'
+        exec: sudo journalctl -u meuapp -n 100 --no-pager
+
+      - description: '5. Conexoes de rede'
+        exec: sudo ss -tunap | head -40
+
+      - description: '6. Remediacao (se solicitado)'
+        script: |
+          if [ "@option.remediate@" = "true" ]; then
+            echo ">>> Reiniciando servico meuapp"
+            sudo systemctl restart meuapp
+            sleep 5
+            sudo systemctl status meuapp
+          else
+            echo ">>> Remediacao nao solicitada (flag --remediate false)"
+          fi
+
+  notification:
+    onsuccess:
+      webhook:
+        urls: "https://events.pagerduty.com/v2/enqueue"</pre>
+
+        <p>
+          O valor desse job não é automatizar tudo — é garantir que o on-call
+          colete <em>os mesmos dados</em> a cada incidente, sem esquecer um
+          comando crítico às 3h da manhã. E o histórico de execução vira
+          post-mortem automaticamente.
+        </p>
+      </div>
+    </div>
+
+    <div class="use-case">
+      <div class="use-case-header">
+        <h3>Caso 5 — Invocar Ansible do Rundeck</h3>
+        <span class="tag">INTERMEDIÁRIO · INTEGRAÇÃO</span>
+      </div>
+      <div class="use-case-body">
+        <p class="scenario">
+          <strong>Cenário</strong>
+          Time já tem playbooks Ansible maduros. Quer expor a execução deles
+          via Rundeck para o time de dev, sem dar acesso ao repo Ansible.
+        </p>
+
+<pre data-lang="yaml">- name: executar-playbook-ansible
+  group: ansible
+  description: Executa um playbook Ansible selecionado
+  options:
+    - name: playbook
+      required: true
+      enforced: true
+      values:
+        - site.yml
+        - deploy-app.yml
+        - patch-security.yml
+        - rotate-certs.yml
+    - name: hosts
+      required: true
+      description: 'Grupo do inventario (ex: web-prod, db-staging)'
+      enforced: true
+      valuesUrl: 'https://ansible-control/api/groups'
+    - name: extra-vars
+      description: 'Extra vars JSON (opcional, ex: {"versao":"1.2.3"})'
+      value: '{}'
+
+  nodefilters:
+    filter: 'name: ansible-control-01'   # Roda no servidor Ansible
+    dispatch:
+      threadcount: 1
+
+  sequence:
+    keepgoing: false
+    commands:
+      - description: 'Rodar ansible-playbook'
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          cd /opt/ansible
+
+          # Pull do repo para garantir versao mais recente
+          git pull origin main
+
+          # Execucao
+          ansible-playbook \
+            -i inventory/prod \
+            --limit "@option.hosts@" \
+            --extra-vars '@option.extra-vars@' \
+            --extra-vars "rundeck_user=${job.username}" \
+            --extra-vars "rundeck_execid=${job.execid}" \
+            playbooks/@option.playbook@</pre>
+
+        <p>
+          Observe os extras <code>rundeck_user</code> e <code>rundeck_execid</code>
+          — o playbook pode usá-los para logar quem disparou e criar links de
+          volta à execução no Rundeck. Rastreabilidade completa.
+        </p>
+      </div>
+    </div>
+
+    <div class="use-case">
+      <div class="use-case-header">
+        <h3>Caso 6 — Workflow com steps condicionais</h3>
+        <span class="tag">AVANÇADO · CONTROLE DE FLUXO</span>
+      </div>
+      <div class="use-case-body">
+        <p class="scenario">
+          <strong>Cenário</strong>
+          Job que executa passos diferentes dependendo da hora do dia ou de
+          uma variável de estado — por exemplo, pular migrations em horário
+          comercial.
+        </p>
+
+<pre data-lang="yaml">- name: deploy-com-condicional
+  group: deploys
+  description: Deploy que pula migration em horario comercial
+  options:
+    - name: versao
+      required: true
+
+  sequence:
+    keepgoing: false
+    commands:
+      - description: 'Detectar hora e setar flag'
+        script: |
+          HOUR=$(date +%H)
+          if [ "$HOUR" -ge 8 ] && [ "$HOUR" -lt 18 ]; then
+            echo "RUNDECK:DATA:skip-migration=true"
+          else
+            echo "RUNDECK:DATA:skip-migration=false"
+          fi
+
+      # O echo RUNDECK:DATA:key=value vira variavel @data.key@
+      - description: 'Rodar migration (apenas fora do horario comercial)'
+        exec: /opt/app/bin/migrate.sh
+        plugins:
+          LogFilter:
+            - type: key-value-data
+              config: { logData: 'true' }
+        condition: '${data.skip-migration} == "false"'
+
+      - description: 'Deploy da aplicacao'
+        exec: /opt/app/bin/deploy.sh @option.versao@</pre>
+
+        <div class="callout tip">
+          <span class="callout-label">key-value-data log filter</span>
+          O plugin <code>key-value-data</code> parsea stdout procurando linhas
+          <code>RUNDECK:DATA:chave=valor</code> e injeta como variáveis
+          <code>${data.chave}</code> nos próximos passos. É o mecanismo
+          oficial para passar estado entre etapas de um workflow.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="api">
+    <span class="part-banner dev">Parte II · Desenvolvimento</span>
+    <h2><span class="num">11 — API</span>REST e integração com sistemas externos</h2>
+
+    <p>
+      A API do Rundeck é como Slack, PagerDuty, GitHub Actions e outros
+      sistemas disparam jobs. Tudo que a UI faz, a API também faz.
+    </p>
+
+    <h3>Gerar um token de API</h3>
+<pre data-lang="bash"># Pela UI: Profile -> User API Tokens -> Generate New Token
+# Ou via rd CLI:
+rd tokens create --user meu-usuario --roles dev,api --duration 30d</pre>
+
+    <h3>Chamadas essenciais</h3>
+
+    <h4>Listar jobs de um projeto</h4>
+<pre data-lang="bash">RD_URL="https://rundeck.empresa.com.br"
+RD_TOKEN="abc123..."
+PROJETO="MeuApp"
+
+curl -H "X-Rundeck-Auth-Token: $RD_TOKEN" \
+     -H "Accept: application/json" \
+     "$RD_URL/api/48/project/$PROJETO/jobs"</pre>
+
+    <h4>Disparar uma execução</h4>
+<pre data-lang="bash">JOB_ID="7f3a9b12-1234-5678-9abc-def012345678"
+
+curl -X POST \
+  -H "X-Rundeck-Auth-Token: $RD_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "options": {
+      "versao": "1.2.3",
+      "ambiente": "prod"
+    },
+    "filter": "tags: canary+prod"
+  }' \
+  "$RD_URL/api/48/job/$JOB_ID/executions"
+
+# Resposta:
+# {
+#   "id": 4521,
+#   "href": "https://.../execution/show/4521",
+#   "status": "running",
+#   ...
+# }</pre>
+
+    <h4>Consultar status de uma execução</h4>
+<pre data-lang="bash">EXEC_ID=4521
+
+curl -H "X-Rundeck-Auth-Token: $RD_TOKEN" \
+     "$RD_URL/api/48/execution/$EXEC_ID"
+
+# Polling ate terminar:
+while true; do
+  STATUS=$(curl -sH "X-Rundeck-Auth-Token: $RD_TOKEN" \
+    "$RD_URL/api/48/execution/$EXEC_ID" | jq -r '.status')
+  echo "Status: $STATUS"
+  [[ "$STATUS" != "running" ]] &amp;&amp; break
+  sleep 5
+done</pre>
+
+    <h4>Baixar log de uma execução</h4>
+<pre data-lang="bash">curl -H "X-Rundeck-Auth-Token: $RD_TOKEN" \
+     "$RD_URL/api/48/execution/$EXEC_ID/output?format=text" \
+     -o execution-${EXEC_ID}.log</pre>
+
+    <h3>Exemplo: disparar job a partir de alerta do Prometheus</h3>
+<pre data-lang="yaml"># alertmanager.yml — receiver que posta no Rundeck
+receivers:
+  - name: rundeck-autoremediate
+    webhook_configs:
+      - url: 'https://rundeck.empresa.com.br/api/48/job/UUID/run?authtoken=TOKEN'
+        send_resolved: false
+        http_config:
+          follow_redirects: true</pre>
+
+    <p>
+      Com esse setup, um alerta de "disco cheio" pode disparar
+      automaticamente um job que limpa <code>/tmp</code>, roda
+      <code>apt autoremove</code> e reporta o estado final — tudo auditado
+      no Rundeck.
+    </p>
+
+    <h3>rd CLI — cliente oficial</h3>
+    <p>
+      Além de <code>curl</code>, existe o <a href="https://rundeck.github.io/rundeck-cli/">rd CLI</a>
+      que encapsula a API. Mais expressivo para scripts:
+    </p>
+<pre data-lang="bash">export RD_URL="https://rundeck.empresa.com.br"
+export RD_TOKEN="abc123..."
+
+# Disparar job, esperar terminar, sair com codigo do job
+rd run -p MeuApp -j 'operacao/deploy/deploy-app' -f \
+  --follow \
+  -- -versao 1.2.3 -ambiente prod
+
+# Exportar job YAML
+rd jobs list -p MeuApp --jobxact 'operacao/deploy-app' -f deploy.yaml
+
+# Carregar job a partir de YAML (ideal para GitOps)
+rd jobs load -p MeuApp -f deploy.yaml --format yaml --duplicate update</pre>
+  </section>
+
+  <section id="boas-praticas">
+    <span class="part-banner dev">Parte II · Desenvolvimento</span>
+    <h2><span class="num">12 — Boas práticas</span>Armadilhas comuns e como evitá-las</h2>
+
+    <h3>Versione seus jobs em Git</h3>
+    <p>
+      Jobs criados pela UI ficam só no banco do Rundeck. Se o servidor morrer,
+      você perde tudo. Trate jobs como código: exporte para YAML, commite no
+      Git e use <code>rd jobs load</code> num pipeline CI para aplicar no
+      Rundeck (GitOps).
+    </p>
+
+    <h3>Nomeie grupos com /</h3>
+    <p>
+      O campo <code>group</code> aceita <code>/</code> como separador
+      hierárquico. <code>operacao/deploy/frontend</code> fica organizado na UI
+      como uma árvore navegável. Com centenas de jobs, isso vira essencial.
+    </p>
+
+    <h3>Idempotência sempre</h3>
+    <p>
+      Assuma que o job vai ser executado duas vezes seguidas — por acidente,
+      por retry, por outro operador. Rode duas vezes o job de deploy e o
+      estado final deve ser o mesmo. <code>systemctl restart</code> é idempotente;
+      <code>mv file file.bak</code> não é (falha na segunda vez).
+    </p>
+
+    <h3>keepgoing cuidadoso</h3>
+    <p>
+      <code>keepgoing: true</code> é tentador mas perigoso em deploys — um
+      node falha, os outros 50 continuam sendo deployados com problema. Em
+      deploys, sempre <code>keepgoing: false</code>. Em health checks e
+      coletas de diagnóstico, <code>keepgoing: true</code> é apropriado.
+    </p>
+
+    <h3>Scripts longos merecem arquivo separado</h3>
+    <p>
+      Um bash de 80 linhas embutido no YAML fica ilegível. Use
+      <code>scriptfile:</code> apontando para um arquivo no repo, ou
+      <code>scripturl:</code> para um presigned URL no S3. Ou melhor: chame um
+      playbook Ansible. O Rundeck orquestra, as ferramentas especializadas
+      executam.
+    </p>
+
+    <h3>Monitore o Rundeck</h3>
+    <p>
+      Exporte métricas do endpoint <code>/metrics</code> (Prometheus format)
+      para Grafana. Acompanhe: tempo médio de execução por job, taxa de
+      falha, tamanho da fila de execuções, uso de memória da JVM. Se o
+      Rundeck morre, seus runbooks morrem junto.
+    </p>
+
+    <div class="callout tip">
+      <span class="callout-label">Regra do dedão</span>
+      Se um job roda mais de 15 minutos, reconsidere. Jobs muito longos
+      bloqueiam slots de execução, são difíceis de depurar e geralmente
+      indicam que o trabalho real deveria estar em outra ferramenta
+      (Kubernetes Job, AWS Batch, Airflow). Rundeck brilha em tarefas curtas
+      e frequentes, não em processamento batch de horas.
+    </div>
+
+    <hr class="divider">
+
+    <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; color: var(--muted); text-align: center; margin-top: 40px;">
+      Runbook automation não é sobre eliminar humanos do loop — é sobre dar a
+      cada humano o poder de operar o sistema com segurança.
+    </p>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 — Franklin José de Oliveira Neto. Todos os direitos reservados.</p>
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.toc a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
